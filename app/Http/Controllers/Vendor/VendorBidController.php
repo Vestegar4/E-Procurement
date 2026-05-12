@@ -22,6 +22,12 @@ class VendorBidController extends Controller
         $user = auth()->user();
         $vendor = $user->vendor;
 
+        if (!$vendor) {
+            return response()->json([
+                'message' => 'Vendor not found'
+            ], 404);
+        }
+
         $tender = Tender::with('timeline')
             ->findOrFail($tenderId);
 
@@ -107,6 +113,12 @@ class VendorBidController extends Controller
         $user = auth()->user();
         $vendor = $user->vendor;
 
+        if (!$vendor) {
+            return response()->json([
+                'message' => 'Vendor not found'
+            ], 404);
+        }
+
         $bids = Bid::with([
             'tender.timeline'
         ])
@@ -125,6 +137,12 @@ class VendorBidController extends Controller
     {
         $user = auth()->user();
         $vendor = $user->vendor;
+
+        if (!$vendor) {
+            return response()->json([
+                'message' => 'Vendor not found'
+            ], 404);
+        }
 
         $bid = Bid::with([
             'tender',

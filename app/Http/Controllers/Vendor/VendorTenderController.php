@@ -44,6 +44,11 @@ class VendorTenderController extends Controller
         $user = auth()->user();
         $vendor = $user->vendor;
 
+        if (!$vendor) {
+            return response()->json([
+                'message' => 'Vendor Profile not Found'
+            ],403);
+        }
         $tender = Tender::with('timeline')
             ->findOrFail($id);
 
@@ -62,7 +67,7 @@ class VendorTenderController extends Controller
             $now < $tender->timeline->registration_start ||
             $now > $tender->timeline->registration_end
         ) {
-            return response()->json([
+            return response()->json([   
                 'message' => 'Registration period closed'
             ], 403);
         }
