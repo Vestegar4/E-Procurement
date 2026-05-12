@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('vendors', function (Blueprint $table) {
       $table->id();
       // akun login
-      $table->string('name'); // nama PIC
+      $table->string('name')->nullable();
       $table->string('email')->unique();
       $table->string('password');
 

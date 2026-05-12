@@ -10,10 +10,6 @@ use App\Http\Controllers\Admin\BidMonitoringController;
 use App\Http\Controllers\Admin\TenderAnnouncementController;
 use App\Http\Controllers\Admin\TenderResultController as AdminTenderResultController;
 use App\Http\Controllers\Admin\VendorManagementController;
-use App\Http\Controllers\Vendor\VendorProfileController;
-use App\Http\Controllers\Vendor\VendorTenderController;
-use App\Http\Controllers\Vendor\VendorBidController;
-use App\Http\Controllers\Vendor\VendorResultController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,4 +72,18 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class
 */
 
 Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsVendor::class])->prefix('vendor')->group(function () {
+    //Check Available Tenders
+    Route::get('/tenders', [\App\Http\Controllers\Vendor\VendorTenderController::class, 'index']);
+    Route::get('/tenders/my-tenders', [\App\Http\Controllers\Vendor\VendorTenderController::class, 'myTenders']);
+    Route::get('/tenders/{id}', [\App\Http\Controllers\Vendor\VendorTenderController::class, 'show']);
+    Route::post('/tenders/{id}/join', [\App\Http\Controllers\Vendor\VendorTenderController::class, 'join']);
+
+    //bids
+    Route::get('bids', [\App\Http\Controllers\Vendor\VendorBidController::class, 'mybids']);
+    Route::get('/bids/{id}', [\App\Http\Controllers\Vendor\VendorBidController::class, 'show']);
+    Route::post('/tenders/{id}/bid', [\App\Http\Controllers\Vendor\VendorBidController::class, 'submitBid']);
+
+    //Tender Results
+    Route::get('/results', [\App\Http\Controllers\Vendor\VendorResultController::class, 'index']);
+    Route::get('/results/{tenderId', [\App\Http\Controllers\Vendor\VendorResultController::class, 'show']);
 });

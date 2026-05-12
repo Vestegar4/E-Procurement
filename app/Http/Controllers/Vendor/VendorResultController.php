@@ -12,10 +12,15 @@ class VendorResultController extends Controller
     // list my results
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
-        $vendor = $user->vendor([
-            'winner'
-        ]);
+        $vendor = $user->vendor;
+
+        if (!$vendor) {
+            return response()->json([
+                'message' => 'Profil Vendor tidak ditemukan.'
+            ], 404);
+        }
 
         $results = TenderResult::with([
             'tender',
