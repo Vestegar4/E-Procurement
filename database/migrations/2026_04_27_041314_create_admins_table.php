@@ -11,25 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vendor', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->id();
-            // akun login
-            $table->string('name'); // nama PIC
+            $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
 
-            // data perusahaan
-            $table->string('company_name');
-            $table->text('address');
-            $table->string('phone');
-            $table->string('npwp')->nullable();
+            $table->string('role')->default('admin');
 
-            // status verifikasi
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->boolean('is_active')->default(true);
 
-            $table->timestamp('approved_at')->nullable();
+            $table->timestamp('last_login_at')->nullable();
 
             $table->rememberToken();
+
             $table->softDeletes();
             $table->timestamps();
         });
@@ -40,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vendor');
+        Schema::dropIfExists('admins');
     }
 };

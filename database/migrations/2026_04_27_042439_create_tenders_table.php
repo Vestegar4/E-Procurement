@@ -16,16 +16,23 @@ return new class extends Migration
 
             $table->string('title');
             $table->text('description')->nullable();
+            $table->longText('specification')->nullable();
+
             $table->decimal('budget', 15, 2)->nullable();
-            $table->date('deadline')->nullable();
+            
 
-            $table->date('published_at')->nullable();
-            $table->date('started_at')->nullable();
-            $table->date('closed_at')->nullable();
+            $table->enum('status', [
+                'draft',
+                'open',
+                'aanwijzing',
+                'bidding', 
+                'closed',
+                'finished',
+            ])->default('draft');
 
-            $table->enum('status', ['draft', 'published', 'closed'])->default('draft');
-
-            $table->foreignId('created_by')->constrained('admin')->onDelete('cascade');
+            $table->foreignId('created_by')
+                  ->constrained('admins')
+                  ->onDelete('cascade');
 
             $table->softDeletes();
             $table->timestamps();

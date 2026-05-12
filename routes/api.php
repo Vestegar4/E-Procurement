@@ -2,24 +2,78 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TenderController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\VendorController;
+use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\Auth\VendorAuthController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\TenderController;
+use App\Http\Controllers\Admin\BidMonitoringController;
+use App\Http\Controllers\Admin\TenderAnnouncementController;
+use App\Http\Controllers\Admin\TenderResultController as AdminTenderResultController;
+use App\Http\Controllers\Admin\VendorManagementController;
+use App\Http\Controllers\Vendor\VendorProfileController;
+use App\Http\Controllers\Vendor\VendorTenderController;
+use App\Http\Controllers\Vendor\VendorBidController;
+use App\Http\Controllers\Vendor\VendorResultController;
 
-Route::post('tenders', [TenderController::class, 'store']);
-Route::get('tenders', [TenderController::class, 'index']);
-Route::get('tenders/{id}', [TenderController::class, 'show']);
-Route::put('tenders/{id}', [TenderController::class, 'update']);
-Route::delete('tenders/{id}', [TenderController::class, 'destroy']);
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES
+|--------------------------------------------------------------------------
+*/
 
-Route::post('admins', [AdminController::class, 'store']);
-Route::get('admins', [AdminController::class, 'index']); 
-Route::get('admins/{id}', [AdminController::class, 'show']);
-Route::put('admins/{id}', [AdminController::class, 'update']);
-Route::delete('admins/{id}', [AdminController::class, 'destroy']);
+// Admin Authentication
+Route::prefix('auth/admin')->group(function () {
+  Route::post('login', [AdminAuthController::class, 'login']);
+    Route::post('logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('me', [AdminAuthController::class, 'me'])->middleware('auth:sanctum');
+});
 
-Route::post('vendor', [VendorController::class, 'store']);
-Route::get('vendor', [VendorController::class, 'index']);
-Route::get('vendor/{id}', [VendorController::class, 'show']);
-Route::put('vendor/{id}', [VendorController::class, 'update']);
-Route::delete('vendor/{id}', [VendorController::class, 'destroy']);
+// Vendor Authentication
+Route::prefix('auth/vendor')->group(function () {
+    Route::post('register', [VendorAuthController::class, 'register']);
+    Route::post('login', [VendorAuthController::class, 'login']);
+    Route::post('logout', [VendorAuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('me', [VendorAuthController::class, 'me'])->middleware('auth:sanctum');
+});
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->group(function () {
+    
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'index']);
+
+    // Tenders Management
+    Route::apiResource('tenders', TenderController::class);
+
+    // Bid Monitoring
+    Route::get('bids', [BidMonitoringController::class, 'index']);
+    Route::get('tenders/{tenderId}/bids', [BidMonitoringController::class, 'tenderBids']);
+
+    // Tender Announcements
+    Route::post('tenders/{tenderId}/announcements', [TenderAnnouncementController::class, 'store']);
+    Route::get('tenders/{tenderId}/announcements', [TenderAnnouncementController::class, 'index']);
+
+    // Tender Results
+    Route::post('tenders/{tenderId}/results/select-winner', [AdminTenderResultController::class, 'selectWinner']);
+    Route::get('tenders/{tenderId}/results', [AdminTenderResultController::class, 'show']);
+
+    // Vendor Management
+    Route::get('vendors', [VendorManagementController::class, 'index']);
+    Route::get('vendors/{id}', [VendorManagementController::class, 'show']);
+    Route::post('vendors/{id}/approve', [VendorManagementController::class, 'approve']);
+    Route::post('vendors/{id}/reject', [VendorManagementController::class, 'reject']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| VENDOR ROUTES
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsVendor::class])->prefix('vendor')->group(function () {
+});
