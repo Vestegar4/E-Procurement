@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\BidMonitoringController;
 use App\Http\Controllers\Admin\TenderAnnouncementController;
 use App\Http\Controllers\Admin\TenderResultController as AdminTenderResultController;
 use App\Http\Controllers\Admin\VendorManagementController;
+use App\Http\Controllers\Admin\AdminInvoiceController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +65,18 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class
     Route::get('vendors/{id}', [VendorManagementController::class, 'show']);
     Route::post('vendors/{id}/approve', [VendorManagementController::class, 'approve']);
     Route::post('vendors/{id}/reject', [VendorManagementController::class, 'reject']);
+
+    Route::prefix('notifications')->group(function () {
+    Route::get('/', [AdminNotificationController::class, 'index']);
+    Route::put('{id}/read', [AdminNotificationController::class, 'markAsRead']);
+    Route::put('read-all', [AdminNotificationController::class, 'markAllAsRead']);
+    });
+
+    Route::prefix('invoices')->group(function () {
+    Route::get('/', [AdminInvoiceController::class, 'index']);
+    Route::get('{id}', [AdminInvoiceController::class, 'show']);
+    Route::put('{id}/status', [AdminInvoiceController::class, 'updateStatus']);
+    });
 });
 
 /*
