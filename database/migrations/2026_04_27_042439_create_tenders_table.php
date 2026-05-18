@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('specification')->nullable();
 
             $table->decimal('budget', 15, 2)->nullable();
-            
+            $table->string('document_path')->nullable();
 
             $table->enum('status', [
                 'draft',
