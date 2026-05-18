@@ -17,6 +17,7 @@ class Tender extends Model
         'description',
         'specification',
         'budget',
+        'document_path',
         'status',
         'created_by',
     ];
