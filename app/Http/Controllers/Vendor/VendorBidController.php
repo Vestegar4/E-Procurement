@@ -32,10 +32,21 @@ class VendorBidController extends Controller
             ->findOrFail($tenderId);
 
         // check if tender is open for bidding
-        if (!in_array($tender->status, ['open', 'bidding'])) {
+        // if (!in_array($tender->status, ['open', 'bidding'])) {
+        //     return response()->json([
+        //         'message' => 'Tender is not open for bidding'
+        //     ], 400);
+        // }
+
+        if ($tender->status !== 'bidding') {
             return response()->json([
                 'message' => 'Tender is not open for bidding'
             ], 400);
+        }
+
+        // Check if vendor is approved
+        if ($vendor->status !== 'approved') {
+            return response()->json(['message' => 'Your vendor account is not approved'], 403);
         }
 
         // check if vendor is a participant
@@ -74,6 +85,16 @@ class VendorBidController extends Controller
 
             // store new document
             $bidDocumentPath = $request->file('bid_document')->store('bids');
+
+            // recovery bid
+            DB::transaction(function () use ($existingBid, $request, $bidDocumentPath) {
+                $existingBid->update([
+                    'bid_amount' => $request->bid_amount,
+                    'notes' => $request->notes,
+                    'submitted_at' => now(),
+                    'bid_document' => $bidDocumentPath,
+                ]);
+            });
 
             // update bid
             $existingBid->update([
