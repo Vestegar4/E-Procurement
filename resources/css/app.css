@@ -1,110 +1,132 @@
 body{
-    margin:0;
-    padding:0;
-    font-family:'Inter',sans-serif;
-    background:#FFF9FB;
+    margin: 0;
+    padding: 0;
+    background: #f1f5f9;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.main-layout{
-    display:flex;
-    min-height:100vh;
+/* WRAPPER */
+.wrapper{
+    display: flex;
+    min-height: 100vh;
 }
 
+/* SIDEBAR */
 .sidebar{
-    width:280px;
-    background:#FBC3C1;
-    padding:30px 20px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
+    width: 260px;
+    background: #481c50;
+    padding: 20px;
 }
 
-.logo{
-    color:#d63384;
-    font-weight:700;
-    margin-bottom:40px;
+.sidebar-header{
+    margin-bottom: 40px;
 }
 
-.menu{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+.sidebar-header h3{
+    color: white;
+    font-weight: bold;
 }
 
-.menu-item{
-    text-decoration:none;
-    padding:14px 18px;
-    border-radius:16px;
-    color:#444;
-    font-weight:500;
-    transition:0.3s;
+/* MENU */
+.sidebar-menu .nav-item{
+    margin-bottom: 10px;
 }
 
-.menu-item:hover{
-    background:#FE81D4;
-    color:white;
+.sidebar-menu .nav-link{
+    color: #cbd5e1;
+    padding: 14px 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: 0.3s;
 }
 
-.active{
-    background:#FE81D4;
-    color:white;
+.sidebar-menu .nav-link:hover{
+    background: #1e293b;
+    color: white;
 }
 
-.sidebar-footer{
-    background:white;
-    padding:20px;
-    border-radius:20px;
+.active-menu{
+    background: #2563eb;
+    color: white !important;
 }
 
-.sidebar-footer h5{
-    margin-bottom:8px;
+/* MAIN CONTENT */
+.main-content{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-.sidebar-footer p{
-    color:gray;
-    font-size:14px;
-    margin:0;
-}
-
-.content{
-    flex:1;
-    padding:30px;
-}
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
+/* TOP NAVBAR */
+.top-navbar{
+    background: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .page-title{
-    margin:0;
-    font-weight:700;
+    margin: 0;
+    font-weight: bold;
 }
 
-.page-subtitle{
-    margin-top:5px;
-    color:gray;
+/* TOP RIGHT */
+.top-right{
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.topbar-right{
-    display:flex;
-    align-items:center;
-    gap:15px;
+.notification-btn{
+    border: none;
+    background: #f1f5f9;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    font-size: 18px;
 }
 
-.search-input{
-    border:none;
-    outline:none;
-    padding:14px 18px;
-    border-radius:16px;
-    width:280px;
+.admin-profile{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
 }
 
-.profile{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    background:#FE81D4;
+/* CONTENT */
+.content-area{
+    padding: 30px;
+}
+
+/* CARD */
+.card{
+    border-radius: 18px;
+}
+
+/* TABLE */
+.table thead th{
+    background: #f8fafc;
+    border-bottom: none;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.table td,
+.table th{
+    padding: 18px;
+    vertical-align: middle;
+}
+
+/* BUTTON */
+.btn{
+    border-radius: 10px;
 }
