@@ -1,11 +1,110 @@
-@import 'tailwindcss';
+body{
+    margin:0;
+    padding:0;
+    font-family:'Inter',sans-serif;
+    background:#FFF9FB;
+}
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+.main-layout{
+    display:flex;
+    min-height:100vh;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+.sidebar{
+    width:280px;
+    background:#FBC3C1;
+    padding:30px 20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.logo{
+    color:#d63384;
+    font-weight:700;
+    margin-bottom:40px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.menu-item{
+    text-decoration:none;
+    padding:14px 18px;
+    border-radius:16px;
+    color:#444;
+    font-weight:500;
+    transition:0.3s;
+}
+
+.menu-item:hover{
+    background:#FE81D4;
+    color:white;
+}
+
+.active{
+    background:#FE81D4;
+    color:white;
+}
+
+.sidebar-footer{
+    background:white;
+    padding:20px;
+    border-radius:20px;
+}
+
+.sidebar-footer h5{
+    margin-bottom:8px;
+}
+
+.sidebar-footer p{
+    color:gray;
+    font-size:14px;
+    margin:0;
+}
+
+.content{
+    flex:1;
+    padding:30px;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.page-title{
+    margin:0;
+    font-weight:700;
+}
+
+.page-subtitle{
+    margin-top:5px;
+    color:gray;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.search-input{
+    border:none;
+    outline:none;
+    padding:14px 18px;
+    border-radius:16px;
+    width:280px;
+}
+
+.profile{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#FE81D4;
 }

@@ -18,7 +18,7 @@ class TenderAnnouncementController extends Controller
       'message' => 'required|string',
     ]);
 
-    $tender = Tender::findOrFail($tenderId);
+    $tender = Tender::findOrFail();
 
         $user = auth()->user();
         $admin = $user->admin;
@@ -34,7 +34,7 @@ class TenderAnnouncementController extends Controller
         ]);
 
     $announcements = TenderAnnouncement::with('creator')
-      ->where('tender_id', $tenderId)
+      ->where('tender_id', )
       ->latest()
       ->paginate(15);
 
