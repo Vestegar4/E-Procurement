@@ -1,120 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Procurement Admin</title>
 
-    {{-- Bootstrap --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    {{-- Google Font --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    {{-- CSS --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+
 <body>
 
-<div class="main-layout">
+    <div class="wrapper">
 
-    {{-- SIDEBAR --}}
-    <aside class="sidebar">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
 
-        <div>
+            <div class="sidebar-header">
+                <h3>E-Proc</h3>
+            </div>
 
-            <h2 class="logo">
-                E-Procurement
-            </h2>
+            <ul class="nav flex-column sidebar-menu">
 
-            <nav class="menu">
+                <li class="nav-item">
+                    <a href="/"
+                        class="nav-link {{ request()->is('/') ? 'active-menu' : '' }}">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                </li>
 
-                <a href="{{ url('/') }}"
-                   class="menu-item {{ request()->is('/') ? 'active' : '' }}">
-                    Dashboard
-                </a>
+                <li class="nav-item">
+                    <a href="/procurement"
+                        class="nav-link {{ request()->is('procurement') ? 'active-menu' : '' }}">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Procurement
+                    </a>
+                </li>
 
-                <a href="{{ url('/procurement') }}"
-                   class="menu-item {{ request()->is('procurement') ? 'active' : '' }}">
-                    Procurement
-                </a>
+                <li class="nav-item">
+                    <a href="/contracts"
+                        class="nav-link {{ request()->is('contracts') ? 'active-menu' : '' }}">
+                        <i class="fa-solid fa-file-contract"></i>
+                        Contracts
+                    </a>
+                </li>
 
-                <a href="{{ url('/purchase-orders') }}"
-                   class="menu-item {{ request()->is('purchase-orders') ? 'active' : '' }}">
-                    Purchase Order
-                </a>
+                <li class="nav-item">
+                    <a href="/po"
+                        class="nav-link {{ request()->is('po') ? 'active-menu' : '' }}">
+                        <i class="fa-solid fa-receipt"></i>
+                        Purchase Order
+                    </a>
+                </li>
 
-                <a href="{{ url('/contracts') }}"
-                   class="menu-item {{ request()->is('contracts') ? 'active' : '' }}">
-                    Contracts
-                </a>
+                <li class="nav-item">
+                    <a href="/reports"
+                        class="nav-link {{ request()->is('reports') ? 'active-menu' : '' }}">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        Reports
+                    </a>
+                </li>
 
-                <a href="{{ url('/reports') }}"
-                   class="menu-item {{ request()->is('reports') ? 'active' : '' }}">
-                    Reports
-                </a>
+                <li class="nav-item">
+                    <a href="/settings"
+                        class="nav-link {{ request()->is('settings') ? 'active-menu' : '' }}">
+                        <i class="fa-solid fa-gear"></i>
+                        Settings
+                    </a>
+                </li>
 
-                <a href="{{ url('/settings') }}"
-                   class="menu-item {{ request()->is('settings') ? 'active' : '' }}">
-                    Settings
-                </a>
-
-            </nav>
+            </ul>
 
         </div>
 
-        <div class="sidebar-footer">
-            <h5>Admin Panel</h5>
-            <p>
-                Modern E-Procurement Dashboard
-            </p>
-        </div>
-    </aside>
+        <!-- MAIN -->
+        <div class="main-content">
 
-    {{-- MAIN CONTENT --}}
-    <main class="content">
+            <!-- TOPBAR -->
+            <div class="top-navbar">
 
-        {{-- TOPBAR --}}
-        <div class="topbar">
+                <div>
+                    <h4 class="page-title">
+                        @yield('title', 'Dashboard')
+                    </h4>
+                </div>
 
-            <div>
+                <div class="top-right">
 
-                <h3 class="page-title">
-                    E-Procurement Admin
-                </h3>
+                    <button class="notification-btn">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
 
-                <p class="page-subtitle">
-                    Welcome back, Admin
-                </p>
+                    <div class="admin-profile">
+                        A
+                    </div>
+
+                </div>
 
             </div>
 
-            <div class="topbar-right">
-
-                <input
-                    type="text"
-                    placeholder="Search..."
-                    class="search-input"
-                >
-
-                <div class="profile"></div>
-
+            <!-- CONTENT -->
+            <div class="content-area">
+                @yield('content')
             </div>
 
         </div>
 
-        {{-- PAGE CONTENT --}}
-        @yield('content')
+    </div>
 
-    </main>
-
-</div>
-
-{{-- Bootstrap JS --}}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>
