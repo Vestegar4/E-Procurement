@@ -28,6 +28,7 @@ return new class extends Migration
                 'bidding', 
                 'closed',
                 'finished',
+                'pending',
             ])->default('draft');
 
             $table->foreignId('created_by')

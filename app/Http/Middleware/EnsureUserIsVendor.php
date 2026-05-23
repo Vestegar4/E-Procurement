@@ -13,12 +13,15 @@ class EnsureUserIsVendor
    *
    * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
    */
-  public function handle(Request $request, Closure $next): Response
+  public function handle(Request $request, Closure $next)
   {
-    if (!$request->user() || $request->user()->role !== 'vendor') {
-      return response()->json([
-        'message' => 'Unauthorized. Vendor access required.'
-      ], 403);
+    if (!auth()->check() || auth()->user()->role !== 'vendor') {
+      // Kalau request dari web, redirect — bukan return JSON
+      if ($request->expectsJson()) {
+        return response()->json(['message' => 'Unauthorized. Vendor access required.'], 403);
+      }
+
+      return redirect('/login')->withErrors(['email' => 'Akses ditolak.']);
     }
 
     return $next($request);

@@ -1,105 +1,115 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Http\Request;
 use App\Models\Vendor;
 use App\Models\Tender;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;     
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema; 
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsVendor;
 
-// DASHBOARD
+// ============================================================
+// AUTH ROUTES
+// register di-disable karena admin dibuat manual
+// ============================================================
+Auth::routes(['register' => false]);
+
+// Redirect root ke dashboard sesuai role
 Route::get('/', function () {
-    $vendorCount = Schema::hasTable('vendor') ? DB::table('vendor')->count() : (Schema::hasTable('vendors') ? Vendor::count() : 0);
-    $tenderCount = Schema::hasTable('tenders') ? Tender::count() : 0;
-    $resultCount = 0;
-    $latestTenders = Schema::hasTable('tenders') ? Tender::latest()->take(5)->get() : collect();
-    
-    return view('dash', compact('vendorCount', 'tenderCount', 'resultCount', 'latestTenders'));
-});
-
-Route::get('/users', function () {
-    $users = Schema::hasTable('users') ? DB::table('users')->get() : collect(); 
-    return view('users', compact('users'));
-});
-
-// VENDOR MANAGEMENT
-Route::get('/vendors', function () {
-    if (Schema::hasTable('vendor')) {
-        $vendors = DB::table('vendor')->get();
-    } elseif (Schema::hasTable('vendors')) {
-        $vendors = Vendor::all();
-    } else {
-        $vendors = collect();
+    if (auth()->check()) {
+        return auth()->user()->role === 'admin'
+            ? redirect()->route('admin.dashboard')
+            : redirect()->route('vendor.dashboard');
     }
-    return view('vendor', compact('vendors'));
+    return redirect()->route('login');
 });
 
-// UPDATE STATUS VENDOR
-Route::post('/vendors/{id}/update-status', function (Request $request, $id) {
-    $table = Schema::hasTable('vendor') ? 'vendor' : (Schema::hasTable('vendors') ? 'vendors' : null);
-    if ($table) {
-        DB::table($table)->where('id', $id)->update(['status' => $request->status]);
+// ============================================================
+// ADMIN ROUTES
+// ============================================================
+Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
+
+    Route::get('/admin/dashboard', function () {
+        $vendorCount   = Schema::hasTable('vendors') ? Vendor::count() : 0;
+        $tenderCount   = Schema::hasTable('tenders') ? Tender::count() : 0;
+        $resultCount   = 0;
+        $latestTenders = Schema::hasTable('tenders') ? Tender::latest()->take(5)->get() : collect();
+
+        return view('admin.dashboard', compact('vendorCount', 'tenderCount', 'resultCount', 'latestTenders'));
+    })->name('admin.dashboard');
+
+    Route::get('/users', function () {
+        $users = Schema::hasTable('users') ? DB::table('users')->get() : collect();
+        return view('admin.users', compact('users'));
+    })->name('admin.users');
+
+    Route::get('/vendors', function () {
+        $vendors = Schema::hasTable('vendors') ? Vendor::all() : collect();
+        return view('admin.vendors', compact('vendors'));
+    })->name('admin.vendors');
+
+    Route::post('/vendors/{id}/update-status', function (Request $request, $id) {
+        Vendor::findOrFail($id)->update(['status' => $request->status]);
         return back()->with('success', 'Status vendor berhasil diperbarui!');
-    }
-    return back()->with('error', 'Tabel vendor tidak ditemukan di database Anda.');
-});
+    })->name('admin.vendors.update-status');
 
-// PROCUREMENT (Daftar & Tambah Tender)
-Route::get('/procurement', function () {
-    $tenders = Schema::hasTable('tenders') ? Tender::latest()->get() : collect();
-    return view('proc', compact('tenders'));
-});
+    Route::get('/procurement', function () {
+        $tenders = Schema::hasTable('tenders') ? Tender::latest()->get() : collect();
+        return view('admin.procurement', compact('tenders'));
+    })->name('admin.procurement');
 
-Route::post('/procurement/store', function (Request $request) {
-    $adminId = Auth::id();
-
-    if (!$adminId) {
-        if (Schema::hasTable('admin')) {
-            $firstAdmin = DB::table('admin')->first();
-            $adminId = $firstAdmin ? $firstAdmin->id : null;
-        } elseif (Schema::hasTable('admins')) {
-            $firstAdmin = DB::table('admins')->first();
-            $adminId = $firstAdmin ? $firstAdmin->id : null;
+    Route::post('/procurement/store', function (Request $request) {
+        if (!Schema::hasTable('tenders')) {
+            return back()->with('error', 'Tabel tenders tidak ditemukan.');
         }
-    }
 
-    if (!$adminId) {
-        return back()->with('error', 'Gagal membuat tender! Akun Admin tidak ditemukan. Mohon pastikan data admin di database Anda sudah terisi.');
-    } 
+        Tender::create([
+            'title'      => $request->title,
+            'status'     => 'draft',
+            'created_by' => auth()->id(),
+        ]);
 
-    if (!Schema::hasTable('tenders')) {
-        return back()->with('error', 'Gagal membuat tender! Tabel `tenders` tidak ditemukan pada database aktif Anda.');
-    }
+        return back()->with('success', 'Tender baru berhasil dibuat!');
+    })->name('admin.procurement.store');
 
-    Tender::create([
-        'title' => $request->title,
-        'status' => 'draft',
-        'created_by' => $adminId,
-    ]);
+    Route::get('/products', fn() => view('admin.products'))->name('admin.products');
 
-    return back()->with('success', 'Tender baru berhasil dibuat!');
+    Route::get('/po', fn() => view('admin.purchase-order'))->name('admin.po');
+
+    Route::get('/reports', fn() => view('admin.reports'))->name('admin.reports');
+
+    Route::get('/reports/download/{type}', function ($type) {
+        $data = $type === 'procurement'
+            ? (Schema::hasTable('tenders') ? Tender::all() : collect())
+            : (Schema::hasTable('vendors') ? Vendor::all() : collect());
+
+        $filename = ($type === 'procurement' ? 'laporan_pengadaan_' : 'laporan_keuangan_') . date('Ymd') . '.csv';
+
+        $handle = fopen('php://output', 'w');
+        header('Content-Type: text/csv');
+        header("Content-Disposition: attachment; filename=$filename");
+
+        fputcsv($handle, ['ID', 'Nama/Judul', 'Tanggal']);
+        foreach ($data as $row) {
+            fputcsv($handle, [$row->id, $row->title ?? $row->name ?? '-', $row->created_at]);
+        }
+        fclose($handle);
+        exit;
+    })->name('admin.reports.download');
+
+    Route::get('/settings', fn() => view('admin.settings'))->name('admin.settings');
 });
 
-Route::get('/products', function () { return view('products'); });
-Route::get('/reports', function () { return view('rep'); });
-
-Route::get('/reports/download/{type}', function ($type) {
-    $data = $type == 'procurement' ? (Schema::hasTable('tenders') ? Tender::all() : collect()) : (Schema::hasTable('vendor') ? DB::table('vendor')->get() : collect());
-    $filename = ($type == 'procurement' ? "laporan_pengadaan_" : "laporan_keuangan_") . date('Ymd') . ".csv";
-
-    $handle = fopen('php://output', 'w');
-    header("Content-Type: text/csv");
-    header("Content-Disposition: attachment; filename=$filename");
-    
-    fputcsv($handle, ['ID', 'Nama/Judul', 'Tanggal']);
-    foreach ($data as $row) {
-        fputcsv($handle, [$row->id, $row->title ?? $row->name, $row->created_at]);
-    }
-    fclose($handle);
-    exit;
+// ============================================================
+// VENDOR ROUTES
+// ============================================================
+Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
+    Route::get('/vendor/dashboard', fn() => view('vendor.dashboard'))->name('vendor.dashboard');
 });
 
-Route::get('/po', function () { return view('purchaseorder'); });
-Route::get('/settings', function () { return view('sett'); });
+// ============================================================
+// PUBLIC ROUTES
+// ============================================================
+Route::get('/pending-approval', fn() => view('auth.pending'))->name('pending');
