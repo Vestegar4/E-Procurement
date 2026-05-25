@@ -1,73 +1,90 @@
 @extends('layouts.app')
 
+@section('title', 'Login')
+
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+    <div class="container auth-container d-flex align-items-center justify-content-center">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+        <div class="row w-100 shadow-lg auth-card overflow-hidden" style="max-width: 1000px;">
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+            {{-- LEFT SIDE --}}
+            <div class="col-md-5 auth-side d-flex flex-column justify-content-center p-5 text-center">
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
+                <div class="logo-circle mb-4">
+                    <i class="fa-solid fa-cube"></i>
                 </div>
+
+                <h2 class="fw-bold">Hello P-Culus</h2>
+
+                <p class="mt-3">
+                    Sistem E-Procurement modern untuk manajemen tender dan vendor perusahaan.
+                </p>
+
             </div>
+
+            {{-- RIGHT SIDE --}}
+            <div class="col-md-7 bg-white p-5">
+
+                <h2 class="auth-title mb-2">
+                    Login Account
+                </h2>
+
+                <p class="auth-subtitle mb-4">
+                    Masukkan email dan password untuk melanjutkan.
+                </p>
+
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Email
+                        </label>
+
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                            value="{{ old('email') }}" required>
+
+                        @error('email')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Password
+                        </label>
+
+                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                            required>
+
+                        @error('password')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <button class="btn btn-pink w-100">
+                        Login
+                    </button>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">
+                            Belum punya akun?
+                        </span>
+
+                        <a href="{{ route('register') }}" class="text-decoration-none fw-bold text-danger">
+                            Register
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+
         </div>
+
     </div>
-</div>
 @endsection

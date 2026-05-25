@@ -2,69 +2,76 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Models\Vendor;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest');
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    // tampil halaman register
+    public function showRegistrationForm()
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        return view('auth.register');
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @return User
-     */
-    protected function create(array $data)
+    // proses register
+    public function register(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+
+            'company_name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'phone' => 'required|string|max:50',
+            'npwp' => 'nullable|string|max:100',
         ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            // create user
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => 'vendor',
+            ]);
+
+            // create vendor
+            Vendor::create([
+                'user_id' => $user->id,
+                'name' => $request->name,
+                'company_name' => $request->company_name,
+                'address' => $request->address,
+                'phone' => $request->phone,
+                'npwp' => $request->npwp,
+                'status' => 'pending',
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('login')->with(
+                'success',
+                'Registrasi berhasil. Tunggu approval admin.'
+            );
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->withInput()->withErrors([
+                'email' => 'Terjadi kesalahan saat registrasi.'
+            ]);
+        }
     }
 }
