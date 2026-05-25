@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\TenderResultController as AdminTenderResultContro
 use App\Http\Controllers\Admin\VendorManagementController;
 use App\Http\Controllers\Admin\AdminInvoiceController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\PurchaseOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +23,7 @@ use App\Http\Controllers\Admin\AdminNotificationController;
 
 // Admin Authentication
 Route::prefix('auth/admin')->group(function () {
-  Route::post('login', [AdminAuthController::class, 'login']);
+  Route::post('login', [AdminAuthController::class, 'login'])->middleware('throttle:5,1'); // Limit to 5 attempts per minute
     Route::post('logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [AdminAuthController::class, 'me'])->middleware('auth:sanctum');
 });
@@ -29,7 +31,7 @@ Route::prefix('auth/admin')->group(function () {
 // Vendor Authentication
 Route::prefix('auth/vendor')->group(function () {
     Route::post('register', [VendorAuthController::class, 'register']);
-    Route::post('login', [VendorAuthController::class, 'login']);
+    Route::post('login', [VendorAuthController::class, 'login'])->middleware('throttle:5,1'); // Limit to 5 attempts per minute
     Route::post('logout', [VendorAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [VendorAuthController::class, 'me'])->middleware('auth:sanctum');
 });
@@ -77,6 +79,13 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class
     Route::get('{id}', [AdminInvoiceController::class, 'show']);
     Route::put('{id}/status', [AdminInvoiceController::class, 'updateStatus']);
     });
+
+    Route::get('/tenders/{tenderId}/export-bahp', [ReportController::class, 'exportBAHP']);
+
+    Route::prefix('purchase-orders')->group(function () {
+        Route::get('/', [PurchaseOrderController::class, 'index']);
+        Route::get('{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF']);
+    });
 });
 
 /*
@@ -99,5 +108,5 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsVendor::clas
 
     //Tender Results
     Route::get('/results', [\App\Http\Controllers\Vendor\VendorResultController::class, 'index']);
-    Route::get('/results/{tenderId', [\App\Http\Controllers\Vendor\VendorResultController::class, 'show']);
+    Route::get('/results/{tenderId}', [\App\Http\Controllers\Vendor\VendorResultController::class, 'show']);
 });

@@ -10,6 +10,35 @@
 </div>
 
 <div class="card card-custom p-4">
-    <p class="text-muted text-center py-5 mb-0">Daftar Purchase Order yang telah disetujui dari pemenang tender akan muncul di sini.</p>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead style="background-color: #f8f9fa;">
+                <tr>
+                    <th width="10%">ID PO</th>
+                    <th width="35%">Nama Paket Pekerjaan (Tender)</th>
+                    <th width="25%">Vendor Pemenang</th>
+                    <th width="15%">Status</th>
+                    <th width="15%" class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="po-table-body">
+                <tr>
+                    <td><strong>#1</strong></td>
+                    <td>Pengadaan Perangkat Komputer Server</td>
+                    <td>PT Vendor Teknologi Maju</td>
+                    <td><span class="badge bg-warning text-dark">Pending</span></td>
+                    <td class="text-center">
+                        
+                        <a href="/api/admin/purchase-orders/1/export-pdf" target="_blank" class="btn btn-sm btn-danger shadow-sm">
+                            <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
+                        </a>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </div>
 @endsection

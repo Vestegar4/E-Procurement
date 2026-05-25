@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         // 1. Buat User dengan role Admin
-        $user = User::create([
+        $user = User::FirstOrCreate([
             'name' => 'Super Admin E-Proc',
             'email' => 'admin@eproc.com',
             'password' => Hash::make('password123'),
@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
         ]);
 
         // 2. Buat Profil Admin-nya (Sesuaikan dengan $fillable di Admin.php)
-        Admin::create([
+        Admin::FirstOrCreate([
             'user_id' => $user->id,
             'name' => 'Super Admin E-Proc',
             'role' => 'Super Admin', // Gunakan 'role' bukan 'employee_id'

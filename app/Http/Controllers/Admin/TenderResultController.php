@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Bid;
 use App\Models\Tender;
+use App\Models\PurchaseOrder; // Pastikan ini di-import
 use Illuminate\Http\Request;
 use App\Models\TenderResult;
 use App\Http\Controllers\Controller;
@@ -15,20 +16,15 @@ class TenderResultController extends Controller
     {
         $request->validate([
             'bid_id' => 'required|exists:bids,id',
-
             'notes' => 'nullable|string',
         ]);
 
         $tender = Tender::findOrFail($tenderId);
-
         $user = auth()->user();
         $admin = $user->admin;
 
-        // pastikan belum ada pemenang yang dipilih untuk tender ini
-        $existingResult = TenderResult::where(
-            'tender_id',
-            $tender->id
-        )->exists();
+        // 1. Pastikan belum ada pemenang yang dipilih untuk tender ini
+        $existingResult = TenderResult::where('tender_id', $tender->id)->exists();
 
         if ($existingResult) {
             return response()->json([
@@ -36,36 +32,38 @@ class TenderResultController extends Controller
             ], 409);
         }
 
-
-        // pastikan bid yang dipilih benar-benar terkait dengan tender ini
+        // 2. Pastikan bid yang dipilih benar-benar terkait dengan tender ini
         $bid = Bid::where('tender_id', $tender->id)
             ->findOrFail($request->bid_id);
 
-
-        // create result
+        // 3. Simpan hasil penetapan pemenang (Menggunakan struktur kolom baru)
         $result = TenderResult::create([
-            'tender_id' => $tender->id,
-
+            'tender_id'        => $tender->id,
             'winner_vendor_id' => $bid->vendor_id,
-
-            'winning_bid' => $bid->bid_amount,
-
-            'notes' => $request->notes,
-
-            'selected_by' => $admin->id,
-
-            'selected_at' => now(),
+            'winning_bid'      => $bid->bid_amount,
+            'notes'            => $request->notes,
+            'selected_by'      => $admin->id,
+            'selected_at'      => now(),
         ]);
 
-        // update status tender
+        // 4. Update status tender
         $tender->update([
-            'status' => 'finished'
+            'status' => 'finished' 
+        ]);
+
+        // 5. OTOMATIS BUAT PURCHASE ORDER (PO) 🚀
+        PurchaseOrder::create([
+            'tender_id' => $tender->id,
+            'vendor_id' => $bid->vendor_id,
+            'po_number' => 'PO-' . date('Ymd') . '-' . $tender->id,
+            'total_amount' => $bid->bid_amount,
+            'status'    => 'draft', 
         ]);
 
         return response()->json([
-            'message' => 'Winner selected successfully',
-            'data' => $result
-        ]);
+            'message' => 'Winner selected and Purchase Order created successfully!',
+            'data'    => $result
+        ], 201);
     }
 
     // show tender result
