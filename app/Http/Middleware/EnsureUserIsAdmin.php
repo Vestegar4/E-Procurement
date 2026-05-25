@@ -13,12 +13,15 @@ class EnsureUserIsAdmin
    *
    * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
    */
-  public function handle(Request $request, Closure $next): Response
+  public function handle(Request $request, Closure $next)
   {
-    if (!$request->user() || $request->user()->role !== 'admin') {
-      return response()->json([
-        'message' => 'Unauthorized. Admin access required.'
-      ], 403);
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+      // Kalau request dari web, redirect — bukan return JSON
+      if ($request->expectsJson()) {
+        return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
+      }
+
+      return redirect('/login')->withErrors(['email' => 'Akses ditolak.']);
     }
 
     return $next($request);

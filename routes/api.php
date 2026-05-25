@@ -23,7 +23,7 @@ use App\Http\Controllers\PurchaseOrderController;
 
 // Admin Authentication
 Route::prefix('auth/admin')->group(function () {
-  Route::post('login', [AdminAuthController::class, 'login'])->middleware('throttle:5,1'); // Limit to 5 attempts per minute
+    Route::post('login', [AdminAuthController::class, 'login']);
     Route::post('logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [AdminAuthController::class, 'me'])->middleware('auth:sanctum');
 });
@@ -43,7 +43,7 @@ Route::prefix('auth/vendor')->group(function () {
 */
 
 Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->group(function () {
-    
+
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index']);
 
@@ -69,15 +69,15 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class
     Route::post('vendors/{id}/reject', [VendorManagementController::class, 'reject']);
 
     Route::prefix('notifications')->group(function () {
-    Route::get('/', [AdminNotificationController::class, 'index']);
-    Route::put('{id}/read', [AdminNotificationController::class, 'markAsRead']);
-    Route::put('read-all', [AdminNotificationController::class, 'markAllAsRead']);
+        Route::get('/', [AdminNotificationController::class, 'index']);
+        Route::put('{id}/read', [AdminNotificationController::class, 'markAsRead']);
+        Route::put('read-all', [AdminNotificationController::class, 'markAllAsRead']);
     });
 
     Route::prefix('invoices')->group(function () {
-    Route::get('/', [AdminInvoiceController::class, 'index']);
-    Route::get('{id}', [AdminInvoiceController::class, 'show']);
-    Route::put('{id}/status', [AdminInvoiceController::class, 'updateStatus']);
+        Route::get('/', [AdminInvoiceController::class, 'index']);
+        Route::get('{id}', [AdminInvoiceController::class, 'show']);
+        Route::put('{id}/status', [AdminInvoiceController::class, 'updateStatus']);
     });
 
     Route::get('/tenders/{tenderId}/export-bahp', [ReportController::class, 'exportBAHP']);
@@ -108,5 +108,5 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsVendor::clas
 
     //Tender Results
     Route::get('/results', [\App\Http\Controllers\Vendor\VendorResultController::class, 'index']);
-    Route::get('/results/{tenderId}', [\App\Http\Controllers\Vendor\VendorResultController::class, 'show']);
+    Route::get('/results/{tenderId', [\App\Http\Controllers\Vendor\VendorResultController::class, 'show']);
 });
