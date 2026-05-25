@@ -1,8 +1,78 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
-
-// Variables
 @import 'variables';
-
-// Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+body {
+  background: linear-gradient(135deg, #fff1f7, #ffe4ef);
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+}
+
+.auth-container {
+  min-height: 100vh;
+}
+
+.auth-card {
+  border: none;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.12);
+}
+
+.auth-title {
+  font-weight: 800;
+  color: #be185d;
+}
+
+.auth-subtitle {
+  color: #9ca3af;
+}
+
+.btn-pink {
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+  border: none;
+  color: white;
+  font-weight: 700;
+  padding: 12px;
+  transition: 0.3s;
+}
+
+.btn-pink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+  color: white;
+}
+
+.form-control {
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid #fbcfe8;
+}
+
+.form-control:focus {
+  border-color: #ec4899;
+  box-shadow: 0 0 0 0.2rem rgba(236, 72, 153, .15);
+}
+
+.auth-side {
+  background: linear-gradient(135deg, #ec4899, #f9a8d4);
+  color: white;
+  border-radius: 28px 0 0 28px;
+}
+
+.logo-circle {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  font-size: 30px;
+}
+
+.glass-navbar {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+}

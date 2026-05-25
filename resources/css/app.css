@@ -3,7 +3,8 @@
 body {
     margin: 0;
     padding: 0;
-    background: #fffaf5; /* Background putih ke-cream-an agar bersih */
+    background: #fffaf5;
+    /* Background putih ke-cream-an agar bersih */
     font-family: 'Nunito', Arial, Helvetica, sans-serif;
     color: #4a4a4a;
 }
@@ -12,6 +13,299 @@ body {
 .wrapper {
     display: flex;
     min-height: 100vh;
+}
+
+/*AUTH PAGE */
+.auth-body {
+    min-height: 100vh;
+
+    background:
+        linear-gradient(135deg,
+            #fffaf5,
+            #ffe5ec);
+}
+
+/* WRAPPER */
+.auth-wrapper {
+    min-height: 100vh;
+}
+
+/* LEFT SIDE */
+.auth-left {
+    padding: 80px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-logo {
+    font-size: 3rem;
+    font-weight: 800;
+
+    color: #fe81d4;
+}
+
+.auth-tagline {
+    font-size: 1.1rem;
+
+    color: #777;
+
+    margin-top: 10px;
+
+    max-width: 500px;
+}
+
+.auth-illustration {
+    margin-top: 40px;
+}
+
+/* RIGHT SIDE */
+.auth-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 40px;
+}
+
+/* LOGIN CARD */
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+
+    background: rgba(255, 255, 255, 0.7);
+
+    backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+
+    border-radius: 28px;
+
+    padding: 40px;
+
+    box-shadow:
+        0 10px 30px rgba(252, 213, 206, 0.3);
+}
+
+/* TITLE */
+.auth-title {
+    font-weight: 800;
+    color: #fe81d4;
+}
+
+.auth-subtitle {
+    color: #888;
+}
+
+/* INPUT */
+.auth-input {
+    height: 52px;
+
+    border-radius: 14px;
+
+    border: 1px solid #fcd5ce;
+
+    background: #fff;
+
+    padding: 0 16px;
+}
+
+.auth-input:focus {
+    border-color: #fe81d4;
+
+    box-shadow:
+        0 0 0 0.2rem rgba(254, 129, 212, 0.2);
+}
+
+/* BUTTON */
+.btn-auth {
+    height: 52px;
+
+    background: #fe81d4;
+
+    border: none;
+
+    border-radius: 14px;
+
+    color: white;
+
+    font-weight: 700;
+
+    transition: 0.3s;
+}
+
+.btn-auth:hover {
+    background: #ff6fcf;
+}
+
+/* LINK */
+.auth-link {
+    color: #fe81d4;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-link:hover {
+    color: #ff6fcf;
+}
+
+/* RESPONSIVE */
+@media(max-width: 768px) {
+
+    .auth-left {
+        display: none;
+    }
+
+    .auth-card {
+        padding: 30px 24px;
+    }
+}
+
+/* =========================
+LANDING PAGE
+========================= */
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.landing-hero {
+    background:
+        linear-gradient(135deg,
+            #fffaf5,
+            #ffe5ec);
+}
+
+.hero-badge {
+    background: #ffe5ec;
+    color: #fe81d4;
+
+    padding: 10px 18px;
+
+    border-radius: 999px;
+
+    font-weight: 700;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    color: #2d2d2d;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+
+    color: #777;
+
+    max-width: 550px;
+
+    line-height: 1.8;
+}
+
+.hero-card {
+    background: rgba(255, 255, 255, 0.7);
+
+    border-radius: 28px;
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        0 10px 30px rgba(252, 213, 206, 0.3);
+}
+
+.feature-mini-card {
+    background: white;
+
+    padding: 28px 20px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.feature-mini-card h3 {
+    color: #fe81d4;
+    font-weight: 800;
+}
+
+.landing-feature-card {
+    background: white;
+
+    padding: 32px 24px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.06);
+
+    transition: 0.3s;
+}
+
+.landing-feature-card:hover {
+    transform: translateY(-6px);
+}
+
+.section-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+
+    color: #2d2d2d;
+}
+
+.section-subtitle {
+    color: #777;
+}
+
+.flow-card {
+    background: white;
+
+    padding: 32px 20px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.05);
+}
+
+.flow-number {
+    width: 60px;
+    height: 60px;
+
+    margin: auto auto 20px;
+
+    background: #fe81d4;
+
+    color: white;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 800;
+    font-size: 1.4rem;
+}
+
+.landing-footer {
+    background: white;
+
+    border-top: 1px solid #f3f3f3;
+}
+
+/* RESPONSIVE */
+@media(max-width: 768px) {
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
 }
 
 /* SIDEBAR - Warna dasar Peach Soft */
@@ -28,7 +322,8 @@ body {
 }
 
 .sidebar-header h3 {
-    color: #fe81d4; /* Aksen Pink Cerah */
+    color: #fe81d4;
+    /* Aksen Pink Cerah */
     font-weight: 800;
 }
 
@@ -75,7 +370,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ffe5b4; /* Border Cream */
+    border-bottom: 1px solid #ffe5b4;
+    /* Border Cream */
 }
 
 .page-title {
@@ -93,7 +389,8 @@ body {
 
 .notification-btn {
     border: none;
-    background: #ffe5b4; /* Cream */
+    background: #ffe5b4;
+    /* Cream */
     color: #fe81d4;
     width: 40px;
     height: 40px;
@@ -118,6 +415,18 @@ body {
     font-weight: bold;
 }
 
+.vendor-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fe81d4;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
 /* CONTENT AREA & CARDS */
 .content-area {
     padding: 30px;
@@ -127,7 +436,7 @@ body {
     border: none;
     border-radius: 16px;
     background: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s;
 }
 
@@ -136,6 +445,17 @@ body {
 }
 
 /* BADGES STYLING UNTUK STATUS */
-.badge-pastel-success { background-color: #d4edda; color: #155724; }
-.badge-pastel-warning { background-color: #fff3cd; color: #856404; }
-.badge-pastel-danger { background-color: #f8d7da; color: #721c24; }
+.badge-pastel-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-pastel-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.badge-pastel-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}

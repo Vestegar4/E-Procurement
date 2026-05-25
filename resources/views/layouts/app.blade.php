@@ -16,40 +16,47 @@
 </head>
 
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand fw-bold" href="{{ url('/') }}">
-                    Proculus E-Procurement
-                </a>
 
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav ms-auto">
-                        @auth
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    {{ Auth::user()->name }}
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            Logout
-                                        </button>
-                                    </form>
-                                </div>
-                            </li>
-                        @endauth
-                    </ul>
-                </div>
+    <nav class="navbar navbar-expand-lg glass-navbar shadow-sm py-3 sticky-top">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold text-danger fs-3" href="/">
+                Proculus
+            </a>
+
+            <div class="ms-auto d-flex align-items-center gap-2">
+
+                @guest
+
+                    <a href="{{ route('home') }}" class="btn btn-outline-secondary">
+                        Home
+                    </a>
+
+                    <a href="{{ route('login') }}" class="btn btn-outline-danger">
+                        Login
+                    </a>
+
+                    <a href="{{ route('register') }}" class="btn btn-pink">
+                        Register Vendor
+                    </a>
+                @else
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+
+                        <button class="btn btn-danger">
+                            Logout
+                        </button>
+                    </form>
+
+                @endguest
+
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <main class="py-4">
-            @yield('content')
-        </main>
-    </div>
+    <main>
+        @yield('content')
+    </main>
 
     @stack('scripts')
 </body>

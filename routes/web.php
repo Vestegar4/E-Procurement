@@ -12,9 +12,8 @@ use App\Http\Middleware\EnsureUserIsVendor;
 
 // ============================================================
 // AUTH ROUTES
-// register di-disable karena admin dibuat manual
 // ============================================================
-Auth::routes(['register' => false]);
+Auth::routes(['register' => true]);
 
 // Redirect root ke dashboard sesuai role
 Route::get('/', function () {
@@ -23,8 +22,8 @@ Route::get('/', function () {
             ? redirect()->route('admin.dashboard')
             : redirect()->route('vendor.dashboard');
     }
-    return redirect()->route('login');
-});
+    return view('home.home');
+})->name('home');
 
 // ============================================================
 // ADMIN ROUTES
@@ -107,6 +106,11 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
 // ============================================================
 Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
     Route::get('/vendor/dashboard', fn() => view('vendor.dashboard'))->name('vendor.dashboard');
+    Route::get('/vendor/tenders', fn() => view('vendor.tenders'))->name('vendor.tenders');
+    Route::get('/vendor/bids', fn() => view('vendor.bids'))->name('vendor.bids');
+    Route::get('/vendor/documents', fn() => view('vendor.documents'))->name('vendor.documents');
+    Route::get('/vendor/reports', fn() => view('vendor.reports'))->name('vendor.reports');
+    Route::get('/vendor/settings', fn() => view('vendor.settings'))->name('vendor.settings');
 });
 
 // ============================================================
