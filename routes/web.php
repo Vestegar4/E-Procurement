@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Vendor;
 use App\Models\Tender;
-use App\Models\User; // <-- Gabungan dari main
-use App\Http\Controllers\PurchaseOrderController; // <-- Gabungan dari branch Anda
+use App\Models\User;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsVendor;
 use App\Http\Controllers\Vendor\VendorTenderController;
@@ -64,16 +64,25 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
     })->name('admin.products');
 
     Route::get('/purchase-order', function () {
-        return view('admin.purchase-order');
-    })->name('admin.purchase-order');
-
-    // Rute PO buatan Anda tetap dipertahankan
-    Route::get('/po', function () {
+        // 1. Coba ambil data asli dari database
         $purchaseOrders = \Illuminate\Support\Facades\Schema::hasTable('purchase_orders') 
             ? \App\Models\PurchaseOrder::latest()->get() 
             : collect();
+
+        if ($purchaseOrders->isEmpty()) {
+            $purchaseOrders = collect([
+                (object) [
+                    'id' => 1,
+                    'tender_name' => 'Pengadaan Perangkat Komputer Server',
+                    'vendor_name' => 'PT Vendor Teknologi Maju',
+                    'status' => 'Pending'
+                ]
+            ]);
+        }
+
+        // 3. Kirim ke tampilan
         return view('admin.purchase-order', compact('purchaseOrders'));
-    })->name('admin.po');
+    })->name('admin.purchase-order');
 
     Route::get('/reports', function () {
         return view('admin.reports');
