@@ -30,9 +30,12 @@
                     <td><span class="badge bg-warning text-dark">Pending</span></td>
                     <td class="text-center">
                         
-                        <a href="/api/admin/purchase-orders/1/export-pdf" target="_blank" class="btn btn-sm btn-danger shadow-sm">
+                        @foreach ( $purchaseOrders as $order )
+                            
+                        <a href="/purchase-orders/{{ $order->id }}/export-pdf" target="_blank" class="btn btn-sm btn-danger shadow-sm">
                             <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
                         </a>
+                        @endforeach
 
                     </td>
                 </tr>
