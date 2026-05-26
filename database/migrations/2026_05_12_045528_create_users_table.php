@@ -20,6 +20,8 @@ return new class extends Migration
 
             $table->enum('role', ['admin', 'vendor'])->default('vendor');
 
+            $table->timestamp('email_verified_at')->nullable();
+
             $table->timestamp('last_login_at')->nullable();
 
             $table->rememberToken();

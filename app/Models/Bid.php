@@ -12,6 +12,7 @@ class Bid extends Model
         'bid_amount',
         'bid_document',
         'notes',
+        'status',
         'submitted_at',
     ];
 

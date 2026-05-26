@@ -17,10 +17,7 @@ class VendorTenderController extends Controller
             ->latest()
             ->paginate(15);
 
-        return response()->json([
-            'message' => 'Tender list retrieved successfully',
-            'data' => $tenders
-        ]);
+        return view('vendor.tenders', compact('tenders'));
     }
 
     // detail tender
@@ -29,13 +26,10 @@ class VendorTenderController extends Controller
         $tender = Tender::with([
             'timeline',
             'announcements',
-        ])
-            ->findOrFail($id);
+            'participants'
+        ])->findOrFail($id);
 
-        return response()->json([
-            'message' => 'Tender detail retrieved successfully',
-            'data' => $tender
-        ]);
+        return view('vendor.tender-detail', compact('tender'));
     }
 
     // vendor join tender
@@ -47,7 +41,7 @@ class VendorTenderController extends Controller
         if (!$vendor) {
             return response()->json([
                 'message' => 'Vendor Profile not Found'
-            ],403);
+            ], 403);
         }
         $tender = Tender::with('timeline')
             ->findOrFail($id);
@@ -67,7 +61,7 @@ class VendorTenderController extends Controller
             $now < $tender->timeline->registration_start ||
             $now > $tender->timeline->registration_end
         ) {
-            return response()->json([   
+            return response()->json([
                 'message' => 'Registration period closed'
             ], 403);
         }
