@@ -10,6 +10,11 @@ use App\Models\Tender;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsVendor;
+use App\Http\Controllers\Vendor\VendorTenderController;
+use App\Http\Controllers\Vendor\VendorBidController;
+use App\Http\Controllers\Vendor\VendorDocumentController;
+use App\Http\Controllers\Vendor\VendorReportController;
+use App\Http\Controllers\Vendor\VendorProfileController;
 
 // ============================================================
 // AUTH ROUTES
@@ -114,12 +119,44 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
 // VENDOR ROUTES
 // ============================================================
 Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
-    Route::get('/vendor/dashboard', fn() => view('vendor.dashboard'))->name('vendor.dashboard');
+    Route::get('/vendor/dashboard', [\App\Http\Controllers\Vendor\VendorDashboardController::class, 'index'])
+        ->name('vendor.dashboard');
     Route::get('/vendor/tenders', fn() => view('vendor.tenders'))->name('vendor.tenders');
-    Route::get('/vendor/bids', fn() => view('vendor.bids'))->name('vendor.bids');
-    Route::get('/vendor/documents', fn() => view('vendor.documents'))->name('vendor.documents');
-    Route::get('/vendor/reports', fn() => view('vendor.reports'))->name('vendor.reports');
-    Route::get('/vendor/settings', fn() => view('vendor.settings'))->name('vendor.settings');
+    Route::get('/vendor/bids', [VendorBidController::class, 'index'])->name('vendor.bids.index');
+    Route::get('/vendor/documents', [VendorDocumentController::class, 'index'])->name('vendor.documents.index');
+    Route::post('/vendor/documents', [VendorDocumentController::class, 'store'])->name('vendor.documents.store');
+    Route::get('/vendor/documents/{id}/download', [VendorDocumentController::class, 'download'])
+        ->name('vendor.documents.download');
+    Route::delete('/vendor/documents/{id}', [VendorDocumentController::class, 'destroy'])
+        ->name('vendor.documents.destroy');
+    Route::get('/vendor/reports', [VendorReportController::class, 'index'])->name('vendor.reports');
+    Route::get('/vendor/settings', [VendorProfileController::class, 'index'])->name('vendor.settings');
+    Route::put('/vendor/settings/profile', [VendorProfileController::class, 'updateProfileWeb'])
+        ->name('vendor.settings.profile.update');
+    Route::put('/vendor/settings/password', [VendorProfileController::class, 'updatePasswordWeb'])
+        ->name('vendor.settings.password.update');
+
+    /*Vendor Tenders*/
+    Route::get(
+        '/vendor/tenders/{id}',
+        [VendorTenderController::class, 'show']
+    )->name('vendor.tenders.show');
+
+    Route::post(
+        '/vendor/tenders/{id}/join',
+        [VendorTenderController::class, 'join']
+    )->name('vendor.tenders.join');
+
+    /*Vendor Bids*/
+    Route::get(
+        '/tenders/{id}/submit-bid',
+        [VendorBidController::class, 'create']
+    )->name('vendor.bids.create');
+
+    Route::post(
+        '/tenders/{id}/submit-bid',
+        [VendorBidController::class, 'store']
+    )->name('vendor.bids.store');
 });
 
 // ============================================================

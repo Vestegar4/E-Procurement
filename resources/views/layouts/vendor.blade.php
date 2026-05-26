@@ -36,14 +36,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('vendor.bids') }}"
-                        class="nav-link {{ request()->routeIs('vendor.bids') ? 'active-menu' : '' }}">
+                    <a href="{{ route('vendor.bids.index') }}"
+                        class="nav-link {{ request()->routeIs('vendor.bids.index') ? 'active-menu' : '' }}">
                         <i class="fa-solid fa-file-invoice-dollar w-20px text-center me-2"></i> Penawaran
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('vendor.documents') }}"
-                        class="nav-link {{ request()->routeIs('vendor.documents') ? 'active-menu' : '' }}">
+                    <a href="{{ route('vendor.documents.index') }}"
+                        class="nav-link {{ request()->routeIs('vendor.documents.*') ? 'active-menu' : '' }}">
                         <i class="fa-solid fa-folder-open w-20px text-center me-2"></i> Dokumen
                     </a>
                 </li>
@@ -72,11 +72,27 @@
                         <input type="text" class="form-control border-0 bg-light" placeholder="Cari...">
                         <button class="btn btn-light bg-light border-0"><i class="fa-solid fa-search"></i></button>
                     </div>
-                    <button class="notification-btn position-relative">
-                        <i class="fa-regular fa-bell"></i>
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                    </button>
+                    <div class="dropdown">
+                        <button class="notification-btn position-relative" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fa-regular fa-bell"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 280px;">
+                            <li>
+                                <h6 class="dropdown-header">Notifikasi</h6>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <span class="dropdown-item-text text-muted small text-center d-block py-3">
+                                    Tidak ada notifikasi baru
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
                     <div class="dropdown">
                         <div class="vendor-profile" data-bs-toggle="dropdown" aria-expanded="false"
                             style="cursor: pointer;">
