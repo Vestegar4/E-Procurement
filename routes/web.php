@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use App\Models\Vendor;
 use App\Models\Tender;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsVendor;
 
@@ -37,8 +38,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
         $latestTenders = Schema::hasTable('tenders') ? Tender::latest()->take(5)->get() : collect();
 
         return view('admin.dashboard', compact('vendorCount', 'tenderCount', 'resultCount', 'latestTenders'));
-    })->name('admin.dashboard');
-
+    })->name('admin.dashboard');    
     Route::get('/users', function () {
         $users = Schema::hasTable('users') ? DB::table('users')->get() : collect();
         return view('admin.users', compact('users'));
@@ -75,7 +75,15 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
 
     Route::get('/products', fn() => view('admin.products'))->name('admin.products');
 
-    Route::get('/po', fn() => view('admin.purchase-order'))->name('admin.po');
+    Route::get('/po', function () {
+    // Pastikan model PurchaseOrder dipanggil (jika tabelnya sudah ada)
+    $purchaseOrders = \Illuminate\Support\Facades\Schema::hasTable('purchase_orders') 
+        ? \App\Models\PurchaseOrder::latest()->get() 
+        : collect();
+
+    // Kirim datanya ke halaman blade menggunakan compact()
+    return view('admin.purchase-order', compact('purchaseOrders'));
+    })->name('admin.po');
 
     Route::get('/reports', fn() => view('admin.reports'))->name('admin.reports');
 
@@ -97,6 +105,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
         fclose($handle);
         exit;
     })->name('admin.reports.download');
+    Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF']);
 
     Route::get('/settings', fn() => view('admin.settings'))->name('admin.settings');
 });
