@@ -2,12 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Http\Request;
 use App\Models\Vendor;
 use App\Models\Tender;
+<<<<<<< HEAD
 use App\Http\Controllers\PurchaseOrderController;
+=======
+use App\Models\User;
+>>>>>>> 6c5fab4 (big update frontend)
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsVendor;
 use App\Http\Controllers\Vendor\VendorTenderController;
@@ -17,7 +19,7 @@ use App\Http\Controllers\Vendor\VendorReportController;
 use App\Http\Controllers\Vendor\VendorProfileController;
 
 // ============================================================
-// AUTH ROUTES
+// AUTH & HOME ROUTES
 // ============================================================
 Auth::routes(['register' => true]);
 
@@ -31,12 +33,14 @@ Route::get('/', function () {
     return view('home.home');
 })->name('home');
 
-// ============================================================
-// ADMIN ROUTES
-// ============================================================
-Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
+Route::get('/pending-approval', fn() => view('auth.pending'))->name('pending');
 
-    Route::get('/admin/dashboard', function () {
+// ============================================================
+// ADMIN ROUTES (Terhubung ke folder views/admin/)
+// ============================================================
+Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(function () {
+
+    Route::get('/dashboard', function () {
         $vendorCount   = Schema::hasTable('vendors') ? Vendor::count() : 0;
         $tenderCount   = Schema::hasTable('tenders') ? Tender::count() : 0;
         $resultCount   = 0;
@@ -45,39 +49,33 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
         return view('admin.dashboard', compact('vendorCount', 'tenderCount', 'resultCount', 'latestTenders'));
     })->name('admin.dashboard');    
     Route::get('/users', function () {
-        $users = Schema::hasTable('users') ? DB::table('users')->get() : collect();
+        $users = Schema::hasTable('users') ? User::all() : [];
         return view('admin.users', compact('users'));
     })->name('admin.users');
 
     Route::get('/vendors', function () {
-        $vendors = Schema::hasTable('vendors') ? Vendor::all() : collect();
+        $vendors = Schema::hasTable('vendors') ? Vendor::all() : [];
         return view('admin.vendors', compact('vendors'));
     })->name('admin.vendors');
 
-    Route::post('/vendors/{id}/update-status', function (Request $request, $id) {
-        Vendor::findOrFail($id)->update(['status' => $request->status]);
-        return back()->with('success', 'Status vendor berhasil diperbarui!');
-    })->name('admin.vendors.update-status');
-
     Route::get('/procurement', function () {
-        $tenders = Schema::hasTable('tenders') ? Tender::latest()->get() : collect();
-        return view('admin.procurement', compact('tenders'));
+        return view('admin.procurement');
     })->name('admin.procurement');
 
-    Route::post('/procurement/store', function (Request $request) {
-        if (!Schema::hasTable('tenders')) {
-            return back()->with('error', 'Tabel tenders tidak ditemukan.');
-        }
+    Route::get('/products', function () {
+        return view('admin.products');
+    })->name('admin.products');
 
-        Tender::create([
-            'title'      => $request->title,
-            'status'     => 'draft',
-            'created_by' => auth()->id(),
-        ]);
+    // INI RUTE YANG SEBELUMNYA HILANG DAN BIKIN ERROR 500
+    Route::get('/purchase-order', function () {
+        return view('admin.purchase-order');
+    })->name('admin.purchase-order');
 
-        return back()->with('success', 'Tender baru berhasil dibuat!');
-    })->name('admin.procurement.store');
+    Route::get('/reports', function () {
+        return view('admin.reports');
+    })->name('admin.reports');
 
+<<<<<<< HEAD
     Route::get('/products', fn() => view('admin.products'))->name('admin.products');
 
     Route::get('/po', function () {
@@ -91,33 +89,36 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
     })->name('admin.po');
 
     Route::get('/reports', fn() => view('admin.reports'))->name('admin.reports');
+=======
+    Route::get('/settings', function () {
+        return view('admin.settings');
+    })->name('admin.settings');
+>>>>>>> 6c5fab4 (big update frontend)
 
+    // Route Download Report
     Route::get('/reports/download/{type}', function ($type) {
-        $data = $type === 'procurement'
-            ? (Schema::hasTable('tenders') ? Tender::all() : collect())
-            : (Schema::hasTable('vendors') ? Vendor::all() : collect());
-
-        $filename = ($type === 'procurement' ? 'laporan_pengadaan_' : 'laporan_keuangan_') . date('Ymd') . '.csv';
-
+        $filename = "laporan_{$type}_" . date('Ymd_His') . ".csv";
+        $data = []; // Ambil dari DB sesuai kebutuhan
+        
         $handle = fopen('php://output', 'w');
         header('Content-Type: text/csv');
         header("Content-Disposition: attachment; filename=$filename");
 
         fputcsv($handle, ['ID', 'Nama/Judul', 'Tanggal']);
         foreach ($data as $row) {
-            fputcsv($handle, [$row->id, $row->title ?? $row->name ?? '-', $row->created_at]);
+            fputcsv($handle, [$row->id ?? '-', $row->title ?? $row->name ?? '-', $row->created_at ?? '-']);
         }
         fclose($handle);
         exit;
     })->name('admin.reports.download');
     Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF']);
 
-    Route::get('/settings', fn() => view('admin.settings'))->name('admin.settings');
 });
 
 // ============================================================
-// VENDOR ROUTES
+// VENDOR ROUTES (Terhubung ke folder views/vendor/)
 // ============================================================
+<<<<<<< HEAD
 Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
     Route::get('/vendor/dashboard', [\App\Http\Controllers\Vendor\VendorDashboardController::class, 'index'])
         ->name('vendor.dashboard');
@@ -163,3 +164,13 @@ Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
 // PUBLIC ROUTES
 // ============================================================
 Route::get('/pending-approval', fn() => view('auth.pending'))->name('pending');
+=======
+Route::middleware(['auth', EnsureUserIsVendor::class])->prefix('vendor')->group(function () {
+    Route::get('/dashboard', fn() => view('vendor.dashboard'))->name('vendor.dashboard');
+    Route::get('/tenders', fn() => view('vendor.tenders'))->name('vendor.tenders');
+    Route::get('/bids', fn() => view('vendor.bids'))->name('vendor.bids');
+    Route::get('/documents', fn() => view('vendor.documents'))->name('vendor.documents');
+    Route::get('/reports', fn() => view('vendor.reports'))->name('vendor.reports');
+    Route::get('/settings', fn() => view('vendor.settings'))->name('vendor.settings');
+});
+>>>>>>> 6c5fab4 (big update frontend)

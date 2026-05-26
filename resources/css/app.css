@@ -1,461 +1,484 @@
-/* resources/css/app.css */
+/* ==========================================================================
+   AUREATE ENTERPRISE THEME (Classic Navy & Amber Edition)
+   Dioptimalkan untuk Aksesibilitas Lansia & Fitur Toggle Smooth Sidebar
+   Sistem Manajemen Warna Menggunakan CSS Variables (:root)
+   ========================================================================== */
 
-body {
-    margin: 0;
-    padding: 0;
-    background: #fffaf5;
-    /* Background putih ke-cream-an agar bersih */
-    font-family: 'Nunito', Arial, Helvetica, sans-serif;
-    color: #4a4a4a;
-}
+:root {
+    /* Palet Warna Utama */
+    --color-primary: #0f172a;
+    --color-accent: #d97706;
+    --color-surface: #f8f9fa;
+    --color-white: #ffffff;
 
-/* WRAPPER */
-.wrapper {
-    display: flex;
-    min-height: 100vh;
-}
+    /* Palet Teks & Netral */
+    --color-text-main: #0f172a;
+    --color-text-muted: #334155;
+    --color-border: #cbd5e1;
 
-/*AUTH PAGE */
-.auth-body {
-    min-height: 100vh;
+    /* Status Badges Aksesibilitas Tinggi (Lansia WCAG AAA) */
+    --color-success-bg: #ecfdf5;
+    --color-success-text: #064e3b;
+    --color-success-border: #059669;
 
-    background:
-        linear-gradient(135deg,
-            #fffaf5,
-            #ffe5ec);
-}
+    --color-warning-bg: #fffbeb;
+    --color-warning-text: #78350f;
+    --color-warning-border: #d97706;
 
-/* WRAPPER */
-.auth-wrapper {
-    min-height: 100vh;
-}
+    --color-danger-bg: #fef2f2;
+    --color-danger-text: #7f1d1d;
+    --color-danger-border: #dc2626;
 
-/* LEFT SIDE */
-.auth-left {
-    padding: 80px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.auth-logo {
-    font-size: 3rem;
-    font-weight: 800;
-
-    color: #fe81d4;
-}
-
-.auth-tagline {
-    font-size: 1.1rem;
-
-    color: #777;
-
-    margin-top: 10px;
-
-    max-width: 500px;
-}
-
-.auth-illustration {
-    margin-top: 40px;
-}
-
-/* RIGHT SIDE */
-.auth-right {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 40px;
-}
-
-/* LOGIN CARD */
-.auth-card {
-    width: 100%;
-    max-width: 450px;
-
-    background: rgba(255, 255, 255, 0.7);
-
-    backdrop-filter: blur(10px);
-
-    border: 1px solid rgba(255, 255, 255, 0.5);
-
-    border-radius: 28px;
-
-    padding: 40px;
-
-    box-shadow:
-        0 10px 30px rgba(252, 213, 206, 0.3);
-}
-
-/* TITLE */
-.auth-title {
-    font-weight: 800;
-    color: #fe81d4;
-}
-
-.auth-subtitle {
-    color: #888;
-}
-
-/* INPUT */
-.auth-input {
-    height: 52px;
-
-    border-radius: 14px;
-
-    border: 1px solid #fcd5ce;
-
-    background: #fff;
-
-    padding: 0 16px;
-}
-
-.auth-input:focus {
-    border-color: #fe81d4;
-
-    box-shadow:
-        0 0 0 0.2rem rgba(254, 129, 212, 0.2);
-}
-
-/* BUTTON */
-.btn-auth {
-    height: 52px;
-
-    background: #fe81d4;
-
-    border: none;
-
-    border-radius: 14px;
-
-    color: white;
-
-    font-weight: 700;
-
-    transition: 0.3s;
-}
-
-.btn-auth:hover {
-    background: #ff6fcf;
-}
-
-/* LINK */
-.auth-link {
-    color: #fe81d4;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.auth-link:hover {
-    color: #ff6fcf;
-}
-
-/* RESPONSIVE */
-@media(max-width: 768px) {
-
-    .auth-left {
-        display: none;
-    }
-
-    .auth-card {
-        padding: 30px 24px;
-    }
+    /* Radius Sudut Elemen */
+    --radius-card: 16px;
+    --radius-btn: 24px;
+    --radius-input: 8px;
 }
 
 /* =========================
-LANDING PAGE
+   1. GLOBAL & STRUCTURAL LAYOUT
 ========================= */
-
-.min-vh-75 {
-    min-height: 75vh;
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-surface);
+    font-family: "Inter", sans-serif;
+    color: var(--color-text-main);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
-.landing-hero {
-    background:
-        linear-gradient(135deg,
-            #fffaf5,
-            #ffe5ec);
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
 }
 
-.hero-badge {
-    background: #ffe5ec;
-    color: #fe81d4;
+.glass-navbar {
+    background: rgba(248, 249, 250, 0.92) !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--color-border);
+}
 
-    padding: 10px 18px;
-
-    border-radius: 999px;
-
+/* =========================
+   2. BUTTONS & TOGGLE HAMBURGER
+========================= */
+.btn-primary-action {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-radius: var(--radius-btn);
+    padding: 14px 36px;
     font-weight: 700;
+    border: none;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+    font-size: 1rem;
+}
+.btn-primary-action:hover {
+    background-color: #1e293b;
+    color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
 }
 
-.hero-title {
-    font-size: 4rem;
+.btn-outline-action {
+    background-color: transparent;
+    border: 2px solid var(--color-text-muted);
+    color: var(--color-text-main);
+    border-radius: var(--radius-btn);
+    padding: 12px 36px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+    font-size: 1rem;
+}
+.btn-outline-action:hover {
+    border-color: var(--color-primary);
+    background-color: rgba(15, 23, 42, 0.05);
+    color: var(--color-primary);
+}
+
+.btn-gold,
+.btn-amber {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    border-radius: var(--radius-btn);
+    padding: 14px 36px;
     font-weight: 800;
-
-    line-height: 1.2;
-
-    color: #2d2d2d;
+    border: 2px solid var(--color-accent);
+    transition: all 0.3s ease;
+}
+.btn-gold:hover,
+.btn-amber:hover {
+    background-color: #b45309;
+    border-color: #b45309;
+    color: var(--color-white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
 }
 
-.hero-description {
-    font-size: 1.1rem;
-
-    color: #777;
-
-    max-width: 550px;
-
-    line-height: 1.8;
-}
-
-.hero-card {
-    background: rgba(255, 255, 255, 0.7);
-
-    border-radius: 28px;
-
-    backdrop-filter: blur(10px);
-
-    box-shadow:
-        0 10px 30px rgba(252, 213, 206, 0.3);
-}
-
-.feature-mini-card {
-    background: white;
-
-    padding: 28px 20px;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.feature-mini-card h3 {
-    color: #fe81d4;
-    font-weight: 800;
-}
-
-.landing-feature-card {
-    background: white;
-
-    padding: 32px 24px;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 6px 24px rgba(0, 0, 0, 0.06);
-
-    transition: 0.3s;
-}
-
-.landing-feature-card:hover {
-    transform: translateY(-6px);
-}
-
-.section-title {
-    font-size: 2.4rem;
-    font-weight: 800;
-
-    color: #2d2d2d;
-}
-
-.section-subtitle {
-    color: #777;
-}
-
-.flow-card {
-    background: white;
-
-    padding: 32px 20px;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 6px 24px rgba(0, 0, 0, 0.05);
-}
-
-.flow-number {
-    width: 60px;
-    height: 60px;
-
-    margin: auto auto 20px;
-
-    background: #fe81d4;
-
-    color: white;
-
-    border-radius: 50%;
-
+/* Tombol Garis Tiga (Hamburger Toggle) */
+.btn-toggle-sidebar {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    color: var(--color-primary);
+    width: 46px;
+    height: 46px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+.btn-toggle-sidebar:hover {
+    background: var(--color-primary);
+    color: var(--color-accent);
+    border-color: var(--color-primary);
+}
 
+/* =========================
+   3. AUTHENTICATION (LOGIN/REGISTER)
+========================= */
+.auth-body {
+    background-color: var(--color-surface);
+    min-height: 100vh;
+}
+.auth-container {
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+.auth-card {
+    border: none;
+    border-radius: var(--radius-card);
+    background: var(--color-white);
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.06);
+}
+.auth-side {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+.auth-title {
     font-weight: 800;
-    font-size: 1.4rem;
+    color: var(--color-text-main);
+    letter-spacing: -0.02em;
+}
+.auth-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1rem;
+}
+.auth-input {
+    border-radius: var(--radius-input);
+    border: 2px solid var(--color-border);
+    background-color: var(--color-white);
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: var(--color-text-main);
+    font-weight: 500;
+    transition: 0.3s;
+}
+.auth-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
+    outline: none;
+}
+.logo-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(217, 119, 6, 0.15);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    margin: 0 auto;
 }
 
-.landing-footer {
-    background: white;
-
-    border-top: 1px solid #f3f3f3;
+/* =========================
+   4. LANDING PAGE
+========================= */
+.landing-hero {
+    background: var(--color-surface);
+    padding: 100px 24px 80px 24px;
+    text-align: center;
+}
+.hero-badge {
+    background: rgba(217, 119, 6, 0.15);
+    color: #b45309;
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: inline-block;
+    margin-bottom: 24px;
+    border: 1px solid rgba(217, 119, 6, 0.3);
+}
+.hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--color-text-main);
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    margin: 0 auto 24px auto;
+}
+.hero-description {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    max-width: 650px;
+    margin: 0 auto 40px auto;
+    line-height: 1.7;
+}
+.section-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: var(--color-text-main);
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+}
+.feature-grid,
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.landing-feature-card {
+    background: var(--color-white);
+    padding: 36px 28px;
+    border-radius: var(--radius-card);
+    border: 2px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
+    transition: 0.3s;
+    flex: 1;
+    min-width: 280px;
+}
+.stat-card {
+    background: var(--color-white);
+    padding: 40px 32px;
+    border-radius: var(--radius-card);
+    border: 2px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+    text-align: left;
+    min-width: 240px;
+    flex: 1;
+}
+.stat-number {
+    font-size: 3.75rem;
+    font-weight: 800;
+    color: var(--color-text-main);
+    margin-bottom: 8px;
+    letter-spacing: -0.03em;
+}
+.stat-label {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    font-weight: 600;
 }
 
-/* RESPONSIVE */
-@media(max-width: 768px) {
-
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-}
-
-/* SIDEBAR - Warna dasar Peach Soft */
+/* =========================
+   5. DASHBOARD & SIDEBAR UTAMA
+========================= */
 .sidebar {
     width: 260px;
-    background: #fcd5ce;
-    padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    min-width: 260px;
+    background: var(--color-primary);
+    padding: 24px;
+    color: var(--color-white);
+    min-height: 100vh;
+    box-shadow: 3px 0 15px rgba(15, 23, 42, 0.15);
+    z-index: 1050;
+    transition:
+        margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Toggle Hide Khusus Desktop */
+.sidebar.toggled {
+    margin-left: -260px;
 }
 
 .sidebar-header {
     margin-bottom: 40px;
     text-align: center;
 }
-
 .sidebar-header h3 {
-    color: #fe81d4;
-    /* Aksen Pink Cerah */
+    color: var(--color-accent);
     font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
 }
-
-/* MENU NAVIGASI */
-.sidebar-menu .nav-item {
-    margin-bottom: 8px;
+.sidebar-menu {
+    padding: 0;
+    list-style: none;
 }
-
 .sidebar-menu .nav-link {
-    color: #555;
-    padding: 12px 16px;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 14px 16px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 12px;
     font-weight: 600;
+    font-size: 1.05rem;
     transition: all 0.3s ease;
+    margin-bottom: 8px;
+    text-decoration: none;
 }
-
-/* Hover menggunakan Pink Soft */
 .sidebar-menu .nav-link:hover {
-    background: #fbaec1;
-    color: white;
+    color: var(--color-white);
+    background: rgba(255, 255, 255, 0.12);
 }
-
-/* Active Menu menggunakan Pink Cerah */
 .active-menu {
-    background: #fe81d4 !important;
-    color: white !important;
-    box-shadow: 0 4px 10px rgba(254, 129, 212, 0.4);
+    background: var(--color-accent) !important;
+    color: var(--color-primary) !important;
+    font-weight: 800 !important;
 }
 
-/* MAIN CONTENT */
 .main-content {
     flex: 1;
+    width: 100%;
+    background: var(--color-surface);
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* TOP NAVBAR */
 .top-navbar {
-    background: white;
-    padding: 15px 30px;
+    background: var(--color-white);
+    padding: 18px 32px;
+    border-bottom: 2px solid var(--color-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ffe5b4;
-    /* Border Cream */
 }
 
 .page-title {
     margin: 0;
-    font-weight: 700;
-    color: #4a4a4a;
+    font-weight: 800;
+    color: var(--color-text-main);
+    font-size: 1.4rem;
 }
-
-/* TOP RIGHT COMPONENT */
-.top-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.notification-btn {
-    border: none;
-    background: #ffe5b4;
-    /* Cream */
-    color: #fe81d4;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    font-size: 18px;
-    transition: 0.2s;
-}
-
-.notification-btn:hover {
-    background: #fcd5ce;
-}
-
-.admin-profile {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #fe81d4;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-}
-
-.vendor-profile {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #fe81d4;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-}
-
-/* CONTENT AREA & CARDS */
 .content-area {
-    padding: 30px;
+    padding: 32px;
+    flex: 1;
 }
 
+/* Overlay Gelap Untuk HP (Sembunyi by default) */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1040;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.sidebar-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+/* =========================
+   6. DASHBOARD COMPONENTS & TABLES
+========================= */
 .card-custom {
-    border: none;
-    border-radius: 16px;
-    background: white;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-white);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+    margin-bottom: 24px;
+}
+.table th {
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    padding: 18px 16px;
+    border-bottom: 2px solid var(--color-border);
+}
+.table td {
+    padding: 18px 16px;
+    vertical-align: middle;
+    color: var(--color-text-main);
+    font-size: 1.05rem;
+    font-weight: 600;
 }
 
-.card-custom:hover {
-    transform: translateY(-3px);
-}
-
-/* BADGES STYLING UNTUK STATUS */
+/* =========================
+   7. BADGES ACCESSBILITY
+========================= */
 .badge-pastel-success {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: var(--color-success-bg) !important;
+    color: var(--color-success-text) !important;
+    border: 2px solid var(--color-success-border) !important;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    letter-spacing: 0.03em;
 }
-
 .badge-pastel-warning {
-    background-color: #fff3cd;
-    color: #856404;
+    background-color: var(--color-warning-bg) !important;
+    color: var(--color-warning-text) !important;
+    border: 2px solid var(--color-warning-border) !important;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    letter-spacing: 0.03em;
+}
+.badge-pastel-danger {
+    background-color: var(--color-danger-bg) !important;
+    color: var(--color-danger-text) !important;
+    border: 2px solid var(--color-danger-border) !important;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    letter-spacing: 0.03em;
 }
 
-.badge-pastel-danger {
-    background-color: #f8d7da;
-    color: #721c24;
+/* =========================
+   8. RESPONSIVE DESIGN (MOBILE HP)
+========================= */
+@media (max-width: 992px) {
+    /* Seting Sidebar di HP: Melayang dan Sembunyi ke Kiri */
+    .sidebar {
+        position: fixed;
+        left: -260px; /* Sembunyi by default */
+        top: 0;
+        margin-left: 0 !important; /* Mematikan class toggled desktop */
+    }
+
+    /* Class untuk memunculkan sidebar di HP */
+    .sidebar.mobile-open {
+        left: 0;
+    }
+
+    /* Penyesuaian Ruang di HP */
+    .top-navbar {
+        padding: 16px 20px;
+    }
+    .content-area {
+        padding: 20px;
+    }
+    .page-title {
+        font-size: 1.2rem;
+    }
 }

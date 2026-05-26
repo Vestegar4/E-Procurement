@@ -5,22 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>E-Procurement Admin - @yield('title', 'Dashboard')</title>
+    <title>Proculus Enterprise Admin - @yield('title', 'Dashboard')</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     @stack('styles')
 </head>
 
 <body>
-
     <div class="wrapper">
 
-        {{-- SIDEBAR --}}
-        <div class="sidebar">
+        {{-- OVERLAY GELAP UNTUK HP --}}
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        {{-- SIDEBAR UTAMA --}}
+        <div class="sidebar" id="sidebarNav">
             <div class="sidebar-header">
-                <h3>Proculus</h3>
+                <h3>PROCULUS</h3>
             </div>
 
             <ul class="nav flex-column sidebar-menu">
@@ -39,34 +40,34 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.vendors') }}"
                         class="nav-link {{ request()->routeIs('admin.vendors') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-building w-20px text-center me-2"></i> Vendor Management
+                        <i class="fa-solid fa-building w-20px text-center me-2"></i> Data Vendor
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.procurement') }}"
                         class="nav-link {{ request()->routeIs('admin.procurement') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-cart-shopping w-20px text-center me-2"></i> Procurement
+                        <i class="fa-solid fa-gavel w-20px text-center me-2"></i> Paket Tender
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.products') }}"
                         class="nav-link {{ request()->routeIs('admin.products') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-box-open w-20px text-center me-2"></i> Produk & Kategori
+                        <i class="fa-solid fa-box w-20px text-center me-2"></i> Katalog Barang
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.po') }}"
-                        class="nav-link {{ request()->routeIs('admin.po') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-file-invoice-dollar w-20px text-center me-2"></i> Purchase Order
+                    <a href="{{ route('admin.purchase-order') }}"
+                        class="nav-link {{ request()->routeIs('admin.purchase-order') ? 'active-menu' : '' }}">
+                        <i class="fa-solid fa-receipt w-20px text-center me-2"></i> Purchase Order
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.reports') }}"
                         class="nav-link {{ request()->routeIs('admin.reports') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-file-lines w-20px text-center me-2"></i> Laporan
+                        <i class="fa-solid fa-file-invoice w-20px text-center me-2"></i> Pusat Laporan
                     </a>
                 </li>
-                <li class="nav-item mt-4">
+                <li class="nav-item">
                     <a href="{{ route('admin.settings') }}"
                         class="nav-link {{ request()->routeIs('admin.settings') ? 'active-menu' : '' }}">
                         <i class="fa-solid fa-gear w-20px text-center me-2"></i> Pengaturan
@@ -75,59 +76,29 @@
             </ul>
         </div>
 
-        {{-- MAIN CONTENT --}}
+        {{-- AREA UTAMA KONTEN --}}
         <div class="main-content">
-
             {{-- TOP NAVBAR --}}
             <div class="top-navbar">
-                <div>
-                    <h4 class="page-title">@yield('title', 'Dashboard Overview')</h4>
+                <div class="d-flex align-items-center gap-3">
+                    {{-- Tombol Toggle Garis Tiga --}}
+                    <button type="button" class="btn-toggle-sidebar" id="sidebarToggle" aria-label="Menu Toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h4 class="page-title mb-0 d-none d-sm-block">@yield('title')</h4>
                 </div>
-                <div class="top-right">
 
-                    {{-- Search --}}
-                    <div class="input-group" style="width: 250px;">
-                        <input type="text" class="form-control border-0 bg-light" placeholder="Cari...">
-                        <button class="btn btn-light bg-light border-0">
-                            <i class="fa-solid fa-search"></i>
-                        </button>
-                    </div>
-
-                    {{-- Notification --}}
+                <div class="top-right d-flex align-items-center gap-3">
                     <div class="dropdown">
-                        <button class="notification-btn position-relative" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="fa-regular fa-bell"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 280px;">
-                            <li>
-                                <h6 class="dropdown-header">Notifikasi</h6>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <span class="dropdown-item-text text-muted small text-center d-block py-3">
-                                    Tidak ada notifikasi baru
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {{-- Profile --}}
-                    <div class="dropdown">
-                        <div class="admin-profile" data-bs-toggle="dropdown" aria-expanded="false"
-                            style="cursor: pointer;">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        <div class="rounded-circle d-flex justify-content-center align-items-center fw-bold text-uppercase shadow-sm"
+                            data-bs-toggle="dropdown" aria-expanded="false"
+                            style="width: 44px; height: 44px; background: var(--color-primary); color: var(--color-accent); cursor: pointer; border: 2px solid var(--color-accent); font-size: 1.1rem;">
+                            {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
                         </div>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                            <li>
-                                <span class="dropdown-item-text fw-bold">{{ Auth::user()->name }}</span>
-                            </li>
-                            <li>
-                                <span class="dropdown-item-text text-muted small">{{ Auth::user()->email }}</span>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2 mt-2" style="border-radius: 12px;">
+                            <li class="px-3 py-2">
+                                <p class="mb-0 fw-bold text-dark">{{ Auth::user()->name ?? 'Administrator' }}</p>
+                                <small class="text-muted">{{ Auth::user()->email ?? 'admin@procurement.com' }}</small>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -135,32 +106,30 @@
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                                    <button type="submit" class="dropdown-item fw-bold text-danger py-2" style="border-radius: 8px;">
+                                        <i class="fa-solid fa-right-from-bracket me-2"></i> Keluar Aplikasi
                                     </button>
                                 </form>
                             </li>
                         </ul>
                     </div>
-
                 </div>
             </div>
 
-            {{-- CONTENT AREA --}}
+            {{-- PANEL TAMPILAN AREA --}}
             <div class="content-area">
-
                 @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #E6F4EA; color: #137333; border-radius: 8px; font-weight: 600;">
+                    <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fa-solid fa-circle-exclamation me-2"></i> {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #FCE8E6; color: #C5221F; border-radius: 8px; font-weight: 600;">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i> {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 @endif
 
                 @yield('content')
@@ -168,6 +137,40 @@
         </div>
 
     </div>
+
+    {{-- LOGIKA TOGGLE JAVASCRIPT --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toggleButton = document.getElementById("sidebarToggle");
+            const sidebarElement = document.getElementById("sidebarNav");
+            const overlayElement = document.getElementById("sidebarOverlay");
+
+            // Event saat tombol garis tiga diklik
+            if (toggleButton && sidebarElement && overlayElement) {
+                toggleButton.addEventListener("click", function(event) {
+                    event.preventDefault();
+
+                    // Cek jika layar adalah ukuran Desktop atau Mobile
+                    if (window.innerWidth > 992) {
+                        // Desktop: Geser konten utama
+                        sidebarElement.classList.toggle("toggled");
+                    } else {
+                        // Mobile/HP: Munculkan sidebar melayang dan overlay gelap
+                        sidebarElement.classList.toggle("mobile-open");
+                        overlayElement.classList.toggle("show");
+                    }
+                });
+            }
+
+            // Event saat latar belakang gelap diklik (hanya berlaku di HP)
+            if (overlayElement) {
+                overlayElement.addEventListener("click", function() {
+                    sidebarElement.classList.remove("mobile-open");
+                    overlayElement.classList.remove("show");
+                });
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
