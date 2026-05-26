@@ -9,47 +9,44 @@
     </div>
 </div>
 
-<<<<<<< HEAD
-<div class="card card-custom p-4">
-    
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead style="background-color: #f8f9fa;">
-                <tr>
-                    <th width="10%">ID PO</th>
-                    <th width="35%">Nama Paket Pekerjaan (Tender)</th>
-                    <th width="25%">Vendor Pemenang</th>
-                    <th width="15%">Status</th>
-                    <th width="15%" class="text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="po-table-body">
-                <tr>
-                    <td><strong>#1</strong></td>
-                    <td>Pengadaan Perangkat Komputer Server</td>
-                    <td>PT Vendor Teknologi Maju</td>
-                    <td><span class="badge bg-warning text-dark">Pending</span></td>
-                    <td class="text-center">
-                        
-                        @foreach ( $purchaseOrders as $order )
-                            
-                        <a href="/purchase-orders/{{ $order->id }}/export-pdf" target="_blank" class="btn btn-sm btn-danger shadow-sm">
-                            <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
-                        </a>
-                        @endforeach
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+@if(isset($purchaseOrders) && $purchaseOrders->count() > 0)
+    <div class="card card-custom p-4 border-0 shadow-sm" style="border-radius: var(--radius-card);">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead style="background-color: #f8f9fa;">
+                    <tr>
+                        <th width="10%">ID PO</th>
+                        <th width="35%">Nama Paket Pekerjaan (Tender)</th>
+                        <th width="25%">Vendor Pemenang</th>
+                        <th width="15%">Status</th>
+                        <th width="15%" class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="po-table-body">
+                    @foreach ($purchaseOrders as $order)
+                    <tr>
+                        <td><strong>#{{ $order->id }}</strong></td>
+                        <td>{{ $order->tender_name ?? 'Pengadaan Perangkat Komputer Server' }}</td> 
+                        <td>{{ $order->vendor_name ?? 'PT Vendor Teknologi Maju' }}</td>
+                        <td><span class="badge bg-warning text-dark">{{ $order->status ?? 'Pending' }}</span></td>
+                        <td class="text-center">
+                            <a href="/admin/purchase-orders/{{ $order->id }}/export-pdf" target="_blank" class="btn btn-sm btn-danger shadow-sm">
+                                <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
-
-=======
-<div class="card card-custom border-0 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card);">
-    <div class="card-body p-5 text-center">
-        <i class="fa-solid fa-receipt display-4 mb-3" style="color: var(--color-primary); opacity: 0.3;"></i>
-        <p class="fw-bold text-muted mb-0">Daftar Purchase Order yang telah disetujui dari pemenang tender akan muncul di sini.</p>
+@else
+    <div class="card card-custom border-0 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card);">
+        <div class="card-body p-5 text-center">
+            <i class="fa-solid fa-receipt display-4 mb-3" style="color: var(--color-primary); opacity: 0.3;"></i>
+            <p class="fw-bold text-muted mb-0">Daftar Purchase Order yang telah disetujui dari pemenang tender akan muncul di sini.</p>
+        </div>
     </div>
->>>>>>> 6c5fab4 (big update frontend)
-</div>
+@endif
+
 @endsection
