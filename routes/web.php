@@ -5,11 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Vendor;
 use App\Models\Tender;
-<<<<<<< HEAD
-use App\Http\Controllers\PurchaseOrderController;
-=======
-use App\Models\User;
->>>>>>> 6c5fab4 (big update frontend)
+use App\Models\User; // <-- Gabungan dari main
+use App\Http\Controllers\PurchaseOrderController; // <-- Gabungan dari branch Anda
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsVendor;
 use App\Http\Controllers\Vendor\VendorTenderController;
@@ -66,39 +63,30 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
         return view('admin.products');
     })->name('admin.products');
 
-    // INI RUTE YANG SEBELUMNYA HILANG DAN BIKIN ERROR 500
     Route::get('/purchase-order', function () {
         return view('admin.purchase-order');
     })->name('admin.purchase-order');
+
+    // Rute PO buatan Anda tetap dipertahankan
+    Route::get('/po', function () {
+        $purchaseOrders = \Illuminate\Support\Facades\Schema::hasTable('purchase_orders') 
+            ? \App\Models\PurchaseOrder::latest()->get() 
+            : collect();
+        return view('admin.purchase-order', compact('purchaseOrders'));
+    })->name('admin.po');
 
     Route::get('/reports', function () {
         return view('admin.reports');
     })->name('admin.reports');
 
-<<<<<<< HEAD
-    Route::get('/products', fn() => view('admin.products'))->name('admin.products');
-
-    Route::get('/po', function () {
-    // Pastikan model PurchaseOrder dipanggil (jika tabelnya sudah ada)
-    $purchaseOrders = \Illuminate\Support\Facades\Schema::hasTable('purchase_orders') 
-        ? \App\Models\PurchaseOrder::latest()->get() 
-        : collect();
-
-    // Kirim datanya ke halaman blade menggunakan compact()
-    return view('admin.purchase-order', compact('purchaseOrders'));
-    })->name('admin.po');
-
-    Route::get('/reports', fn() => view('admin.reports'))->name('admin.reports');
-=======
+    // Rute Settings dari branch main dimasukkan
     Route::get('/settings', function () {
         return view('admin.settings');
     })->name('admin.settings');
->>>>>>> 6c5fab4 (big update frontend)
 
-    // Route Download Report
     Route::get('/reports/download/{type}', function ($type) {
         $filename = "laporan_{$type}_" . date('Ymd_His') . ".csv";
-        $data = []; // Ambil dari DB sesuai kebutuhan
+        $data = []; 
         
         $handle = fopen('php://output', 'w');
         header('Content-Type: text/csv');
@@ -111,6 +99,8 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
         fclose($handle);
         exit;
     })->name('admin.reports.download');
+    
+    // Rute PDF PO buatan Anda tetap dipertahankan
     Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF']);
 
 });
@@ -118,7 +108,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
 // ============================================================
 // VENDOR ROUTES (Terhubung ke folder views/vendor/)
 // ============================================================
-<<<<<<< HEAD
+// Kita menggunakan versi dari branch Anda karena jauh lebih lengkap dengan logic controller
 Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
     Route::get('/vendor/dashboard', [\App\Http\Controllers\Vendor\VendorDashboardController::class, 'index'])
         ->name('vendor.dashboard');
@@ -137,40 +127,8 @@ Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
     Route::put('/vendor/settings/password', [VendorProfileController::class, 'updatePasswordWeb'])
         ->name('vendor.settings.password.update');
 
-    /*Vendor Tenders*/
-    Route::get(
-        '/vendor/tenders/{id}',
-        [VendorTenderController::class, 'show']
-    )->name('vendor.tenders.show');
-
-    Route::post(
-        '/vendor/tenders/{id}/join',
-        [VendorTenderController::class, 'join']
-    )->name('vendor.tenders.join');
-
-    /*Vendor Bids*/
-    Route::get(
-        '/tenders/{id}/submit-bid',
-        [VendorBidController::class, 'create']
-    )->name('vendor.bids.create');
-
-    Route::post(
-        '/tenders/{id}/submit-bid',
-        [VendorBidController::class, 'store']
-    )->name('vendor.bids.store');
+    Route::get('/vendor/tenders/{id}', [VendorTenderController::class, 'show'])->name('vendor.tenders.show');
+    Route::post('/vendor/tenders/{id}/join', [VendorTenderController::class, 'join'])->name('vendor.tenders.join');
+    Route::get('/tenders/{id}/submit-bid', [VendorBidController::class, 'create'])->name('vendor.bids.create');
+    Route::post('/tenders/{id}/submit-bid', [VendorBidController::class, 'store'])->name('vendor.bids.store');
 });
-
-// ============================================================
-// PUBLIC ROUTES
-// ============================================================
-Route::get('/pending-approval', fn() => view('auth.pending'))->name('pending');
-=======
-Route::middleware(['auth', EnsureUserIsVendor::class])->prefix('vendor')->group(function () {
-    Route::get('/dashboard', fn() => view('vendor.dashboard'))->name('vendor.dashboard');
-    Route::get('/tenders', fn() => view('vendor.tenders'))->name('vendor.tenders');
-    Route::get('/bids', fn() => view('vendor.bids'))->name('vendor.bids');
-    Route::get('/documents', fn() => view('vendor.documents'))->name('vendor.documents');
-    Route::get('/reports', fn() => view('vendor.reports'))->name('vendor.reports');
-    Route::get('/settings', fn() => view('vendor.settings'))->name('vendor.settings');
-});
->>>>>>> 6c5fab4 (big update frontend)
