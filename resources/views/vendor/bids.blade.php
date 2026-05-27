@@ -55,17 +55,26 @@
 
                                     <td>
 
-                                        @if ($bid->status == 'pending')
+                                        @php
+                                            $result = $bid->tender->result ?? null;
+                                            $effectiveStatus = $bid->status;
+                                            if ($bid->status === 'pending' && $result) {
+                                                $effectiveStatus =
+                                                    $result->winner_vendor_id === $bid->vendor_id ? 'won' : 'lost';
+                                            }
+                                        @endphp
+
+                                        @if ($effectiveStatus == 'pending')
                                             <span class="badge bg-warning">
                                                 Pending
                                             </span>
-                                        @elseif($bid->status == 'accepted')
+                                        @elseif($effectiveStatus == 'won')
                                             <span class="badge bg-success">
-                                                Accepted
+                                                Won
                                             </span>
-                                        @elseif($bid->status == 'rejected')
+                                        @elseif($effectiveStatus == 'lost')
                                             <span class="badge bg-danger">
-                                                Rejected
+                                                Lost
                                             </span>
                                         @endif
 
@@ -77,7 +86,7 @@
 
                                     <td>
 
-                                        <a href="{{ asset('storage/' . $bid->proposal_file) }}" target="_blank"
+                                        <a href="{{ asset('storage/' . $bid->bid_document) }}" target="_blank"
                                             class="btn btn-sm btn-outline-primary">
 
                                             Download

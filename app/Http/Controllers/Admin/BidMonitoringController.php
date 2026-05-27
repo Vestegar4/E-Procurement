@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Bid;
 use App\Models\Tender;
+use App\Models\TenderResult;
 
 class BidMonitoringController extends Controller
 {
@@ -42,5 +43,21 @@ class BidMonitoringController extends Controller
 
             'data' => $bids
         ]);
+    }
+
+    public function tenderBidsWeb($tenderId)
+    {
+        $tender = Tender::with('timeline')->findOrFail($tenderId);
+
+        $bids = Bid::with('vendor')
+            ->where('tender_id', $tender->id)
+            ->orderBy('bid_amount', 'asc')
+            ->get();
+
+        $result = TenderResult::with('winner')
+            ->where('tender_id', $tender->id)
+            ->first();
+
+        return view('admin.tender-bids', compact('tender', 'bids', 'result'));
     }
 }

@@ -7,6 +7,10 @@ use App\Models\Vendor;
 use App\Models\Tender;
 use App\Models\User;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\Admin\VendorManagementController;
+use App\Http\Controllers\Admin\TenderController;
+use App\Http\Controllers\Admin\BidMonitoringController;
+use App\Http\Controllers\Admin\TenderResultController as AdminTenderResultController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsVendor;
 use App\Http\Controllers\Vendor\VendorTenderController;
@@ -41,10 +45,12 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
         $vendorCount   = Schema::hasTable('vendors') ? Vendor::count() : 0;
         $tenderCount   = Schema::hasTable('tenders') ? Tender::count() : 0;
         $resultCount   = 0;
-        $latestTenders = Schema::hasTable('tenders') ? Tender::latest()->take(5)->get() : collect();
+        $latestTenders = Schema::hasTable('tenders')
+            ? Tender::with('result')->latest()->take(5)->get()
+            : collect();
 
         return view('admin.dashboard', compact('vendorCount', 'tenderCount', 'resultCount', 'latestTenders'));
-    })->name('admin.dashboard');    
+    })->name('admin.dashboard');
     Route::get('/users', function () {
         $users = Schema::hasTable('users') ? User::all() : [];
         return view('admin.users', compact('users'));
@@ -55,32 +61,44 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
         return view('admin.vendors', compact('vendors'));
     })->name('admin.vendors');
 
+    Route::post('/vendors/{vendor}/status', [VendorManagementController::class, 'updateStatus'])
+        ->name('admin.vendors.update-status');
+
     Route::get('/procurement', function () {
-        return view('admin.procurement');
+        $tenders = Schema::hasTable('tenders')
+            ? Tender::with('timeline')->latest()->get()
+            : collect();
+
+        return view('admin.procurement', compact('tenders'));
     })->name('admin.procurement');
+
+    Route::post('/procurement/store', [TenderController::class, 'storePlan'])
+        ->name('admin.procurement.store');
+
+    Route::post('/procurement/{tender}/publish', [TenderController::class, 'publish'])
+        ->name('admin.procurement.publish');
+
+    Route::put('/procurement/{tender}', [TenderController::class, 'updateWeb'])
+        ->name('admin.procurement.update');
+
+    Route::post('/procurement/{tender}/status', [TenderController::class, 'updateStatus'])
+        ->name('admin.procurement.status');
+
+    Route::get('/tenders/{tender}/bids', [BidMonitoringController::class, 'tenderBidsWeb'])
+        ->name('admin.tenders.bids');
+
+    Route::post('/tenders/{tender}/select-winner', [AdminTenderResultController::class, 'selectWinnerWeb'])
+        ->name('admin.tenders.select-winner');
 
     Route::get('/products', function () {
         return view('admin.products');
     })->name('admin.products');
 
     Route::get('/purchase-order', function () {
-        // 1. Coba ambil data asli dari database
-        $purchaseOrders = \Illuminate\Support\Facades\Schema::hasTable('purchase_orders') 
-            ? \App\Models\PurchaseOrder::latest()->get() 
+        $purchaseOrders = \Illuminate\Support\Facades\Schema::hasTable('purchase_orders')
+            ? \App\Models\PurchaseOrder::with(['tender', 'vendor'])->latest()->get()
             : collect();
 
-        if ($purchaseOrders->isEmpty()) {
-            $purchaseOrders = collect([
-                (object) [
-                    'id' => 1,
-                    'tender_name' => 'Pengadaan Perangkat Komputer Server',
-                    'vendor_name' => 'PT Vendor Teknologi Maju',
-                    'status' => 'Pending'
-                ]
-            ]);
-        }
-
-        // 3. Kirim ke tampilan
         return view('admin.purchase-order', compact('purchaseOrders'));
     })->name('admin.purchase-order');
 
@@ -95,8 +113,8 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
 
     Route::get('/reports/download/{type}', function ($type) {
         $filename = "laporan_{$type}_" . date('Ymd_His') . ".csv";
-        $data = []; 
-        
+        $data = [];
+
         $handle = fopen('php://output', 'w');
         header('Content-Type: text/csv');
         header("Content-Disposition: attachment; filename=$filename");
@@ -108,10 +126,9 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
         fclose($handle);
         exit;
     })->name('admin.reports.download');
-    
+
     // Rute PDF PO buatan Anda tetap dipertahankan
     Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF']);
-
 });
 
 // ============================================================
@@ -121,7 +138,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
 Route::middleware(['auth', EnsureUserIsVendor::class])->group(function () {
     Route::get('/vendor/dashboard', [\App\Http\Controllers\Vendor\VendorDashboardController::class, 'index'])
         ->name('vendor.dashboard');
-    Route::get('/vendor/tenders', fn() => view('vendor.tenders'))->name('vendor.tenders');
+    Route::get('/vendor/tenders', [VendorTenderController::class, 'index'])->name('vendor.tenders');
     Route::get('/vendor/bids', [VendorBidController::class, 'index'])->name('vendor.bids.index');
     Route::get('/vendor/documents', [VendorDocumentController::class, 'index'])->name('vendor.documents.index');
     Route::post('/vendor/documents', [VendorDocumentController::class, 'store'])->name('vendor.documents.store');

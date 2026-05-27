@@ -29,7 +29,8 @@ class VendorBidController extends Controller
 
         $bids = Bid::with([
             'tender',
-            'tender.timeline'
+            'tender.timeline',
+            'tender.result'
         ])
             ->where('vendor_id', $vendor->id)
             ->latest()

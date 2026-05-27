@@ -6,12 +6,33 @@
 
     <div class="container-fluid p-0">
 
+        @if (session('success'))
+            <div class="alert alert-success shadow-sm" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger shadow-sm" role="alert">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         {{-- HEADER --}}
         <div class="mb-4">
 
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
 
                 <div>
+                    <div class="mb-2">
+                        <a href="{{ route('vendor.tenders') }}" class="btn btn-outline-action btn-sm">
+                            Kembali
+                        </a>
+                    </div>
 
                     <h3 class="fw-bold mb-1">
                         {{ $tender->title }}
@@ -25,21 +46,39 @@
 
                 <div>
 
-                    @if ($tender->status == 'open')
+                    @php
+                        $status = $effectiveStatus ?? $tender->status;
+                    @endphp
+
+                    @if ($status == 'open')
                         <span class="badge bg-success px-3 py-2">
                             Open Registration
                         </span>
-                    @elseif($tender->status == 'bidding')
+                    @elseif($status == 'aanwijzing')
+                        <span class="badge bg-warning px-3 py-2">
+                            Aanwijzing
+                        </span>
+                    @elseif($status == 'bidding')
                         <span class="badge bg-primary px-3 py-2">
                             Bidding
                         </span>
-                    @elseif($tender->status == 'closed')
+                    @elseif($status == 'closed' || $status == 'finished')
                         <span class="badge bg-danger px-3 py-2">
                             Closed
                         </span>
                     @else
                         <span class="badge bg-secondary px-3 py-2">
                             Draft
+                        </span>
+                    @endif
+
+                    @if ($isWinner ?? false)
+                        <span class="badge bg-success px-3 py-2 ms-2">
+                            Winner
+                        </span>
+                    @elseif($isLoser ?? false)
+                        <span class="badge bg-danger px-3 py-2 ms-2">
+                            Lost
                         </span>
                     @endif
 
@@ -219,19 +258,26 @@
                             Aksi Tender
                         </h5>
 
-                        @if ($tender->status == 'open')
+                        @if ($status == 'open')
                             <form action="{{ route('vendor.tenders.join', $tender->id) }}" method="POST">
 
                                 @csrf
 
-                                <button type="submit" class="btn btn-success w-100">
+                                <button type="submit" class="btn btn-success w-100"
+                                    {{ $isJoined ?? false ? 'disabled' : '' }}>
 
-                                    Join Tender
+                                    {{ $isJoined ?? false ? 'Sudah Join' : 'Join Tender' }}
 
                                 </button>
 
                             </form>
-                        @elseif($tender->status == 'bidding')
+                        @elseif($status == 'aanwijzing')
+                            <button class="btn btn-warning w-100" disabled>
+
+                                Menunggu Aanwijzing
+
+                            </button>
+                        @elseif($status == 'bidding')
                             <a href="{{ route('vendor.bids.create', $tender->id) }}" class="btn btn-primary w-100">
 
                                 Submit Penawaran

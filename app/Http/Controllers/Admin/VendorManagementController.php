@@ -59,4 +59,18 @@ class VendorManagementController extends Controller
             'message' => 'Vendor rejected'
         ]);
     }
+
+    // update status vendor via admin panel
+    public function updateStatus(Request $request, Vendor $vendor)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,approved,rejected',
+        ]);
+
+        $vendor->status = $validated['status'];
+        $vendor->approved_at = $validated['status'] === 'approved' ? now() : null;
+        $vendor->save();
+
+        return back()->with('success', 'Status vendor berhasil diperbarui.');
+    }
 }
