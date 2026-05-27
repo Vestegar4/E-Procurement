@@ -5,26 +5,21 @@
 <div class="container-fluid p-0">
 
     {{-- LINK SUB-MENU TABS NAVIGATION (Gaya Neo Resign) --}}
-    <ul class="nav nav-tabs border-0 mb-4 gap-4" id="settingsTab" role="tablist" style="border-bottom: 2px solid var(--color-border) !important; padding-bottom: 5px;">
+    {{-- LINK SUB-MENU TABS NAVIGATION (Dengan Animasi Slide CSS Murni) --}}
+    <ul class="settings-tab-container nav" id="settingsTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active fw-bold border-0 bg-transparent p-0 pb-2 text-uppercase tracking-wider"
-                id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab"
-                style="color: var(--color-primary); border-bottom: 3px solid var(--color-accent) !important; font-size: 0.95rem;">
-                Profile Instansi
+            <button class="settings-tab-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab">
+                <i class="fa-solid fa-building me-2"></i> Profile Instansi
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold border-0 bg-transparent p-0 pb-2 text-uppercase tracking-wider"
-                id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab"
-                style="color: var(--color-text-muted); font-size: 0.95rem;">
-                Security
+            <button class="settings-tab-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab">
+                <i class="fa-solid fa-shield-halved me-2"></i> Security
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold border-0 bg-transparent p-0 pb-2 text-uppercase tracking-wider"
-                id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification-pane" type="button" role="tab"
-                style="color: var(--color-text-muted); font-size: 0.95rem;">
-                Notifications
+            <button class="settings-tab-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification-pane" type="button" role="tab">
+                <i class="fa-solid fa-bell me-2"></i> Notifications
             </button>
         </li>
     </ul>

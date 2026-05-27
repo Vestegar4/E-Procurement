@@ -1,161 +1,104 @@
 @extends('layouts.app')
 
-@section('title', 'Home')
+@section('title', 'Welcome to Proculus')
 
 @section('content')
+    {{-- HERO SECTION UTAMA --}}
+    <section class="landing-hero" style="position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -100px; left: -50px; width: 300px; height: 300px; background: rgba(217, 119, 6, 0.05); border-radius: 50%; z-index: 0;"></div>
+        <div style="position: absolute; bottom: -150px; right: -50px; width: 400px; height: 400px; background: rgba(15, 23, 42, 0.03); border-radius: 50%; z-index: 0;"></div>
 
-    {{-- HERO SECTION --}}
-    <section class="landing-hero">
-        <div class="container text-center">
+        <div class="container" style="position: relative; z-index: 1;">
             
-            <span class="hero-badge">
-                Modern E-Procurement Platform
+            <span class="hero-badge shadow-sm">
+                <i class="fa-solid fa-bolt me-2"></i> Modern E-Procurement Platform
             </span>
 
-            <h1 class="hero-title">
+            <h1 class="hero-title mt-3">
                 Digital Procurement Solution<br>for Modern Enterprise
             </h1>
 
-            <p class="hero-description">
-                Kelola proses tender, vendor management, bid monitoring, invoice, dan procurement perusahaan dalam satu platform terintegrasi.
+            <p class="hero-description text-muted">
+                Kelola proses tender, vendor management, bid monitoring, invoice, dan procurement perusahaan dalam satu platform terintegrasi dengan aksesibilitas tinggi.
             </p>
 
-            <div class="d-flex justify-content-center mt-4">
-                <a href="{{ route('login') }}" class="btn-primary-action">
-                    Login
+            <div class="d-flex justify-content-center gap-3 mt-5">
+                <a href="{{ route('login') }}" class="btn-primary-action shadow-sm" style="min-width: 160px;">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i> Login
                 </a>
-                <a href="{{ route('register') }}" class="btn-outline-action">
-                    Register Vendor
+                <a href="{{ route('register') }}" class="btn-amber shadow-sm" style="min-width: 160px;">
+                    <i class="fa-solid fa-building me-2"></i> Register Vendor
                 </a>
             </div>
 
-            {{-- Opsional: Jika Anda memiliki gambar mockup dashboard seperti di desain TaskGo, uncomment baris di bawah ini --}}
-            {{-- <img src="{{ asset('images/dashboard-mockup.png') }}" alt="Dashboard Mockup" class="hero-mockup-img"> --}}
-
         </div>
     </section>
 
-    {{-- FEATURES SECTION (Premium Benefits) --}}
-    <section class="features-section">
-        <div class="container">
-            
-            <div class="text-center">
-                <h2 class="section-title">Unlock Premium Benefits</h2>
-                <p class="section-subtitle">Semua kebutuhan procurement perusahaan dalam satu dashboard modern.</p>
-            </div>
-
-            <div class="feature-grid mt-5">
-                <div class="landing-feature-card">
-                    <h3>Tender Management</h3>
-                    <p>Kelola tender procurement secara digital dan terstruktur dari awal hingga akhir.</p>
-                </div>
-                
-                <div class="landing-feature-card">
-                    <h3>Vendor Verification</h3>
-                    <p>Sistem approval vendor yang efisien dengan validasi dokumen perusahaan otomatis.</p>
-                </div>
-                
-                <div class="landing-feature-card">
-                    <h3>Bid Monitoring</h3>
-                    <p>Monitoring seluruh proses bidding, penawaran harga, dan evaluasi performa vendor.</p>
-                </div>
-                
-                <div class="landing-feature-card">
-                    <h3>Invoice Tracking</h3>
-                    <p>Monitoring tagihan, invoice, dan purchase order secara realtime dengan riwayat jelas.</p>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    {{-- STATS SECTION (Why Teams Choose Us) --}}
-    <section class="stats-section">
-        <div class="container text-center">
-            
-            <h2 class="section-title" style="margin-bottom: 50px;">Why Enterprises Choose Us</h2>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">120+</div>
-                    <div class="stat-label">Active Vendors<br>Tergabung di sistem</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">56</div>
-                    <div class="stat-label">Open Tenders<br>Sedang berlangsung</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">98%</div>
-                    <div class="stat-label">Procurement<br>Efficiency Impact</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Monitoring System<br>Selalu siap diakses</div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    {{-- FLOW SECTION (Easy Steps) --}}
-    <section style="padding: 80px 24px; background: #FFFFFF;">
-        <div class="container">
+    {{-- SECTION HOW IT WORKS (4 LANGKAH) --}}
+    <section class="py-5" style="background-color: var(--color-white); border-top: 2px solid var(--color-border);">
+        <div class="container py-4">
             
             <div class="text-center mb-5">
-                <h2 class="section-title">Get Started in 4 Easy Steps</h2>
-                <p class="section-subtitle">Alur proses pengadaan barang dan jasa yang transparan.</p>
+                <h2 class="fw-bold" style="color: var(--color-text-main); letter-spacing: -0.02em;">Cara Kerja Proculus</h2>
+                <p class="text-muted">Proses transparan dan efisien dari hulu ke hilir</p>
             </div>
 
             <div class="row g-4 text-center">
+                
+                {{-- Step 1 --}}
                 <div class="col-md-3">
-                    <div class="landing-feature-card h-100" style="padding: 24px;">
-                        <div style="width: 50px; height: 50px; background: #1A1A1A; color: #D4AF37; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; margin: 0 auto 20px;">1</div>
-                        <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Vendor Register</h3>
-                        <p style="font-size: 0.9rem;">Pendaftaran akun vendor baru.</p>
+                    <div class="landing-feature-card h-100">
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4 shadow-sm" style="width: 60px; height: 60px; background: var(--color-primary); color: var(--color-accent-bright); font-size: 1.5rem; font-weight: 800;">
+                            1
+                        </div>
+                        <h5 class="fw-bold mb-2 text-dark">Vendor Register</h5>
+                        <p class="text-muted small mb-0">Pendaftaran mandiri oleh rekanan vendor secara online.</p>
                     </div>
                 </div>
 
+                {{-- Step 2 --}}
                 <div class="col-md-3">
-                    <div class="landing-feature-card h-100" style="padding: 24px;">
-                        <div style="width: 50px; height: 50px; background: #1A1A1A; color: #D4AF37; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; margin: 0 auto 20px;">2</div>
-                        <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Admin Verify</h3>
-                        <p style="font-size: 0.9rem;">Verifikasi kelayakan berkas.</p>
+                    <div class="landing-feature-card h-100">
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4 shadow-sm" style="width: 60px; height: 60px; background: var(--color-primary); color: var(--color-accent-bright); font-size: 1.5rem; font-weight: 800;">
+                            2
+                        </div>
+                        <h5 class="fw-bold mb-2 text-dark">Admin Verification</h5>
+                        <p class="text-muted small mb-0">Verifikasi berkas dan legalitas oleh admin instansi.</p>
                     </div>
                 </div>
 
+                {{-- Step 3 --}}
                 <div class="col-md-3">
-                    <div class="landing-feature-card h-100" style="padding: 24px;">
-                        <div style="width: 50px; height: 50px; background: #1A1A1A; color: #D4AF37; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; margin: 0 auto 20px;">3</div>
-                        <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Join Tender</h3>
-                        <p style="font-size: 0.9rem;">Ajukan penawaran dokumen.</p>
+                    <div class="landing-feature-card h-100">
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4 shadow-sm" style="width: 60px; height: 60px; background: var(--color-primary); color: var(--color-accent-bright); font-size: 1.5rem; font-weight: 800;">
+                            3
+                        </div>
+                        <h5 class="fw-bold mb-2 text-dark">Join Tender</h5>
+                        <p class="text-muted small mb-0">Akses tender terbuka dan kirim proposal penawaran.</p>
                     </div>
                 </div>
 
+                {{-- Step 4 --}}
                 <div class="col-md-3">
-                    <div class="landing-feature-card h-100" style="padding: 24px;">
-                        <div style="width: 50px; height: 50px; background: #1A1A1A; color: #D4AF37; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; margin: 0 auto 20px;">4</div>
-                        <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Bid & Result</h3>
-                        <p style="font-size: 0.9rem;">Pengumuman pemenang lelang.</p>
+                    <div class="landing-feature-card h-100">
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4 shadow-sm" style="width: 60px; height: 60px; background: var(--color-primary); color: var(--color-accent-bright); font-size: 1.5rem; font-weight: 800;">
+                            4
+                        </div>
+                        <h5 class="fw-bold mb-2 text-dark">Bid & Result</h5>
+                        <p class="text-muted small mb-0">Evaluasi sistematis dan pengumuman pemenang lelang.</p>
                     </div>
                 </div>
+
             </div>
 
         </div>
     </section>
 
     {{-- FOOTER --}}
-    <footer class="landing-footer py-5" style="background: #FAF9F6; border-top: 1px solid rgba(0,0,0,0.05);">
-        <div class="container text-center">
-            
-            <h5 style="font-weight: 800; color: #1A1A1A; letter-spacing: -0.01em;">
-                Proculus E-Procurement
-            </h5>
-            
-            <p style="color: #71717A; max-width: 400px; margin: 10px auto 0;">
-                Modern digital procurement platform for enterprise procurement management.
-            </p>
-
+    <footer class="py-4 text-center" style="background: var(--color-surface);">
+        <div class="container">
+            <h5 class="fw-bold" style="color: var(--color-text-main);">Proculus E-Procurement</h5>
+            <p class="mb-0 text-muted small">&copy; 2026 Proculus Enterprise. Hak Cipta Dilindungi.</p>
         </div>
     </footer>
-
 @endsection
