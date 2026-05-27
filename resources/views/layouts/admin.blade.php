@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     @stack('styles')
 </head>
-
 <body>
     <div class="wrapper">
-
+        
         {{-- OVERLAY GELAP UNTUK HP --}}
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -67,12 +65,6 @@
                         <i class="fa-solid fa-file-invoice w-20px text-center me-2"></i> Pusat Laporan
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.settings') }}"
-                        class="nav-link {{ request()->routeIs('admin.settings') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-gear w-20px text-center me-2"></i> Pengaturan
-                    </a>
-                </li>
             </ul>
         </div>
 
@@ -95,14 +87,19 @@
                             style="width: 44px; height: 44px; background: var(--color-primary); color: var(--color-accent); cursor: pointer; border: 2px solid var(--color-accent); font-size: 1.1rem;">
                             {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
                         </div>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2 mt-2" style="border-radius: 12px;">
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2 mt-2" style="border-radius: 12px; min-width: 220px;">
                             <li class="px-3 py-2">
                                 <p class="mb-0 fw-bold text-dark">{{ Auth::user()->name ?? 'Administrator' }}</p>
                                 <small class="text-muted">{{ Auth::user()->email ?? 'admin@procurement.com' }}</small>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
+                            {{-- MENEMPATKAN MENU PENGATURAN DI SINI --}}
                             <li>
-                                <hr class="dropdown-divider">
+                                <a href="{{ route('admin.settings') }}" class="dropdown-item fw-bold py-2 {{ request()->routeIs('admin.settings') ? 'text-warning' : 'text-dark' }}" style="border-radius: 8px;">
+                                    <i class="fa-solid fa-gear me-2 text-secondary"></i> Pengaturan Sistem
+                                </a>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
@@ -119,17 +116,17 @@
             {{-- PANEL TAMPILAN AREA --}}
             <div class="content-area">
                 @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #E6F4EA; color: #137333; border-radius: 8px; font-weight: 600;">
-                    <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #E6F4EA; color: #137333; border-radius: 8px; font-weight: 600;">
+                        <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 @endif
 
                 @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #FCE8E6; color: #C5221F; border-radius: 8px; font-weight: 600;">
-                    <i class="fa-solid fa-circle-exclamation me-2"></i> {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                    <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #FCE8E6; color: #C5221F; border-radius: 8px; font-weight: 600;">
+                        <i class="fa-solid fa-circle-exclamation me-2"></i> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 @endif
 
                 @yield('content')
@@ -140,31 +137,25 @@
 
     {{-- LOGIKA TOGGLE JAVASCRIPT --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const toggleButton = document.getElementById("sidebarToggle");
             const sidebarElement = document.getElementById("sidebarNav");
             const overlayElement = document.getElementById("sidebarOverlay");
 
-            // Event saat tombol garis tiga diklik
             if (toggleButton && sidebarElement && overlayElement) {
-                toggleButton.addEventListener("click", function(event) {
+                toggleButton.addEventListener("click", function (event) {
                     event.preventDefault();
-
-                    // Cek jika layar adalah ukuran Desktop atau Mobile
                     if (window.innerWidth > 992) {
-                        // Desktop: Geser konten utama
                         sidebarElement.classList.toggle("toggled");
                     } else {
-                        // Mobile/HP: Munculkan sidebar melayang dan overlay gelap
                         sidebarElement.classList.toggle("mobile-open");
                         overlayElement.classList.toggle("show");
                     }
                 });
             }
 
-            // Event saat latar belakang gelap diklik (hanya berlaku di HP)
             if (overlayElement) {
-                overlayElement.addEventListener("click", function() {
+                overlayElement.addEventListener("click", function () {
                     sidebarElement.classList.remove("mobile-open");
                     overlayElement.classList.remove("show");
                 });
@@ -174,5 +165,4 @@
 
     @stack('scripts')
 </body>
-
 </html>
