@@ -22,23 +22,24 @@ class EprocurementSeeder extends Seeder
         $adminUser = User::where('role', 'admin')->first();
         $adminData = Admin::where('user_id', $adminUser->id)->first();
 
-        // (Opsional) Pencegahan error jika database ternyata benar-benar kosong
         if (!$adminUser) {
             $this->command->error('Gagal: Tidak ada akun Admin di database! Silakan buat admin dulu.');
             return;
         }
+
         // Vendor 1 (Approved)
         $userV1 = User::firstOrCreate(
             ['email' => 'vendor1@mail.com'],
             ['name' => 'PT Teknologi Maju', 'password' => Hash::make('password123'), 'role' => 'vendor']
         );
-        Vendor::firstOrCreate(
+        // TANGKAP HASILNYA KE VARIABEL $vendor1
+        $vendor1 = Vendor::firstOrCreate(
             ['user_id' => $userV1->id],
             [
-                'name' => 'Budi Santoso', // <-- Diubah dari owner_name menjadi name
+                'name' => 'Budi Santoso', 
                 'company_name' => 'PT Teknologi Maju', 
                 'address' => 'Jl. Sudirman No 1', 
-                'phone' => '081234567890', // <-- Tambahan wajib
+                'phone' => '081234567890', 
                 'status' => 'approved'
             ]
         );
@@ -48,13 +49,14 @@ class EprocurementSeeder extends Seeder
             ['email' => 'vendor2@mail.com'],
             ['name' => 'CV Sukses Bersama', 'password' => Hash::make('password123'), 'role' => 'vendor']
         );
-        Vendor::firstOrCreate(
+        // TANGKAP HASILNYA KE VARIABEL $vendor2
+        $vendor2 = Vendor::firstOrCreate(
             ['user_id' => $userV2->id],
             [
-                'name' => 'Andi Wijaya', // <-- Diubah dari owner_name menjadi name
+                'name' => 'Andi Wijaya', 
                 'company_name' => 'CV Sukses Bersama', 
                 'address' => 'Jl. Merdeka No 2', 
-                'phone' => '081298765432', // <-- Tambahan wajib
+                'phone' => '081298765432', 
                 'status' => 'approved'
             ]
         );
@@ -64,13 +66,14 @@ class EprocurementSeeder extends Seeder
             ['email' => 'vendor3@mail.com'],
             ['name' => 'PT Angin Ribut', 'password' => Hash::make('password123'), 'role' => 'vendor']
         );
-        Vendor::firstOrCreate(
+        // TANGKAP HASILNYA KE VARIABEL $vendor3
+        $vendor3 = Vendor::firstOrCreate(
             ['user_id' => $userV3->id],
             [
-                'name' => 'Citra Lestari', // <-- Diubah dari owner_name menjadi name
+                'name' => 'Citra Lestari', 
                 'company_name' => 'PT Angin Ribut', 
                 'address' => 'Jl. Pahlawan No 3', 
-                'phone' => '081333444555', // <-- Tambahan wajib
+                'phone' => '081333444555', 
                 'status' => 'pending'
             ]
         );
@@ -83,33 +86,31 @@ class EprocurementSeeder extends Seeder
             'description' => 'Spesifikasi: Core i7, 16GB RAM, 1TB SSD.',
             'budget' => 750000000,
             'status' => 'bidding',
-            'created_by' => $adminUser->id,
+            'created_by' => $adminData->id,
         ]);
         
-        // Timeline Tender 1 (Masih aktif sampai besok)
         TenderTimeline::create([
             'tender_id' => $tender1->id,
             'bidding_start' => Carbon::now()->subDays(2),
             'bidding_end' => Carbon::now()->addDays(1)
         ]);
 
-        // Peserta & Bidding untuk Tender 1
-        TenderParticipant::create(['tender_id' => $tender1->id, 'vendor_id' => $userV1->id]);
-        TenderParticipant::create(['tender_id' => $tender1->id, 'vendor_id' => $userV2->id]);
+        // GUNAKAN $vendor1->id dan $vendor2->id DI SINI
+        TenderParticipant::create(['tender_id' => $tender1->id, 'vendor_id' => $vendor1->id]);
+        TenderParticipant::create(['tender_id' => $tender1->id, 'vendor_id' => $vendor2->id]);
 
         Bid::create([
             'tender_id' => $tender1->id, 
-            'vendor_id' => $userV1->id, 
+            'vendor_id' => $vendor1->id, 
             'bid_amount' => 740000000,
-            'submitted_at' => Carbon::now()->subDay() // <-- Tambahan untuk mencatat waktu submit bid
+            'submitted_at' => Carbon::now()->subDay() 
         ]);
         Bid::create([
             'tender_id' => $tender1->id, 
-            'vendor_id' => $userV2->id, 
+            'vendor_id' => $vendor2->id, 
             'bid_amount' => 725000000,
             'submitted_at' => Carbon::now()
         ]);
-
 
         // ---------------------------------------------------
         // 4. TENDER 2: SUDAH SELESAI (Menghasilkan PO)
@@ -119,33 +120,31 @@ class EprocurementSeeder extends Seeder
             'description' => 'Lisensi 1 tahun untuk 500 endpoint.',
             'budget' => 150000000,
             'status' => 'closed',
-            'created_by' => $adminUser->id,
+            'created_by' => $adminData->id,
         ]);
 
-        // Peserta & Bidding untuk Tender 2
-        TenderParticipant::create(['tender_id' => $tender2->id, 'vendor_id' => $userV1->id]);
+        // GUNAKAN $vendor1->id
+        TenderParticipant::create(['tender_id' => $tender2->id, 'vendor_id' => $vendor1->id]);
         
-        // Vendor 1 menang tender ini
         $winningBid = Bid::create([
             'tender_id' => $tender2->id, 
-            'vendor_id' => $userV1->id, 
+            'vendor_id' => $vendor1->id, 
             'bid_amount' => 145000000,
             'submitted_at' => Carbon::now()
         ]);
 
-        // Simpan Hasil (Tender Result)
         TenderResult::create([
             'tender_id'        => $tender2->id,
-            'winner_vendor_id' => $userV1->id, // <-- Diubah
-            'winning_bid'      => $winningBid->bid_amount, // <-- Diubah mengambil nominal harga
+            'winner_vendor_id' => $vendor1->id, // PASTIKAN NAMA KOLOM INI BENAR DI MIGRATION ANDA
+            'winning_bid'      => $winningBid->bid_amount, 
             'notes'            => 'Pemenang dipilih karena dokumen lengkap dan harga efisien.',
-            'selected_by'      => $adminData->id, // <-- Tambahan wajib
-            'selected_at'      => Carbon::now() // <-- Tambahan wajib
+            'selected_by'      => $adminData->id, 
+            'selected_at'      => Carbon::now() 
         ]);
-        // BUAT PURCHASE ORDER (PO) UNTUK TENDER 2
+
         PurchaseOrder::create([
             'tender_id' => $tender2->id,
-            'vendor_id' => $userV1->id,
+            'vendor_id' => $vendor1->id,
             'po_number'    => 'PO-DUMMY-' . $tender2->id, 
             'total_amount' => $winningBid->bid_amount,
             'status' => 'draft'

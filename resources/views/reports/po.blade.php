@@ -203,30 +203,26 @@
     <table class="table-items">
         <thead>
             <tr>
-                <th width="8%">No</th>
-                <th width="52%">Deskripsi</th>
-                <th width="10%">Qty</th>
-                <th width="15%">Harga</th>
-                <th width="15%">Subtotal</th>
+                <th width="5%" style="text-align: center;">No</th>
+                <th width="50%">Deskripsi Pekerjaan (Paket)</th>
+                <th width="15%" style="text-align: center;">Kuantitas</th>
+                <th width="15%">Harga Satuan</th>
+                <th width="15%">Total Harga</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($po->items as $index => $item)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->description }}</td>
-                    <td>{{ number_format($item->quantity, 0, ',', '.') }}</td>
-                    <td>Rp {{ number_format($item->unit_price, 0, ',', '.') }}</td>
-                    <td>Rp {{ number_format($item->total_price, 0, ',', '.') }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5">Item belum tersedia.</td>
-                </tr>
-            @endforelse
+            <tr>
+                <td style="text-align: center;">1</td>
+                <td>
+                    <strong>{{ $po->tender->title }}</strong><br>
+                    <span style="font-size: 11px; color: #555;">{{ $po->tender->description }}</span>
+                </td>
+                <td style="text-align: center;">1 Paket</td>
+                <td>Rp {{ number_format($po->total_amount, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($po->total_amount, 0, ',', '.') }}</td>
+            </tr>
         </tbody>
     </table>
-
     <div class="section-title">IV. Syarat dan Ketentuan</div>
     <p class="text-justified" style="font-size: 12px; color: #555;">
         1. Penyedia barang/jasa wajib menyelesaikan pekerjaan atau mengirimkan barang sesuai spesifikasi teknis yang

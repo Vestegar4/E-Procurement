@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\TenderTimeline;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Aanwijzing;
 
 class TenderController extends Controller
 {
@@ -213,20 +214,29 @@ class TenderController extends Controller
     }
 
     // show tender
+    public function showAanwijzing($id)
+    {
+        // Tarik data tender beserta pertanyaan Aanwijzing-nya
+        $tender = Tender::with([
+            'aanwijzings.vendor' // Wajib agar memuat nama vendor penanya
+        ])->findOrFail($id);
+
+        // Arahkan ke file aanwijzing.blade.php Anda
+        // (Asumsinya file Anda ada di folder resources/views/admin/aanwijzing.blade.php)
+        return view('admin.aanwijzing', compact('tender'));
+    }
     public function show($id)
     {
         $tender = Tender::with([
             'creator',
             'timeline',
-            'participants',
+            'participants.vendor',
             'announcements',
-            'bids'
+            'bids',
+            'aanwijzings.vendor'
         ])->findOrFail($id);
 
-        return response()->json([
-            'message' => 'Tender detail retrieved successfully',
-            'data' => $tender
-        ]);
+        return view('admin.aanwijzing', compact('tender'));
     }
 
     // update tender
@@ -326,5 +336,22 @@ class TenderController extends Controller
         return response()->json([
             'message' => 'Tender deleted successfully'
         ]);
+    }
+    public function jawabAanwijzing(Request $request, $id)
+    {
+        $request->validate([
+        'answer' => 'required|string'
+    ]);
+
+    // Cari pertanyaan berdasarkan ID
+        $aanwijzing = Aanwijzing::findOrFail($id);
+    
+    // Isi kolom answer dengan jawaban dari form admin
+        $aanwijzing->update([
+        'answer' => $request->answer
+    ]);
+
+    // Kembalikan admin ke halaman sebelumnya dengan pesan sukses
+        return back()->with('success', 'Jawaban berhasil dikirim ke forum vendor.');
     }
 }

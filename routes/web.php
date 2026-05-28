@@ -56,16 +56,14 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
         return view('admin.users', compact('users'));
     })->name('admin.users');
 
-    Route::get('/vendors', function () {
-        $vendors = Schema::hasTable('vendors') ? Vendor::all() : [];
-        return view('admin.vendors', compact('vendors'));
-    })->name('admin.vendors');
-
      // Menampilkan daftar vendor
     Route::get('/vendors', function () {
         $vendors = \Illuminate\Support\Facades\Schema::hasTable('vendors') ? \App\Models\Vendor::latest()->get() : collect();
         return view('admin.vendors', compact('vendors'));
     })->name('admin.vendors');
+
+    Route::get('/procurement/{id}/aanwijzing', [TenderController::class, 'showAanwijzing'])->name('admin.aanwijzing.show');
+    Route::post('/aanwijzing/{id}/jawab', [TenderController::class, 'jawabAanwijzing'])->name('admin.aanwijzing.jawab');
 
     // FITUR ACC / REJECT VENDOR OLEH ADMIN
     Route::post('/vendors/{id}/update-status', function (Illuminate\Http\Request $request, $id) {

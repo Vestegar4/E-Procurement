@@ -92,6 +92,10 @@
                                                 Edit
                                             </button>
 
+                                            <a href="{{ route('admin.aanwijzing.show', $tender->id) }}" class="btn btn-sm      btn-info text-white">
+                                                <i class="fa-solid fa-eye"></i> Aanwijzing
+                                            </a>
+
                                             <a href="{{ route('admin.tenders.bids', $tender->id) }}"
                                                 class="btn btn-sm btn-outline-action">
                                                 Bids
