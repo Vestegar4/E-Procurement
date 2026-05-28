@@ -61,6 +61,19 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
         return view('admin.vendors', compact('vendors'));
     })->name('admin.vendors');
 
+     // Menampilkan daftar vendor
+    Route::get('/vendors', function () {
+        $vendors = \Illuminate\Support\Facades\Schema::hasTable('vendors') ? \App\Models\Vendor::latest()->get() : collect();
+        return view('admin.vendors', compact('vendors'));
+    })->name('admin.vendors');
+
+    // FITUR ACC / REJECT VENDOR OLEH ADMIN
+    Route::post('/vendors/{id}/update-status', function (Illuminate\Http\Request $request, $id) {
+        $vendor = \App\Models\Vendor::findOrFail($id);
+        $vendor->update(['status' => $request->status]); // status akan diisi 'approved' atau 'rejected'
+        return back()->with('success', 'Status vendor berhasil diperbarui!');
+    })->name('admin.vendors.update-status');
+
     Route::post('/vendors/{vendor}/status', [VendorManagementController::class, 'updateStatus'])
         ->name('admin.vendors.update-status');
 
