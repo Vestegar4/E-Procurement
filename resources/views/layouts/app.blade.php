@@ -9,36 +9,141 @@
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Inter:400,500,600,700,800" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
+
+    <style>
+        /* 1. Sembunyikan body di awal untuk mencegah flash, lalu jalankan animasi masuk */
+        body {
+            opacity: 0;
+            animation: smoothEnter 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            background-color: var(--color-surface, #f8f9fa); /* Mencegah background putih silau */
+        }
+
+        /* Animasi Masuk (Fade in & Slide up halus) */
+        @keyframes smoothEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 2. Kelas untuk Animasi Keluar (Dipicu otomatis oleh JavaScript saat klik link/tombol) */
+        body.page-leaving {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg glass-navbar shadow-sm py-3 sticky-top">
+    {{-- NAVBAR TOP NAVIGATION HEADER --}}
+    <nav class="navbar navbar-expand-lg glass-navbar shadow-sm py-3 sticky-top" style="background-color: var(--color-white); border-bottom: 1px solid var(--color-border);">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-3" style="color: #1A1A1A; letter-spacing: -0.02em;" href="/">
-                Proculus
+            <a class="navbar-brand fw-bold fs-3" style="color: var(--color-primary); letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px;" href="/">
+                <i class="fa-solid fa-cube" style="color: var(--color-accent);"></i> Proculus
             </a>
 
-            <div class="ms-auto d-flex align-items-center gap-2">
+            <div class="ms-auto d-flex align-items-center gap-3">
                 @guest
-                    <a href="{{ route('home') }}" class="btn btn-light border">Home</a>
-                    <a href="{{ route('login') }}" class="btn-outline-action" style="padding: 8px 24px;">Login</a>
-                    <a href="{{ route('register') }}" class="btn-primary-action" style="padding: 8px 24px;">Register Vendor</a>
+                    <a href="{{ route('home') }}" class="nav-link fw-bold px-2" style="color: var(--color-text-muted); font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)';" onmouseout="this.style.color='var(--color-text-muted)';">Home</a>
+                    
+                    <a href="{{ route('login') }}" class="btn px-4 py-2" style="
+                        border: 2px solid var(--color-primary); 
+                        color: var(--color-primary); 
+                        background-color: transparent;
+                        border-radius: 6px; 
+                        font-weight: 700;
+                        font-size: 0.95rem;
+                        transition: all 0.2s ease;
+                        text-decoration: none;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                    " onmouseover="this.style.backgroundColor='var(--color-primary)'; this.style.color='var(--color-white)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--color-primary)';">
+                        Login
+                    </a>
+                    
+                    <a href="{{ route('register') }}" class="btn px-4 py-2 shadow-sm" style="
+                        background-color: var(--color-accent); 
+                        color: var(--color-white); 
+                        border: 2px solid var(--color-accent);
+                        border-radius: 6px; 
+                        font-weight: 700;
+                        font-size: 0.95rem;
+                        transition: all 0.2s ease;
+                        text-decoration: none;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                    " onmouseover="this.style.backgroundColor='#b45309'; this.style.borderColor='#b45309';" onmouseout="this.style.backgroundColor='var(--color-accent)'; this.style.borderColor='var(--color-accent)';">
+                        Register Vendor
+                    </a>
                 @else
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button class="btn btn-dark">Logout</button>
-                    </form>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="fw-medium text-muted small">Halo, <strong style="color: var(--color-text-main);">{{ Auth::user()->name }}</strong></span>
+                        <form action="{{ route('logout') }}" method="POST" class="m-0">
+                            @csrf
+                            <button type="submit" class="btn btn-sm px-3 py-2 text-white" style="background-color: var(--color-primary); border-radius: 6px; font-weight: 600; border: none;">
+                                <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+                            </button>
+                        </form>
+                    </div>
                 @endguest
             </div>
         </div>
     </nav>
 
-    <main>
-        @yield('content')
-    </main>
+    {{-- KONTEN UTAMA HALAMAN --}}
+    @yield('content')
 
     @stack('scripts')
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Tangkap semua klik pada link navigasi
+            const links = document.querySelectorAll('a[href]:not([target="_blank"]):not([href^="#"]):not([href^="javascript:"])');
+            
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Biarkan berfungsi normal jika user membuka di tab baru (Ctrl+Click / Cmd+Click)
+                    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+                    
+                    e.preventDefault();
+                    const targetUrl = this.href;
+
+                    // Tambahkan kelas animasi keluar (Fade-out)
+                    document.body.classList.add('page-leaving');
+
+                    // Tunggu animasi CSS selesai (350ms), baru eksekusi perpindahan halaman
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 350);
+                });
+            });
+
+            // 2. Tangkap juga saat tombol Submit Form ditekan (seperti klik Login / Daftar)
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    document.body.classList.add('page-leaving');
+                });
+            });
+        });
+
+        // 3. Fix untuk Safari / iOS (Back-Forward Cache Bug)
+        // Mencegah halaman tetap transparan saat user menekan tombol "Back" di browser
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                document.body.classList.remove('page-leaving');
+            }
+        });
+    </script>
 </body>
 </html>
