@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\AdminInvoiceController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\PurchaseOrderController;
-
+use App\Http\Controllers\Api\Vendor\AanwijzingController;
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES (KHUSUS API / MESIN / APLIKASI MOBILE)
@@ -91,5 +91,9 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsVendor::clas
     Route::post('/tenders/{id}/bid', [\App\Http\Controllers\Vendor\VendorBidController::class, 'submitBid']);
 
     Route::get('/results', [\App\Http\Controllers\Vendor\VendorResultController::class, 'index']);
-    Route::get('/results/{tenderId}', [\App\Http\Controllers\Vendor\VendorResultController::class, 'show']);
+    Route::get('/results/{tenderId}', [\App\Http\Controllers\Vendor\VendorResultController::class, 
+    'show']);
+    
+    Route::get('/tenders/{id}/aanwijzing', [AanwijzingController::class, 'index']);
+    Route::post('/tenders/{id}/aanwijzing', [AanwijzingController::class, 'store']);
 });

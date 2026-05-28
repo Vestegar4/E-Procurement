@@ -57,6 +57,11 @@ class Tender extends Model
         return $this->hasOne(TenderResult::class);
     }
 
+    public function aanwijzings()
+    {
+        // Satu tender bisa memiliki banyak pertanyaan (hasMany)
+        return $this->hasMany(Aanwijzing::class);
+    }
     /*
     |--------------------------------------------------------------------------
     | HELPER METHODS
