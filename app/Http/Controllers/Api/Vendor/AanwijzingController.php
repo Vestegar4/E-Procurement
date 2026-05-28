@@ -9,14 +9,12 @@ use App\Models\Tender;
 
 class AanwijzingController extends Controller
 {
-    // Fungsi untuk Ionic mengambil daftar tanya jawab
+    // Fungsi untuk Ionic mengambil daftar Tanya Jawab
     public function index($tenderId)
     {
-        // 1. MANFAATKAN MODEL TENDER DI SINI
-        // Pastikan tender-nya ada. Jika ID tidak ditemukan, Laravel otomatis membalas error 404 Not Found.
         $tender = Tender::findOrFail($tenderId);
 
-        // Ambil semua pertanyaan di tender ini, sertakan juga nama vendornya
+        // Ambil data Tanya Jawab
         $aanwijzings = Aanwijzing::with('vendor:id,name')
                         ->where('tender_id', $tender->id)
                         ->latest()
@@ -24,6 +22,7 @@ class AanwijzingController extends Controller
 
         return response()->json([
             'status' => true,
+            'message' => 'Daftar Tanya Jawab berhasil dimuat', // Diubah di sini
             'data' => $aanwijzings
         ]);
     }
@@ -35,20 +34,18 @@ class AanwijzingController extends Controller
             'question' => 'required|string'
         ]);
 
-        // 2. MANFAATKAN MODEL TENDER DI SINI JUGA
-        // Pastikan tender valid sebelum sistem mengizinkan vendor bertanya
         $tender = Tender::findOrFail($tenderId);
 
         // Simpan ke database
         $aanwijzing = Aanwijzing::create([
             'tender_id' => $tender->id,
-            'vendor_id' => auth()->id(), // Otomatis mengambil ID vendor yang sedang login
+            'vendor_id' => auth()->id(), 
             'question' => $request->question
         ]);
 
         return response()->json([
             'status' => true,
-            'message' => 'Pertanyaan berhasil dikirim ke Admin.',
+            'message' => 'Pertanyaan Tanya Jawab berhasil dikirim ke Admin.', // Diubah di sini
             'data' => $aanwijzing
         ]);
     }
