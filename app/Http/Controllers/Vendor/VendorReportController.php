@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Vendor;
 use App\Models\Bid;
 use App\Models\Invoice;
 use App\Models\TenderParticipant;
+use App\Models\TenderResult;
 use App\Http\Controllers\Controller;
 
 class VendorReportController extends Controller
@@ -33,12 +34,7 @@ class VendorReportController extends Controller
       $vendor->id
     )->count();
 
-    $winningBids = Bid::where(
-      'vendor_id',
-      $vendor->id
-    )
-      ->where('status', 'won')
-      ->count();
+    $winningBids = TenderResult::where('winner_vendor_id', $vendor->id)->count();
 
     $totalBidAmount = Bid::where(
       'vendor_id',
@@ -51,7 +47,7 @@ class VendorReportController extends Controller
         |--------------------------------------------------------------------------
         */
 
-    $recentBids = Bid::with('tender')
+    $recentBids = Bid::with(['tender', 'tender.result'])
       ->where('vendor_id', $vendor->id)
       ->latest()
       ->take(5)

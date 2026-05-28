@@ -1,41 +1,65 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Surat Perintah Kerja - Purchase Order</title>
     <style>
         /* Gaya font standar untuk dokumen resmi/yuridis */
-        body { 
-            font-family: 'Times New Roman', Times, serif; 
-            margin: 15px; 
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 15px;
             color: #333;
             line-height: 1.4;
         }
-        
+
         /* Desain Kop Surat */
-        .kop-surat { 
-            text-align: center; 
-            border-bottom: 3px double #000; 
-            padding-bottom: 10px; 
-            margin-bottom: 25px; 
+        .kop-surat {
+            text-align: center;
+            border-bottom: 3px double #000;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
         }
-        .kop-surat h2 { margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        .kop-surat h1 { margin: 5px 0; font-size: 24px; text-transform: uppercase; color: #111; }
-        .kop-surat p { margin: 0; font-size: 12px; font-style: italic; color: #555; }
-        
+
+        .kop-surat h2 {
+            margin: 0;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .kop-surat h1 {
+            margin: 5px 0;
+            font-size: 24px;
+            text-transform: uppercase;
+            color: #111;
+        }
+
+        .kop-surat p {
+            margin: 0;
+            font-size: 12px;
+            font-style: italic;
+            color: #555;
+        }
+
         /* Judul Dokumen */
         .judul-dokumen {
             text-align: center;
             margin-bottom: 30px;
         }
-        .judul-dokumen h3 { 
-            margin: 0; 
-            font-size: 16px; 
-            text-decoration: underline; 
+
+        .judul-dokumen h3 {
+            margin: 0;
+            font-size: 16px;
+            text-decoration: underline;
             text-transform: uppercase;
             font-weight: bold;
         }
-        .judul-dokumen p { margin: 5px 0 0 0; font-size: 13px; }
+
+        .judul-dokumen p {
+            margin: 5px 0 0 0;
+            font-size: 13px;
+        }
 
         /* Paragraf Pembuka dan Penutup */
         .text-justified {
@@ -55,16 +79,34 @@
             margin-bottom: 10px;
             border-left: 4px solid #333;
         }
-        
-        .table-data { 
-            width: 100%; 
-            margin-bottom: 20px; 
+
+        .table-data {
+            width: 100%;
+            margin-bottom: 20px;
             border-collapse: collapse;
             font-size: 14px;
         }
-        .table-data td { 
-            padding: 6px 4px; 
-            vertical-align: top; 
+
+        .table-data td {
+            padding: 6px 4px;
+            vertical-align: top;
+        }
+
+        .table-items {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .table-items th,
+        .table-items td {
+            border: 1px solid #333;
+            padding: 6px;
+        }
+
+        .table-items th {
+            background-color: #f2f2f2;
+            text-align: left;
         }
 
         /* Aturan Cetak Halaman & Tanda Tangan */
@@ -73,19 +115,23 @@
             width: 100%;
             font-size: 14px;
         }
+
         .signature-box {
             width: 45%;
             float: left;
             text-align: center;
         }
+
         .signature-box.right {
             float: right;
         }
+
         .space-ttd {
             height: 70px;
         }
     </style>
 </head>
+
 <body>
 
     <div class="kop-surat">
@@ -100,7 +146,9 @@
     </div>
 
     <p class="text-justified">
-        Berdasarkan hasil evaluasi dokumen penawaran, teknis, dan harga pada sistem pelelangan elektronik, dengan ini Panitia Pengadaan menetapkan kesepakatan kerja dan memberikan perintah pengadaan kepada pihak penyedia barang/jasa berikut:
+        Berdasarkan hasil evaluasi dokumen penawaran, teknis, dan harga pada sistem pelelangan elektronik, dengan ini
+        Panitia Pengadaan menetapkan kesepakatan kerja dan memberikan perintah pengadaan kepada pihak penyedia
+        barang/jasa berikut:
     </p>
 
     <div class="section-title">I. Identitas Penyedia Barang / Jasa (Vendor)</div>
@@ -151,11 +199,42 @@
         </tr>
     </table>
 
-    <div class="section-title">III. Syarat dan Ketentuan</div>
+    <div class="section-title">III. Daftar Item Pekerjaan</div>
+    <table class="table-items">
+        <thead>
+            <tr>
+                <th width="8%">No</th>
+                <th width="52%">Deskripsi</th>
+                <th width="10%">Qty</th>
+                <th width="15%">Harga</th>
+                <th width="15%">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($po->items as $index => $item)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $item->description }}</td>
+                    <td>{{ number_format($item->quantity, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($item->unit_price, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($item->total_price, 0, ',', '.') }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="5">Item belum tersedia.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="section-title">IV. Syarat dan Ketentuan</div>
     <p class="text-justified" style="font-size: 12px; color: #555;">
-        1. Penyedia barang/jasa wajib menyelesaikan pekerjaan atau mengirimkan barang sesuai spesifikasi teknis yang tertera pada dokumen tender.<br>
-        2. Surat Perintah Kerja (PO) ini diterbitkan secara otomatis oleh sistem e-procurement setelah penetapan pemenang yang sah dan berkekuatan hukum tetap.<br>
-        3. Segala bentuk keterlambatan pemenuhan komitmen akan dikenakan sanksi atau denda sesuai aturan pengadaan yang berlaku.
+        1. Penyedia barang/jasa wajib menyelesaikan pekerjaan atau mengirimkan barang sesuai spesifikasi teknis yang
+        tertera pada dokumen tender.<br>
+        2. Surat Perintah Kerja (PO) ini diterbitkan secara otomatis oleh sistem e-procurement setelah penetapan
+        pemenang yang sah dan berkekuatan hukum tetap.<br>
+        3. Segala bentuk keterlambatan pemenuhan komitmen akan dikenakan sanksi atau denda sesuai aturan pengadaan yang
+        berlaku.
     </p>
 
     <div class="container-signature">
@@ -166,7 +245,7 @@
             <p><u>( ________________________ )</u></p>
             <p>Direktur / Penanggung Jawab</p>
         </div>
-        
+
         <div class="signature-box right">
             <p>Jakarta, {{ $date }}</p>
             <p><strong>Panitia Pengadaan (Admin)</strong></p>
@@ -177,4 +256,5 @@
     </div>
 
 </body>
+
 </html>

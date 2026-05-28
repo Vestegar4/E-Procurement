@@ -19,30 +19,35 @@
         {{-- FILTER --}}
         <div class="card card-custom mb-4">
             <div class="card-body p-3">
+                <form action="{{ route('vendor.tenders') }}" method="GET">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-5">
+                            <input type="text" name="q" class="form-control" placeholder="Cari tender..."
+                                value="{{ $search ?? '' }}">
+                        </div>
 
-                <div class="row g-3 align-items-center">
+                        <div class="col-md-3">
+                            <select name="status" class="form-select">
+                                <option value="">Semua Status</option>
+                                <option value="open" {{ ($status ?? '') === 'open' ? 'selected' : '' }}>Open</option>
+                                <option value="aanwijzing" {{ ($status ?? '') === 'aanwijzing' ? 'selected' : '' }}>
+                                    Aanwijzing</option>
+                                <option value="bidding" {{ ($status ?? '') === 'bidding' ? 'selected' : '' }}>
+                                    Bidding</option>
+                                <option value="closed" {{ ($status ?? '') === 'closed' ? 'selected' : '' }}>
+                                    Closed</option>
+                                <option value="finished" {{ ($status ?? '') === 'finished' ? 'selected' : '' }}>
+                                    Finished</option>
+                            </select>
+                        </div>
 
-                    <div class="col-md-5">
-                        <input type="text" class="form-control" placeholder="Cari tender...">
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" type="submit">
+                                Filter
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="col-md-3">
-                        <select class="form-select">
-                            <option>Semua Status</option>
-                            <option>Open</option>
-                            <option>Bidding</option>
-                            <option>Closed</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100">
-                            Filter
-                        </button>
-                    </div>
-
-                </div>
-
+                </form>
             </div>
         </div>
 
@@ -96,6 +101,14 @@
 
                                         <div class="fw-bold">
                                             {{ $tender->title }}
+                                            @if (!empty($joinedTenderIds) && in_array($tender->id, $joinedTenderIds, true))
+                                                <span class="badge bg-info ms-2">Joined</span>
+                                            @endif
+                                            @if ($tender->is_winner ?? false)
+                                                <span class="badge bg-success ms-2">Winner</span>
+                                            @elseif($tender->is_loser ?? false)
+                                                <span class="badge bg-danger ms-2">Lost</span>
+                                            @endif
                                         </div>
 
                                         <small class="text-muted">
@@ -105,7 +118,7 @@
                                     </td>
 
                                     <td class="fw-semibold">
-                                        Rp {{ number_format($tender->budget, 0, ',', '.') }}
+                                        Rp {{ number_format($tender->budget ?? 0, 0, ',', '.') }}
                                     </td>
 
                                     <td>
@@ -120,15 +133,23 @@
 
                                     <td>
 
-                                        @if ($tender->status == 'open')
+                                        @php
+                                            $effectiveStatus = $tender->effective_status ?? $tender->status;
+                                        @endphp
+
+                                        @if ($effectiveStatus == 'open')
                                             <span class="badge bg-success px-3 py-2">
                                                 Open
                                             </span>
-                                        @elseif($tender->status == 'bidding')
+                                        @elseif($effectiveStatus == 'aanwijzing')
+                                            <span class="badge bg-warning px-3 py-2">
+                                                Aanwijzing
+                                            </span>
+                                        @elseif($effectiveStatus == 'bidding')
                                             <span class="badge bg-primary px-3 py-2">
                                                 Bidding
                                             </span>
-                                        @elseif($tender->status == 'finished')
+                                        @elseif($effectiveStatus == 'closed' || $effectiveStatus == 'finished')
                                             <span class="badge bg-danger px-3 py-2">
                                                 Closed
                                             </span>
@@ -142,7 +163,8 @@
 
                                     <td class="text-end">
 
-                                        <a href="#" class="btn btn-outline-primary btn-sm">
+                                        <a href="{{ route('vendor.tenders.show', $tender->id) }}"
+                                            class="btn btn-outline-primary btn-sm">
 
                                             Detail
 
@@ -178,6 +200,12 @@
             </div>
 
         </div>
+
+        @if (isset($tenders) && $tenders->hasPages())
+            <div class="mt-4">
+                {{ $tenders->links() }}
+            </div>
+        @endif
 
     </div>
 @endsection

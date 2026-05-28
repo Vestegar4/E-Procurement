@@ -19,7 +19,7 @@
         {{-- SIDEBAR UTAMA VENDOR --}}
         <div class="sidebar" id="sidebarNav">
             <div class="sidebar-header">
-                <h3>E-PROC VENDOR</h3>
+                <h3>PROCULUS</h3>
             </div>
 
             <ul class="nav flex-column sidebar-menu">
@@ -36,14 +36,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('vendor.bids') }}"
-                        class="nav-link {{ request()->routeIs('vendor.bids') ? 'active-menu' : '' }}">
+                    <a href="{{ route('vendor.bids.index') }}"
+                        class="nav-link {{ request()->routeIs('vendor.bids.index') ? 'active-menu' : '' }}">
                         <i class="fa-solid fa-receipt w-20px text-center me-2"></i> Penawaran Saya
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('vendor.documents') }}"
-                        class="nav-link {{ request()->routeIs('vendor.documents') ? 'active-menu' : '' }}">
+                    <a href="{{ route('vendor.documents.index') }}"
+                        class="nav-link {{ request()->routeIs('vendor.documents.index') ? 'active-menu' : '' }}">
                         <i class="fa-solid fa-file-shield w-20px text-center me-2"></i> Dokumen Vendor
                     </a>
                 </li>

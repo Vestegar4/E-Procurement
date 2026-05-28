@@ -146,11 +146,22 @@
 
                                             <td>
 
-                                                @if ($bid->status == 'won')
+                                                @php
+                                                    $result = $bid->tender->result ?? null;
+                                                    $effectiveStatus = $bid->status;
+                                                    if ($bid->status === 'pending' && $result) {
+                                                        $effectiveStatus =
+                                                            $result->winner_vendor_id === $bid->vendor_id
+                                                                ? 'won'
+                                                                : 'lost';
+                                                    }
+                                                @endphp
+
+                                                @if ($effectiveStatus == 'won')
                                                     <span class="badge bg-success">
                                                         Won
                                                     </span>
-                                                @elseif($bid->status == 'lost')
+                                                @elseif($effectiveStatus == 'lost')
                                                     <span class="badge bg-danger">
                                                         Lost
                                                     </span>

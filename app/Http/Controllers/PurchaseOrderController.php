@@ -13,7 +13,7 @@ class PurchaseOrderController extends Controller
     {
         // Mengambil data PO beserta relasi tender dan vendornya
         $purchaseOrders = PurchaseOrder::with(['tender', 'vendor'])->get();
-        
+
         return response()->json([
             'status' => 'success',
             'data' => $purchaseOrders
@@ -23,7 +23,7 @@ class PurchaseOrderController extends Controller
     // 2. Fitur Cetak Dokumen PO (PDF)
     public function exportPDF($id)
     {
-        $po = PurchaseOrder::with(['tender', 'vendor'])->findOrFail($id);
+        $po = PurchaseOrder::with(['tender', 'vendor', 'items'])->findOrFail($id);
 
         $data = [
             'title' => 'SURAT PERINTAH KERJA (PURCHASE ORDER)',

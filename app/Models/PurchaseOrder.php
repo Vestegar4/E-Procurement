@@ -29,4 +29,9 @@ class PurchaseOrder extends Model
     {
         return $this->belongsTo(Vendor::class);
     }
+
+    public function items()
+    {
+        return $this->hasMany(PurchaseOrderItem::class);
+    }
 }

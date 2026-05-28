@@ -7,6 +7,7 @@ use App\Models\Tender;
 use App\Models\PurchaseOrder; // Pastikan ini di-import
 use Illuminate\Http\Request;
 use App\Models\TenderResult;
+use App\Models\PurchaseOrderItem;
 use App\Http\Controllers\Controller;
 
 class TenderResultController extends Controller
@@ -36,6 +37,11 @@ class TenderResultController extends Controller
         $bid = Bid::where('tender_id', $tender->id)
             ->findOrFail($request->bid_id);
 
+        Bid::where('tender_id', $tender->id)
+            ->update(['status' => 'lost']);
+
+        $bid->update(['status' => 'won']);
+
         // 3. Simpan hasil penetapan pemenang (Menggunakan struktur kolom baru)
         $result = TenderResult::create([
             'tender_id'        => $tender->id,
@@ -48,22 +54,87 @@ class TenderResultController extends Controller
 
         // 4. Update status tender
         $tender->update([
-            'status' => 'finished' 
+            'status' => 'finished'
         ]);
 
         // 5. OTOMATIS BUAT PURCHASE ORDER (PO) 🚀
-        PurchaseOrder::create([
+        $purchaseOrder = PurchaseOrder::create([
             'tender_id' => $tender->id,
             'vendor_id' => $bid->vendor_id,
             'po_number' => 'PO-' . date('Ymd') . '-' . $tender->id,
             'total_amount' => $bid->bid_amount,
-            'status'    => 'draft', 
+            'status'    => 'issued',
+        ]);
+
+        PurchaseOrderItem::create([
+            'purchase_order_id' => $purchaseOrder->id,
+            'description' => $bid->notes ?: ($tender->title ?? 'Paket pekerjaan'),
+            'quantity' => 1,
+            'unit_price' => $bid->bid_amount,
+            'total_price' => $bid->bid_amount,
         ]);
 
         return response()->json([
             'message' => 'Winner selected and Purchase Order created successfully!',
             'data'    => $result
         ], 201);
+    }
+
+    public function selectWinnerWeb(Request $request, $tenderId)
+    {
+        $request->validate([
+            'bid_id' => 'required|exists:bids,id',
+            'notes' => 'nullable|string',
+        ]);
+
+        $tender = Tender::findOrFail($tenderId);
+        $user = auth()->user();
+        $admin = $user->admin;
+
+        $existingResult = TenderResult::where('tender_id', $tender->id)->exists();
+
+        if ($existingResult) {
+            return back()->withErrors(['winner' => 'Pemenang sudah ditetapkan untuk tender ini.']);
+        }
+
+        $bid = Bid::where('tender_id', $tender->id)
+            ->findOrFail($request->bid_id);
+
+        Bid::where('tender_id', $tender->id)
+            ->update(['status' => 'lost']);
+
+        $bid->update(['status' => 'won']);
+
+        $result = TenderResult::create([
+            'tender_id'        => $tender->id,
+            'winner_vendor_id' => $bid->vendor_id,
+            'winning_bid'      => $bid->bid_amount,
+            'notes'            => $request->notes,
+            'selected_by'      => $admin->id,
+            'selected_at'      => now(),
+        ]);
+
+        $tender->update([
+            'status' => 'finished'
+        ]);
+
+        $purchaseOrder = PurchaseOrder::create([
+            'tender_id' => $tender->id,
+            'vendor_id' => $bid->vendor_id,
+            'po_number' => 'PO-' . date('Ymd') . '-' . $tender->id,
+            'total_amount' => $bid->bid_amount,
+            'status'    => 'issued',
+        ]);
+
+        PurchaseOrderItem::create([
+            'purchase_order_id' => $purchaseOrder->id,
+            'description' => $bid->notes ?: ($tender->title ?? 'Paket pekerjaan'),
+            'quantity' => 1,
+            'unit_price' => $bid->bid_amount,
+            'total_price' => $bid->bid_amount,
+        ]);
+
+        return back()->with('success', 'Pemenang berhasil ditetapkan dan PO dibuat.');
     }
 
     // show tender result
