@@ -203,7 +203,7 @@
                 {{-- PAGINATION --}}
                 @if ($tenders->hasPages())
                     <div class="d-flex justify-content-center mt-4 pt-3 border-top">
-                        {{ $tenders->links('pagination::bootstrap-5') }}
+                        {{ $tenders->links('components.pagination') }}
                     </div>
                 @endif
                 

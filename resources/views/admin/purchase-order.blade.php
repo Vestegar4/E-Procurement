@@ -87,7 +87,7 @@
         
         @if ($purchaseOrders instanceof \Illuminate\Pagination\LengthAwarePaginator && $purchaseOrders->hasPages())
             <div class="d-flex justify-content-center mt-4 pt-3 border-top">
-                {{ $purchaseOrders->links('pagination::bootstrap-5') }}
+                {{ $purchaseOrders->links('components.pagination') }}
             </div>
         @endif
     </div>

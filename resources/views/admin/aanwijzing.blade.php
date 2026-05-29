@@ -12,12 +12,6 @@
     </a>
 </div>
 
-@if (session('success'))
-    <div class="alert alert-success shadow-sm border-0 mb-4" style="background-color: var(--color-success-bg); color: var(--color-success-text); border-left: 4px solid var(--color-success-border) !important;">
-        <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-    </div>
-@endif
-
 <div class="card card-custom border-0 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card, 16px);">
     <div class="card-header border-bottom pt-4 pb-3" style="background-color: var(--color-surface);">
         <h6 class="fw-bold mb-0" style="color: var(--color-text-main);"><i class="fa-solid fa-clipboard-question me-2" style="color: var(--color-accent);"></i>Daftar Pertanyaan Masuk dari Peserta</h6>

@@ -31,7 +31,7 @@ Route::get('/pending-approval', fn() => view('auth.pending'))->name('pending');
 // ADMIN ROUTES 
 // ============================================================
 Route::middleware(['auth'])->prefix('admin')->group(function () {
-    
+
     Route::get('/dashboard', function () {
         $vendorCount = Schema::hasTable('vendors') ? Vendor::count() : 0;
         $tenderCount = Schema::hasTable('tenders') ? Tender::count() : 0;
@@ -39,34 +39,34 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.dashboard', compact('vendorCount', 'tenderCount', 'latestTenders'));
     })->name('admin.dashboard');
 
-   // ==========================================
+    // ==========================================
     // MODULE: VENDOR (FILTER + SORT BY ID)
     // ==========================================
     Route::get('/vendors', function (Request $request) {
         if (Schema::hasTable('vendors')) {
             // Gunakan with('user') agar memuat relasi email (Mencegah N+1 Query bug)
             $query = Vendor::with('user');
-            
+
             // 1. Logika Filter Status
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
             }
-            
+
             // 2. Logika Pencarian (Perbaikan Error Kolom Email)
             if ($request->filled('search')) {
                 $search = $request->search;
-                
+
                 // Kondisi pencarian harus dibungkus function() agar tidak merusak filter status
                 $query->where(function ($q) use ($search) {
                     // Cari berdasarkan nama perusahaan (Tabel vendors)
                     $q->where('company_name', 'like', '%' . $search . '%')
-                      // ATAU cari berdasarkan email (Tabel users) melalui relasi
-                      ->orWhereHas('user', function ($userQuery) use ($search) {
-                          $userQuery->where('email', 'like', '%' . $search . '%');
-                      });
+                        // ATAU cari berdasarkan email (Tabel users) melalui relasi
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('email', 'like', '%' . $search . '%');
+                        });
                 });
             }
-            
+
             // Pengurutan berdasarkan ID Ascending
             $vendors = $query->orderBy('id', 'asc')->paginate(10)->withQueryString();
         } else {
@@ -165,9 +165,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     })->name('admin.tenders.update');
 
     Route::get('/tenders/{id}/bids', function ($id) {
-        $tender = Tender::with('bids.vendor')->findOrFail($id);
-        $result = $tender->result ?? null;
-        return view('admin.tender-bids', compact('tender', 'result'));
+        $tender = \App\Models\Tender::with('bids')->findOrFail($id);
+        $bids = $tender->bids;
+        $result = $tender->result;
+        return view('admin.tender-bids', compact('tender', 'bids', 'result'));
     })->name('admin.tenders.bids');
 
     Route::post('/tenders/{id}/select-winner', function (Request $request, $id) {
@@ -186,7 +187,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         $request->validate(['answer' => 'required|string']);
         $aanwijzing = Aanwijzing::findOrFail($id);
         $aanwijzing->update(['answer' => $request->answer]);
-        return back()->with('success', 'Jawaban penjelasan resmi berhasil diterbitkan ke forum publik!');
+        return back()->with('interaction', 'Jawaban penjelasan resmi berhasil diterbitkan ke forum publik!');
     })->name('admin.aanwijzing.jawab');
 
     // ==========================================
@@ -195,7 +196,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/purchase-orders', function (Request $request) {
         if (Schema::hasTable('purchase_orders')) {
             $query = \App\Models\PurchaseOrder::with(['tender', 'vendor']);
-            
+
             // Logika Filter
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
@@ -213,14 +214,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     })->name('admin.purchase-order');
 
     Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF'])->name('admin.purchase-orders.pdf');
-    
+
     // ==========================================
     // MODULE: PRODUCTS (KATALOG BARANG)
     // ==========================================
     Route::get('/products', function (Request $request) {
         if (Schema::hasTable('products')) {
             $query = \App\Models\Product::query();
-            
+
             if ($request->filled('category')) {
                 $query->where('category', $request->category);
             }
@@ -256,15 +257,46 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return back()->with('success', 'Barang baru berhasil ditambahkan ke katalog!');
     })->name('admin.products.store');
 
-    // ==========================================
     // OTHERS MASTER DATA
-    // ==========================================
     Route::get('/users', function () {
         $users = Schema::hasTable('users') ? User::whereIn('role', ['admin', 'super_admin'])->get() : collect();
         return view('admin.users', compact('users'));
     })->name('admin.users');
 
-    Route::get('/reports', function () { return view('admin.reports'); })->name('admin.reports');
-    Route::get('/reports/download/{type}', function ($type) { return back()->with('success', 'File data berhasil diekstrak.'); })->name('admin.reports.download');
-    Route::get('/settings', function () { return view('admin.settings'); })->name('admin.settings');
+    // Rute untuk Halaman Laporan & Grafik (Ini yang sudah kamu buat, sudah benar!)
+    Route::get('/reports', function () {
+        // data untuk chart keuangan (total anggaran pembelian per bulan di tahun berjalan)
+        $financialData = \Illuminate\Support\Facades\DB::table('purchase_orders')
+            ->select(
+                \Illuminate\Support\Facades\DB::raw("DATE_FORMAT(created_at, '%b') as month_name"),
+                \Illuminate\Support\Facades\DB::raw("SUM(total_amount) as total_budget")
+            )
+            ->whereYear('created_at', date('Y')) // Hanya mengambil data tahun berjalan
+            ->groupBy(\Illuminate\Support\Facades\DB::raw("DATE_FORMAT(created_at, '%b')"), \Illuminate\Support\Facades\DB::raw("MONTH(created_at)"))
+            ->orderBy(\Illuminate\Support\Facades\DB::raw("MONTH(created_at)"), 'asc')
+            ->get();
+
+        // Ekstrak nama bulan dan total anggaran ke dalam array untuk Chart.js
+        $chartLabels = $financialData->pluck('month_name')->toArray();
+        $chartValues = $financialData->pluck('total_budget')->map(function ($value) {
+            return (float) $value;
+        })->toArray();
+
+        // Jika tidak ada data, set default agar chart tetap tampil dengan nilai 0
+        if (empty($chartLabels)) {
+            $chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
+            $chartValues = [0, 0, 0, 0, 0, 0];
+        }
+
+        // Kirim data asli database ke file view admin/reports.blade.php
+        return view('admin.reports', compact('chartLabels', 'chartValues'));
+    })->name('admin.reports');
+
+    // menambahkan rute ini agar tidak error
+    Route::get('/reports/download/{type}', function ($type) {
+        return back()->with('success', 'File data berhasil diekstrak.');
+    })->name('admin.reports.download');
+    Route::get('/settings', function () {
+        return view('admin.settings');
+    })->name('admin.settings');
 });
