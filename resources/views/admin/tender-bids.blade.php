@@ -9,7 +9,7 @@
             <p class="mb-0 fw-medium" style="color: var(--color-text-muted);">{{ $tender->title }} (ID #{{ $tender->id }})
             </p>
         </div>
-        <a href="{{ route('admin.procurement') }}" class="btn btn-outline-action">Kembali</a>
+        @include('components.back-button', ['url' => route('admin.procurement'), 'label' => 'Kembali ke Pengadaan'])
     </div>
 
     @if (session('success'))

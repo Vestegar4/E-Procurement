@@ -9,12 +9,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success shadow-sm mb-4">
-            <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-        </div>
-    @endif
-
     {{-- KOTAK FILTER & SEARCH --}}
     <div class="card card-custom border-0 shadow-sm mb-4" style="background: var(--color-white); border-radius: var(--radius-card);">
         <div class="card-body p-3">
@@ -136,7 +130,7 @@
             {{-- Paginasi --}}
             @if ($vendors instanceof \Illuminate\Pagination\LengthAwarePaginator && $vendors->hasPages())
                 <div class="d-flex justify-content-center mt-4 pt-3 border-top">
-                    {{ $vendors->links('pagination::bootstrap-5') }}
+                    {{ $vendors->links('components.pagination') }}
                 </div>
             @endif
         </div>

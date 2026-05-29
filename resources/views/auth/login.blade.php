@@ -62,7 +62,7 @@
                             {{-- PERBAIKAN: Menampilkan "Password anda salah" di bawah form password saat login gagal --}}
                             @if($errors->has('password') || ($errors->has('email') && (str_contains(strtolower($errors->first('email')), 'records') || str_contains(strtolower($errors->first('email')), 'match') || str_contains(strtolower($errors->first('email')), 'kredensial'))))
                                 <div class="text-danger small fw-bold mt-2" style="font-size: 0.85rem;">
-                                    <i class="fa-solid fa-circle-xmark me-1"></i> password anda salah, coba lagi
+                                    <i class="fa-solid fa-circle-xmark me-1"></i> email atau password anda salah
                                 </div>
                             @endif
 

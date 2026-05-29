@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     @stack('styles')
 </head>
+
 <body>
     <div class="wrapper">
-        
+
         {{-- OVERLAY GELAP UNTUK HP --}}
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -73,6 +75,7 @@
             {{-- TOP NAVBAR --}}
             <div class="top-navbar">
                 <div class="d-flex align-items-center gap-3">
+
                     {{-- Tombol Toggle Garis Tiga --}}
                     <button type="button" class="btn-toggle-sidebar" id="sidebarToggle" aria-label="Menu Toggle">
                         <i class="fa-solid fa-bars"></i>
@@ -81,6 +84,57 @@
                 </div>
 
                 <div class="top-right d-flex align-items-center gap-3">
+
+                    {{-- ================================================== --}}
+                    {{-- TOMBOL LONCENG NOTIFIKASI TARUH DI SINI --}}
+                    {{-- ================================================== --}}
+                    @php
+                    // Ambil 5 notif terakhir dari DB
+                    $notifications = \App\Models\Notification::latest()->take(5)->get();
+                    @endphp
+
+                    <div class="dropdown">
+                        <button class="btn border-0 position-relative rounded-circle d-flex justify-content-center align-items-center" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 44px; height: 44px; background: var(--color-surface); border: 1px solid var(--color-border) !important;">
+                            <i class="fa-solid fa-bell text-muted fs-5"></i>
+                            @if($notifications->count() > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="margin-top: 5px; margin-left: -5px;"></span>
+                            @endif
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="notifDropdown" style="width: 320px; border-radius: 12px; max-height: 400px; overflow-y: auto;">
+                            <li class="bg-light border-bottom px-3 py-3 position-sticky top-0" style="z-index: 10;">
+                                <h6 class="mb-0 fw-bold" style="color: var(--color-text-main);">Pemberitahuan Sistem</h6>
+                            </li>
+
+                            @forelse($notifications as $notif)
+                            <li>
+                                <a class="dropdown-item py-3 border-bottom text-wrap" href="javascript:void(0)" style="background: transparent;">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="rounded-circle d-flex justify-content-center align-items-center mt-1 shadow-sm" style="width: 35px; height: 35px; background-color: var(--color-primary); color: var(--color-white); flex-shrink: 0;">
+                                            <i class="fa-solid fa-info" style="font-size: 0.8rem;"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block text-dark small mb-1">{{ $notif->title ?? 'Pembaruan' }}</strong>
+                                            <span class="text-muted d-block" style="font-size: 0.85rem; white-space: normal;">{{ $notif->message ?? 'Ada aktivitas baru.' }}</span>
+                                            <small class="d-block fw-bold mt-1" style="color: var(--color-accent); font-size: 0.75rem;">{{ $notif->created_at->diffForHumans() }}</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            @empty
+                            <li class="text-center py-4">
+                                <i class="fa-regular fa-bell-slash fs-3 mb-2" style="color: var(--color-border);"></i>
+                                <p class="text-muted small mb-0">Belum ada aktivitas baru.</p>
+                            </li>
+                            @endforelse
+                        </ul>
+                    </div>
+                    {{-- ================================================== --}}
+                    {{-- AKHIR KODE LONCENG NOTIFIKASI --}}
+                    {{-- ================================================== --}}
+
+
+                    {{-- INI ADALAH DROPDOWN PROFIL USER ANDA (TIDAK BERUBAH) --}}
                     <div class="dropdown">
                         <div class="rounded-circle d-flex justify-content-center align-items-center fw-bold text-uppercase shadow-sm"
                             data-bs-toggle="dropdown" aria-expanded="false"
@@ -92,14 +146,19 @@
                                 <p class="mb-0 fw-bold text-dark">{{ Auth::user()->name ?? 'Administrator' }}</p>
                                 <small class="text-muted">{{ Auth::user()->email ?? 'admin@procurement.com' }}</small>
                             </li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
                             {{-- MENEMPATKAN MENU PENGATURAN DI SINI --}}
                             <li>
                                 <a href="{{ route('admin.settings') }}" class="dropdown-item fw-bold py-2 {{ request()->routeIs('admin.settings') ? 'text-warning' : 'text-dark' }}" style="border-radius: 8px;">
                                     <i class="fa-solid fa-gear me-2 text-secondary"></i> Pengaturan Sistem
                                 </a>
                             </li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
@@ -115,19 +174,9 @@
 
             {{-- PANEL TAMPILAN AREA --}}
             <div class="content-area">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #E6F4EA; color: #137333; border-radius: 8px; font-weight: 600;">
-                        <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
 
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background: #FCE8E6; color: #C5221F; border-radius: 8px; font-weight: 600;">
-                        <i class="fa-solid fa-circle-exclamation me-2"></i> {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
+                {{-- memanggil komponen alert --}}
+                @include('components.alert')
 
                 @yield('content')
             </div>
@@ -137,13 +186,13 @@
 
     {{-- LOGIKA TOGGLE JAVASCRIPT --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const toggleButton = document.getElementById("sidebarToggle");
             const sidebarElement = document.getElementById("sidebarNav");
             const overlayElement = document.getElementById("sidebarOverlay");
 
             if (toggleButton && sidebarElement && overlayElement) {
-                toggleButton.addEventListener("click", function (event) {
+                toggleButton.addEventListener("click", function(event) {
                     event.preventDefault();
                     if (window.innerWidth > 992) {
                         sidebarElement.classList.toggle("toggled");
@@ -155,7 +204,7 @@
             }
 
             if (overlayElement) {
-                overlayElement.addEventListener("click", function () {
+                overlayElement.addEventListener("click", function() {
                     sidebarElement.classList.remove("mobile-open");
                     overlayElement.classList.remove("show");
                 });
@@ -163,6 +212,9 @@
         });
     </script>
 
+    {{-- SCRIPT JAVASCRIPT --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @include('components.interaction-toast')
     @stack('scripts')
-</body>
+</body> 
 </html>
