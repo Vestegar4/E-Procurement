@@ -80,58 +80,63 @@ class VendorTenderController extends Controller
     }
 
     // vendor join tender
-    public function join($id)
+    // Jangan lupa pastikan (Request $request) ada di dalam parameter fungsi
+    public function join(Request $request, $id)
     {
-        $user = auth()->user();
-        $vendor = $user->vendor;
+        $vendor = auth()->user()->vendor;
 
         if (!$vendor) {
-            return back()->withErrors(['join' => 'Profil vendor tidak ditemukan.']);
+            return $request->expectsJson() 
+                ? response()->json(['message' => 'Profil vendor tidak ditemukan.'], 404)
+                : back()->withErrors(['join' => 'Profil vendor tidak ditemukan.']);
         }
-        $tender = Tender::with('timeline')
-            ->findOrFail($id);
 
-        // pastikan vendor sudah diapprove admin
+        // 1. Pengecekan status vendor (Wajib disetujui)
         if ($vendor->status !== 'approved') {
-            return back()->withErrors(['join' => 'Vendor belum disetujui admin.']);
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Akun vendor masih menunggu approval admin.'], 403)
+                : back()->withErrors(['join' => 'Akun vendor masih menunggu approval admin.']);
         }
 
-        // gunakan waktu server untuk validasi, agar tidak bisa dimanipulasi dari client
+        $tender = Tender::with('timeline')->findOrFail($id);
         $now = now();
 
         if (!$tender->timeline) {
-            return back()->withErrors(['join' => 'Timeline tender belum tersedia.']);
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Timeline tender belum tersedia.'], 400)
+                : back()->withErrors(['join' => 'Timeline tender belum tersedia.']);
         }
 
-        if (
-            $now < $tender->timeline->registration_start ||
-            $now > $tender->timeline->registration_end
-        ) {
-            return back()->withErrors(['join' => 'Periode registrasi sudah ditutup.']);
+        if ($now < $tender->timeline->registration_start || $now > $tender->timeline->registration_end) {
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Periode registrasi sudah ditutup.'], 400)
+                : back()->withErrors(['join' => 'Periode registrasi sudah ditutup.']);
         }
 
-        // cek apakah vendor sudah pernah join tender ini
+        // Cek apakah vendor sudah pernah join tender ini
         $alreadyJoined = TenderParticipant::where([
             'tender_id' => $tender->id,
             'vendor_id' => $vendor->id
         ])->exists();
 
         if ($alreadyJoined) {
-            return back()->withErrors(['join' => 'Anda sudah join tender ini.']);
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Anda sudah join tender ini.'], 400)
+                : back()->withErrors(['join' => 'Anda sudah join tender ini.']);
         }
 
-        // buat entry di tabel peserta tender
+        // Buat entry di tabel peserta tender
         TenderParticipant::create([
             'tender_id' => $tender->id,
-
             'vendor_id' => $vendor->id,
-
             'joined_at' => now(),
         ]);
 
-        return back()->with('success', 'Berhasil join tender.');
+        // Berikan respons SUKSES sesuai platform
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Berhasil join tender.'], 200)
+            : back()->with('success', 'Berhasil join tender.');
     }
-
     // joined Tenders
     public function myTenders()
     {
