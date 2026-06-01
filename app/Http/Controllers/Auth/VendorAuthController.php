@@ -75,25 +75,36 @@ class VendorAuthController extends Controller
             ], 401);
         }
 
-        // Check if vendor is approved
-        $vendor = $user->vendor;
-        if ($vendor->status !== 'approved') {
-            return response()->json([
-                'message' => 'Vendor not approved yet'
-            ], 403);
-        }
+        // // Check if vendor is approved
+        // $vendor = $user->vendor;
+        // if ($vendor->status !== 'approved') {
+        //     return response()->json([
+        //         'message' => 'Vendor not approved yet'
+        //     ], 403);
+        // }
 
         $token = $user->createToken('vendor-token')->plainTextToken;
 
+        
         $user->update([
             'last_login_at' => now()
         ]);
 
         return response()->json([
-            'message' => 'Login success',
-            'token' => $token,
-            'data' => $user
-        ]);
+        'message' => 'Login successful',
+        'token' => $token,
+        'vendor' => [
+            'id' => $user->vendor->id,
+            'name' => $user->name,
+            'company_name' => $user->vendor->company_name,
+            'email' => $user->email,
+            'phone' => $user->vendor->phone ?? '-',
+            'address' => $user->vendor->address ?? '-',
+            'status' => $user->vendor->status 
+        ]
+        ], 200);
+
+        
     }
 
     // melogout

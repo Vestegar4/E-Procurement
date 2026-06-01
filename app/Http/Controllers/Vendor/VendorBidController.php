@@ -253,13 +253,19 @@ class VendorBidController extends Controller
                 'message' => 'Tender is not open for bidding'
             ], 400);
         }
+    
+        // if ($vendor->status !== 'approved') {
+        //     return response()->json([
+        //         'message' => 'Your vendor account is not approved'
+        //     ], 403);
+        // }
 
         if ($vendor->status !== 'approved') {
-            return response()->json([
-                'message' => 'Your vendor account is not approved'
-            ], 403);
+        return response()->json([
+            'message' => 'Akun vendor belum approved untuk melakukan bidding.'
+        ], 403);
         }
-
+        
         $participant = TenderParticipant::where([
             'tender_id' => $tender->id,
             'vendor_id' => $vendor->id
