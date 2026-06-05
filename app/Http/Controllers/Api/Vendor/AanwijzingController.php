@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Aanwijzing;
 use App\Models\Tender;
+use App\Models\User;
+use App\Notifications\AanwijzingQuestionNotification;
 
 class AanwijzingController extends Controller
 {
@@ -42,6 +44,10 @@ class AanwijzingController extends Controller
             'vendor_id' => auth()->id(), 
             'question' => $request->question
         ]);
+
+        // Kirim notifikasi ke admin
+        $admin = User::where('role', 'admin')->first();
+        $admin->notify(new AanwijzingQuestionNotification($aanwijzing->vendor->name, $tender->title));
 
         return response()->json([
             'status' => true,

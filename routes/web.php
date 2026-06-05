@@ -9,6 +9,7 @@ use App\Models\Tender;
 use App\Models\User;
 use App\Models\Aanwijzing;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 
 // ============================================================
 // AUTH & HOME ROUTES
@@ -19,7 +20,7 @@ Route::get('/', function () {
     if (auth()->check()) {
         return auth()->user()->role === 'admin'
             ? redirect()->route('admin.dashboard')
-            : redirect()->route('vendor.dashboard');
+            : redirect()->route('home');
     }
     return view('home.home');
 })->name('home');
@@ -38,6 +39,21 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         $latestTenders = Schema::hasTable('tenders') ? Tender::latest()->take(5)->get() : collect();
         return view('admin.dashboard', compact('vendorCount', 'tenderCount', 'latestTenders'));
     })->name('admin.dashboard');
+
+    Route::get(
+        '/notifications',
+        [AdminNotificationController::class, 'index']
+    )->name('admin.notifications');
+
+    Route::post(
+        '/notifications/{id}/read',
+        [AdminNotificationController::class, 'markAsRead']
+    )->name('admin.notifications.read');
+
+    Route::post(
+        '/notifications/read-all',
+        [AdminNotificationController::class, 'markAllAsRead']
+    )->name('admin.notifications.readAll');
 
     // ==========================================
     // MODULE: VENDOR (FILTER + SORT BY ID)

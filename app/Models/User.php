@@ -31,12 +31,12 @@ class User extends Authenticatable
         'last_login_at' => 'datetime',
     ];
 
-    // Notification
-    public function notifications() // override
-    {
-        return $this->morphMany(Notification::class, 'notifiable')
-            ->orderBy('created_at', 'desc');
-    }
+    // // Notification
+    // public function notifications() // override
+    // {
+    //     return $this->morphMany(Notification::class, 'notifiable')
+    //         ->orderBy('created_at', 'desc');
+    // }
 
     /*
     |--------------------------------------------------------------------------
