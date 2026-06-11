@@ -13,6 +13,36 @@
         </button>
     </div>
 
+    {{-- KOTAK FILTER & SEARCH PENGADAAN --}}
+    <div class="card card-custom border-0 shadow-sm mb-4" style="background: var(--color-white); border-radius: var(--radius-card, 16px);">
+        <div class="card-body p-3">
+            <form action="{{ route('admin.procurement') }}" method="GET">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" name="search" class="form-control border-start-0 auth-input px-0" placeholder="Cari ID atau Nama Paket Tender lalu enter..." value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        {{-- Fitur Auto-Submit pada Dropdown --}}
+                        <select name="status" class="form-select auth-input" onchange="this.form.submit()">
+                            <option value="">Semua Status Tender</option>
+                            <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft (Belum Rilis)</option>
+                            <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Open (Pendaftaran Dibuka)</option>
+                            <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>Closed (Selesai/Tutup)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn w-100 fw-bold shadow-sm" style="background-color: var(--color-primary); color: var(--color-white); border-radius: 8px; font-size: 1.05rem;">
+                            <i class="fa-solid fa-filter me-1"></i> Terapkan
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {{-- KONTEN TABEL DATA TENDER --}}
     @if (isset($tenders) && $tenders->count() > 0)
         <div class="card card-custom border-0 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card, 16px);">

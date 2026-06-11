@@ -81,7 +81,18 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-outline-action fw-medium px-3" data-bs-toggle="modal" data-bs-target="#reviewModal-{{ $v->id }}">
+                                    <button type="button" 
+                                            class="btn fw-bold px-4 py-2 shadow-sm" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#reviewModal-{{ $v->id }}"
+                                            style="background-color: transparent; 
+                                                border: 2px solid var(--color-accent); 
+                                                color: var(--color-accent); 
+                                                border-radius: 8px; 
+                                                font-size: 0.95rem;
+                                                transition: all 0.2s ease;"
+                                            onmouseover="this.style.backgroundColor='var(--color-accent)'; this.style.color='#ffffff';" 
+                                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--color-accent)';">
                                         Tinjau
                                     </button>
                                 </td>
