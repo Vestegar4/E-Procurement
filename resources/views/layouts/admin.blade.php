@@ -50,12 +50,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.products') }}"
-                        class="nav-link {{ request()->routeIs('admin.products') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-box w-20px text-center me-2"></i> Katalog Barang
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{{ route('admin.purchase-order') }}"
                         class="nav-link {{ request()->routeIs('admin.purchase-order') ? 'active-menu' : '' }}">
                         <i class="fa-solid fa-receipt w-20px text-center me-2"></i> Purchase Order
@@ -64,7 +58,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.reports') }}"
                         class="nav-link {{ request()->routeIs('admin.reports') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-file-invoice w-20px text-center me-2"></i> Pusat Laporan
+                        <i class="fa-solid fa-file-invoice w-20px text-center me-2"></i> Laporan & Analitik
                     </a>
                 </li>
             </ul>
@@ -85,9 +79,7 @@
 
                 <div class="top-right d-flex align-items-center gap-3">
 
-                    {{-- ================================================== --}}
                     {{-- TOMBOL LONCENG NOTIFIKASI TARUH DI SINI --}}
-                    {{-- ================================================== --}}
                     @php
                     // Ambil 5 notif terakhir dari DB
                     $notifications = \App\Models\Notification::latest()->take(5)->get();
@@ -131,7 +123,7 @@
                     </div>
                     {{-- ================================================== --}}
                     {{-- AKHIR KODE LONCENG NOTIFIKASI --}}
-                    {{-- ================================================== --}}
+                    {{-- ================================================== }}
 
 
                     {{-- INI ADALAH DROPDOWN PROFIL USER ANDA (TIDAK BERUBAH) --}}

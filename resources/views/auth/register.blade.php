@@ -9,8 +9,16 @@
 
                 {{-- SISI KIRI (Branding & Syarat) --}}
                 <div class="col-md-5 d-none d-md-flex flex-column justify-content-center p-5 text-center" style="background: var(--color-primary); color: var(--color-white);">
-                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px; background: rgba(217, 119, 6, 0.15); color: var(--color-accent-bright);">
-                        <i class="fa-solid fa-handshake fa-2xl"></i>
+                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" 
+                        style="width: 120px; 
+                                height: 120px; 
+                                aspect-ratio: 1/1; 
+                                flex-shrink: 0; 
+                                background-color: #fff1e1;
+                                border: 1px solid #5c361ba8; 
+                                box-shadow: 0 0 30px #f59f0baa; 
+                                transition: transform 0.3s ease;">
+                        <img src="{{ asset('assets/img/logo.png') }}" alt="Proculus Logo" class="img-fluid" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
                     <h3 class="fw-bold mb-3" style="color: var(--color-accent-bright); letter-spacing: -0.02em;">Mitra Pengadaan</h3>
                     <p class="mb-4" style="color: var(--color-border); font-size: 0.95rem; line-height: 1.6;">
