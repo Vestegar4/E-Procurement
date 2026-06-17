@@ -16,7 +16,7 @@
             <div class="card card-custom p-4 border-0 position-relative overflow-hidden h-100 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card, 16px);">
                 <div class="d-flex justify-content-between align-items-center h-100">
                     <div class="pe-3">
-                        <p class="text-uppercase fw-bold small mb-2" style="color: var(--color-text-muted); letter-spacing: 0.05em; font-size: 0.85rem;">Total Vendor Rekanan</p>
+                        <p class="text-uppercase fw-bold small mb-2" style="color: var(--color-text-muted); letter-spacing: 0.05em; font-size: 0.85rem;">Total Vendor</p>
                         <h2 class="m-0" style="color: var(--color-text-main); font-weight: 800; font-size: clamp(2rem, 5vw, 2.5rem); letter-spacing: -0.02em;">
                             {{ $vendorCount ?? 0 }}
                         </h2>

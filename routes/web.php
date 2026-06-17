@@ -126,6 +126,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
             'title' => $request->title,
             'description' => $request->description,
             'status' => $request->status,
+            'created_by' => auth()->id(),
         ]);
 
         $tender->timeline()->updateOrCreate(
@@ -219,13 +220,39 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF'])->name('admin.purchase-orders.pdf');
 
-    // Laporan & Grafik Keuangan
-    // OTHERS MASTER DATA
-    Route::get('/users', function () {
-        $users = Schema::hasTable('users') ? User::whereIn('role', ['admin'])->get() : collect();
+    // MODULE: OTHERS MASTER DATA (MANAJEMEN USER - DIURUTKAN BERDASARKAN ROLE)
+    Route::get('/users', function (Request $request) {
+        if (Schema::hasTable('users')) {
+            $query = User::query();
+
+            // 1. Logika Filter Berdasarkan Role
+            if ($request->filled('role')) {
+                $query->where('role', $request->role);
+            }
+
+            // 2. Logika Pencarian berdasarkan nama atau email
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+
+            // KUNCI PERBAIKAN: Urutkan berdasarkan 'role' dari A ke Z, 
+            // lalu urutkan berdasarkan 'name' agar nama di dalam role yang sama juga berurutan.
+            $users = $query->orderBy('role', 'asc')
+                           ->orderBy('name', 'asc')
+                           ->paginate(10)
+                           ->withQueryString();
+        } else {
+            $users = collect();
+        }
+        
         return view('admin.users', compact('users'));
     })->name('admin.users');
-
+                        
+    // Laporan & Grafik Keuangan
     // Rute untuk Halaman Laporan & Grafik (Ini yang sudah kamu buat, sudah benar!)
     Route::get('/reports', function () {
         // data untuk chart keuangan (total anggaran pembelian per bulan di tahun berjalan)

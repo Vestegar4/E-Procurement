@@ -10,6 +10,28 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     @stack('styles')
+    <style>
+        /* FIX SIDEBAR POP-UP & SCROLL OVERFLOW */
+        .sidebar {
+            position: sticky !important;
+            top: 0 !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3); 
+        }
+    </style>
 </head>
 
 <body>
@@ -144,7 +166,7 @@
 
                             {{-- MENEMPATKAN MENU PENGATURAN DI SINI --}}
                             <li>
-                                <a href="{{ route('admin.settings') }}" class="dropdown-item fw-bold py-2 {{ request()->routeIs('admin.settings') ? 'text-warning' : 'text-dark' }}" style="border-radius: 8px;">
+                                <a href="{{ route('admin.settings') }}" class="dropdown-item fw-bold text-dark py-2 {{ request()->routeIs('admin.settings') ? 'text-warning' : 'text-dark' }}" style="border-radius: 8px;">
                                     <i class="fa-solid fa-gear me-2 text-secondary"></i> Pengaturan Sistem
                                 </a>
                             </li>
@@ -166,9 +188,6 @@
 
             {{-- PANEL TAMPILAN AREA --}}
             <div class="content-area">
-
-                {{-- memanggil komponen alert --}}
-                @include('components.alert')
 
                 @yield('content')
             </div>

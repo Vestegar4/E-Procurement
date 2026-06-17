@@ -12,12 +12,6 @@
         @include('components.back-button', ['url' => route('admin.procurement'), 'label' => 'Kembali ke Pengadaan'])
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success shadow-sm" role="alert">
-            {{ session('success') }}
-        </div>
-    @endif
-
     @if ($errors->any())
         <div class="alert alert-danger shadow-sm" role="alert">
             <ul class="mb-0">

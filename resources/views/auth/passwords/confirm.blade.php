@@ -1,49 +1,77 @@
 @extends('layouts.app')
+@section('title', 'Konfirmasi Keamanan')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Confirm Password') }}</div>
+    <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh; padding-top: 2rem; padding-bottom: 2rem;">
+        
+        <div class="card border-0 shadow-lg overflow-hidden w-100" style="max-width: 1000px; border-radius: var(--radius-card, 16px);">
+            <div class="row g-0">
 
-                <div class="card-body">
-                    {{ __('Please confirm your password before continuing.') }}
+                {{-- SISI KIRI (Branding & Logo) --}}
+                <div class="col-md-5 d-none d-md-flex flex-column justify-content-center p-5 text-center" style="background: var(--color-primary); color: var(--color-white);">
+                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" 
+                        style="width: 120px; 
+                                height: 120px; 
+                                aspect-ratio: 1/1; 
+                                flex-shrink: 0; 
+                                background-color: #fff1e1;
+                                border: 1px solid #5c361ba8; 
+                                box-shadow: 0 0 30px #f59f0baa;">
+                        <img src="{{ asset('assets/img/logo.png') }}" alt="Proculus Logo" class="img-fluid" style="max-width: 70%; max-height: 70%; object-fit: contain;">
+                    </div>
+                    <h4 class="fw-bold text-uppercase tracking-wider mb-2" style="color: var(--color-accent-bright);">Proculus</h4>
+                    <p class="small mb-0 opacity-75">Enterprise Procurement Solution</p>
+                </div>
+
+                {{-- SISI KANAN (Form Konfirmasi Password) --}}
+                <div class="col-md-7 p-5 bg-white d-flex flex-column justify-content-center">
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" style="background-color: var(--color-danger-bg); color: var(--color-danger-border);">
+                            <i class="fa-solid fa-shield-halved fs-3"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark mb-2">Konfirmasi Keamanan</h3>
+                        <p class="text-muted fw-medium mb-0">Halaman yang akan Anda tuju bersifat sensitif. Harap masukkan ulang kata sandi Anda untuk melanjutkan.</p>
+                    </div>
 
                     <form method="POST" action="{{ route('password.confirm') }}">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-uppercase small text-muted mb-2">Kata Sandi Anda</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-lock"></i></span>
+                                <input id="password" type="password" name="password" required autocomplete="current-password" autofocus
+                                       class="form-control border-start-0 auth-input px-0 @error('password') is-invalid @enderror" 
+                                       placeholder="Ketik kata sandi Anda di sini...">
                                 @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                    <span class="invalid-feedback mt-2" role="alert"><strong>{{ $message }}</strong></span>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Confirm Password') }}
-                                </button>
+                        {{-- Tombol Submit --}}
+                        <button type="submit" class="btn w-100 py-3 fs-5 mb-4 shadow-sm" style="
+                            background-color: var(--color-accent); 
+                            color: var(--color-white); 
+                            border: 2px solid var(--color-accent);
+                            border-radius: 8px; 
+                            font-weight: 700;
+                            transition: all 0.25s ease;
+                        " onmouseover="this.style.backgroundColor='#b45309'; this.style.borderColor='#b45309';" onmouseout="this.style.backgroundColor='var(--color-accent)'; this.style.borderColor='var(--color-accent)';">
+                            Konfirmasi Identitas <i class="fa-solid fa-check-circle ms-2"></i>
+                        </button>
 
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
+                        @if (Route::has('password.request'))
+                            <div class="text-center">
+                                <a href="{{ route('password.request') }}" class="text-decoration-none fw-bold" style="color: var(--color-primary);">
+                                    Lupa Password Anda?
+                                </a>
                             </div>
-                        </div>
+                        @endif
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
-</div>
 @endsection
