@@ -28,9 +28,9 @@
                     <select name="status" class="form-select auth-input" onchange="this.form.submit()" style="cursor: pointer;">
                         <option value="">Semua Status PO</option>
                         <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft (Konsep Tersimpan)</option>
-                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved (Menunggu Pengiriman)</option>
-                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected (Ditolak Manajer)</option>
-                        <option value="complete" {{ request('status') == 'complete' ? 'selected' : '' }}>Complete (Selesai & Lunas)</option>
+                        <option value="issued" {{ request('status') == 'issued' ? 'selected' : '' }}>Issued (Menunggu Pengiriman)</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled (Dibatalkan)</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed (Selesai & Lunas)</option>
                     </select>
                 </div>
                 
@@ -70,23 +70,22 @@
                             <td style="color: var(--color-text-muted); font-weight: 500;">{{ $po->vendor->company_name ?? ($po->vendor->name ?? 'N/A') }}</td>
                             <td class="fw-bold" style="color: var(--color-accent);">Rp {{ number_format($po->total_amount, 0, ',', '.') }}</td>
                             
-                            {{-- LOGIKA BADGE STATUS BERDASARKAN CHAT TEMEN LU --}}
                             <td>
                                 @if(strtolower($po->status) == 'draft')
                                     <span class="badge rounded-pill px-3 py-2 fw-bold text-dark shadow-sm" style="background-color: #d1d5db; border: 1.5px solid #a6a9ae; font-size: 0.75rem;">
                                         <i class="fa-solid fa-file-pen me-1"></i> DRAFT
                                     </span>
-                                @elseif(strtolower($po->status) == 'approved')
+                                @elseif(strtolower($po->status) == 'issued')
                                     <span class="badge rounded-pill px-3 py-2 fw-bold text-white shadow-sm" style="background-color: #41ff00; font-size: 0.75rem;">
-                                        <i class="fa-solid fa-paper-plane me-1"></i> APPROVED
+                                        <i class="fa-solid fa-paper-plane me-1"></i> ISSUED
                                     </span>
-                                @elseif(strtolower($po->status) == 'rejected')
+                                @elseif(strtolower($po->status) == 'cancelled')
                                     <span class="badge rounded-pill px-3 py-2 fw-bold shadow-sm" style="background-color: var(--color-danger-bg); color: var(--color-danger-text); border: 1px solid var(--color-danger-border); font-size: 0.75rem;">
-                                        <i class="fa-solid fa-circle-xmark me-1"></i> REJECTED
+                                        <i class="fa-solid fa-circle-xmark me-1"></i> CANCELLED
                                     </span>
-                                @elseif(strtolower($po->status) == 'complete')
+                                @elseif(strtolower($po->status) == 'completed')
                                     <span class="badge rounded-pill px-3 py-2 fw-bold shadow-sm" style="background-color: var(--color-success-bg); color: var(--color-success-text); border: 1px solid var(--color-success-border); font-size: 0.75rem;">
-                                        <i class="fa-solid fa-check-double me-1"></i> COMPLETE
+                                        <i class="fa-solid fa-check-double me-1"></i> COMPLETED
                                     </span>
                                 @else
                                     <span class="badge rounded-pill px-3 py-2 fw-bold bg-secondary text-white shadow-sm" style="font-size: 0.75rem;">
@@ -96,9 +95,21 @@
                             </td>
 
                             <td class="text-center">
-                                <a href="/admin/purchase-orders/{{ $po->id }}/export-pdf" target="_blank" class="btn btn-outline-action btn-sm">
-                                    <i class="fa-solid fa-file-pdf text-danger me-1"></i> PDF
+                                <a href="/admin/purchase-orders/{{ $po->id }}/export-pdf" target="_blank" class="btn btn-outline-danger btn-sm mb-2 w-100 fw-bold" style="border-radius: 6px;">
+                                    <i class="fa-solid fa-file-pdf me-1"></i> Cetak PDF
                                 </a>
+
+                                {{-- Form Ubah Status --}}
+                                <form action="{{ route('admin.purchase-orders.update-status', $po->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <select name="status" class="form-select form-select-sm text-center shadow-sm" onchange="this.form.submit()" style="border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">
+                                        <option value="draft" {{ strtolower($po->status) == 'draft' ? 'selected' : '' }}>Ubah ke Draft</option>
+                                        <option value="issued" {{ strtolower($po->status) == 'issued' ? 'selected' : '' }}>Issued PO</option>
+                                        <option value="cancelled" {{ strtolower($po->status) == 'cancelled' ? 'selected' : '' }}>Cancel PO</option>
+                                        <option value="completed" {{ strtolower($po->status) == 'completed' ? 'selected' : '' }}>Complete PO</option>
+                                    </select>
+                                </form>
                             </td>
                         </tr>
                         @endforeach

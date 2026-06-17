@@ -41,7 +41,7 @@ class PurchaseOrderController extends Controller
     public function UpdateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:draft,approved,rejected,completed',
+            'status' => 'required|in:draft,issued,completed,cancelled',
         ]);
 
         $po = PurchaseOrder::findOrFail($id);
