@@ -3,36 +3,37 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VendorNotificationController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $notifications = $request->user()
+        $notifications = Auth::user()
             ->notifications()
+            ->latest()
             ->paginate(20);
 
-        return response()->json($notifications);
+        return view('vendor.notifications.index', compact('notifications'));
     }
 
-    public function markAsRead(Request $request, string $id)
+    public function markAsRead($id)
     {
-        $notification = $request->user()->notifications()->findOrFail($id);
+        $notification = Auth::user()->notifications()->findOrFail($id);
         $notification->markAsRead();
 
-        return response()->json(['message' => 'Marked as read.']);
+        return back()->with('success', 'Marked as read.');
     }
 
-    public function markAllAsRead(Request $request)
+    public function markAllAsRead()
     {
-        $request->user()->unreadNotifications->markAsRead();
-        return response()->json(['message' => 'All notifications marked as read.']);
+        Auth::user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'All notifications marked as read.');
     }
 
-    public function destroy(Request $request, string $id)
+    public function destroy($id)
     {
-        $request->user()->notifications()->findOrFail($id)->delete();
-        return response()->json(['message' => 'Notification deleted.']);
+        Auth::user()->notifications()->findOrFail($id)->delete();
+        return back()->with('success', 'Notification deleted.');
     }
 }

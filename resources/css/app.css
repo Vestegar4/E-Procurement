@@ -285,7 +285,7 @@ body {
     font-weight: 600;
 }
 
-/* ==========================================================================
+/* 5. DASHBOARD & SIDEBAR UTAMA (DENGAN CORE SLIDING ACTIVE THEME)/* ==========================================================================
    5. DASHBOARD & SIDEBAR UTAMA (DENGAN CORE SLIDING ACTIVE THEME)
    ========================================================================== */
 .sidebar { 
@@ -294,16 +294,40 @@ body {
     background: var(--color-primary); 
     padding: 24px; 
     color: var(--color-white); 
-    min-height: 100vh; 
+    
+    /* --- INI KUNCI UTAMA BIAR SIDEBAR NGGAK KEPOTONG --- */
+    position: sticky;
+    top: 0;
+    height: 100vh; 
+    overflow-y: auto; 
+    /* --------------------------------------------------- */
+
     box-shadow: 3px 0 15px rgba(15, 23, 42, 0.15); 
     z-index: 1050; 
     transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1), left 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
 }
 
+/* --- KUSTOMISASI SCROLLBAR SIDEBAR (Biar estetik transparan) --- */
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: transparent; 
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3); 
+}
+/* --------------------------------------------------------------- */
+
 /* Toggle Hide Desktop */
 .sidebar.toggled { 
     margin-left: -285px; /* Sesuaikan dengan lebar baru */
 }
+
 .sidebar-header {
     margin-bottom: 40px;
     text-align: center;

@@ -46,8 +46,19 @@
     {{-- NAVBAR TOP NAVIGATION HEADER --}}
     <nav class="navbar navbar-expand-lg glass-navbar shadow-sm py-3 sticky-top" style="background-color: var(--color-white); border-bottom: 1px solid var(--color-border);">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-3" style="color: var(--color-primary); letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px;" href="/">
-                <i class="fa-solid fa-cube" style="color: var(--color-accent);"></i> Proculus
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="{{ url('/') }}">
+                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" 
+                    style="width: 40px; 
+                            height: 40px; 
+                            aspect-ratio: 1/1; 
+                            flex-shrink: 0; 
+                            background-color: #fff1e1; 
+                            border: 1px solid #5c361b76; 
+                            box-shadow: 0 0 15px #f59f0bab; 
+                            transition: transform 0.3s ease;">
+                    <img src="{{ asset('assets/img/logo.png') }}" alt="Proculus Logo" class="img-fluid" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+                Proculus
             </a>
 
             <div class="ms-auto d-flex align-items-center gap-3">

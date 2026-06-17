@@ -37,4 +37,16 @@ class PurchaseOrderController extends Controller
         // Unduh otomatis
         return $pdf->download('PO_Tender_' . $po->tender_id . '.pdf');
     }
+
+    public function UpdateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:draft,approved,rejected,completed',
+        ]);
+
+        $po = PurchaseOrder::findOrFail($id);
+        $po->update(['status' => $request->status]);
+
+        return back()->with('success', 'Status Purchase Order berhasil diperbarui menjadi: ' . strtoupper($request->status));
+    }
 }

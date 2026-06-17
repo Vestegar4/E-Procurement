@@ -10,6 +10,28 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     @stack('styles')
+    <style>
+        /* FIX SIDEBAR POP-UP & SCROLL OVERFLOW */
+        .sidebar {
+            position: sticky !important;
+            top: 0 !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3); 
+        }
+    </style>
 </head>
 
 <body>
@@ -50,12 +72,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.products') }}"
-                        class="nav-link {{ request()->routeIs('admin.products') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-box w-20px text-center me-2"></i> Katalog Barang
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{{ route('admin.purchase-order') }}"
                         class="nav-link {{ request()->routeIs('admin.purchase-order') ? 'active-menu' : '' }}">
                         <i class="fa-solid fa-receipt w-20px text-center me-2"></i> Purchase Order
@@ -64,7 +80,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.reports') }}"
                         class="nav-link {{ request()->routeIs('admin.reports') ? 'active-menu' : '' }}">
-                        <i class="fa-solid fa-file-invoice w-20px text-center me-2"></i> Pusat Laporan
+                        <i class="fa-solid fa-file-invoice w-20px text-center me-2"></i> Laporan & Analitik
                     </a>
                 </li>
             </ul>
@@ -85,9 +101,7 @@
 
                 <div class="top-right d-flex align-items-center gap-3">
 
-                    {{-- ================================================== --}}
                     {{-- TOMBOL LONCENG NOTIFIKASI TARUH DI SINI --}}
-                    {{-- ================================================== --}}
                     @php
                     // Ambil 5 notif terakhir dari DB
                     $notifications = \App\Models\Notification::latest()->take(5)->get();
@@ -131,7 +145,7 @@
                     </div>
                     {{-- ================================================== --}}
                     {{-- AKHIR KODE LONCENG NOTIFIKASI --}}
-                    {{-- ================================================== --}}
+                    {{-- ================================================== }}
 
 
                     {{-- INI ADALAH DROPDOWN PROFIL USER ANDA (TIDAK BERUBAH) --}}
@@ -152,7 +166,7 @@
 
                             {{-- MENEMPATKAN MENU PENGATURAN DI SINI --}}
                             <li>
-                                <a href="{{ route('admin.settings') }}" class="dropdown-item fw-bold py-2 {{ request()->routeIs('admin.settings') ? 'text-warning' : 'text-dark' }}" style="border-radius: 8px;">
+                                <a href="{{ route('admin.settings') }}" class="dropdown-item fw-bold text-dark py-2 {{ request()->routeIs('admin.settings') ? 'text-warning' : 'text-dark' }}" style="border-radius: 8px;">
                                     <i class="fa-solid fa-gear me-2 text-secondary"></i> Pengaturan Sistem
                                 </a>
                             </li>
@@ -174,9 +188,6 @@
 
             {{-- PANEL TAMPILAN AREA --}}
             <div class="content-area">
-
-                {{-- memanggil komponen alert --}}
-                @include('components.alert')
 
                 @yield('content')
             </div>

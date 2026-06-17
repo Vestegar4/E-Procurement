@@ -1,5 +1,6 @@
 <?php
 
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AdminAuthController;
@@ -23,7 +24,7 @@ use App\Http\Controllers\Api\Vendor\AanwijzingController;
 
 // Admin Authentication
 Route::prefix('auth/admin')->group(function () {
-    Route::post('login', [AdminAuthController::class, 'login']);
+    Route::post('login', [AdminAuthController::class, 'login'])->middleware('throttle:3,15');
     Route::post('logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [AdminAuthController::class, 'me'])->middleware('auth:sanctum');
 });
@@ -31,7 +32,7 @@ Route::prefix('auth/admin')->group(function () {
 // Vendor Authentication
 Route::prefix('auth/vendor')->group(function () {
     Route::post('register', [VendorAuthController::class, 'register']);
-    Route::post('login', [VendorAuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('login', [VendorAuthController::class, 'login'])->middleware('throttle:5,15');
     Route::post('logout', [VendorAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [VendorAuthController::class, 'me'])->middleware('auth:sanctum');
 });
@@ -72,6 +73,7 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class
     Route::prefix('purchase-orders')->group(function () {
         Route::get('/', [PurchaseOrderController::class, 'index']);
         Route::get('{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF']);
+        Route::put('{id}/status', [PurchaseOrderController::class, 'UpdateStatus']) ->name('admin.purchase-orders.update-status');
     });
 });
 

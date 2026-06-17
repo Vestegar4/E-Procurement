@@ -9,17 +9,16 @@ use App\Models\Tender;
 use App\Models\User;
 use App\Models\Aanwijzing;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 
-// ============================================================
 // AUTH & HOME ROUTES
-// ============================================================
 Auth::routes(['register' => true]);
 
 Route::get('/', function () {
     if (auth()->check()) {
         return auth()->user()->role === 'admin'
             ? redirect()->route('admin.dashboard')
-            : redirect()->route('vendor.dashboard');
+            : redirect()->route('home');
     }
     return view('home.home');
 })->name('home');
@@ -27,9 +26,7 @@ Route::get('/', function () {
 Route::get('/pending-approval', fn() => view('auth.pending'))->name('pending');
 
 
-// ============================================================
 // ADMIN ROUTES 
-// ============================================================
 Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::get('/dashboard', function () {
@@ -39,9 +36,22 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.dashboard', compact('vendorCount', 'tenderCount', 'latestTenders'));
     })->name('admin.dashboard');
 
-    // ==========================================
+    Route::get(
+        '/notifications',
+        [AdminNotificationController::class, 'index']
+    )->name('admin.notifications');
+
+    Route::post(
+        '/notifications/{id}/read',
+        [AdminNotificationController::class, 'markAsRead']
+    )->name('admin.notifications.read');
+
+    Route::post(
+        '/notifications/read-all',
+        [AdminNotificationController::class, 'markAllAsRead']
+    )->name('admin.notifications.readAll');
+
     // MODULE: VENDOR (FILTER + SORT BY ID)
-    // ==========================================
     Route::get('/vendors', function (Request $request) {
         if (Schema::hasTable('vendors')) {
             // Gunakan with('user') agar memuat relasi email (Mencegah N+1 Query bug)
@@ -81,9 +91,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return back()->with('success', 'Status verifikasi akun vendor berhasil diperbarui!');
     })->name('admin.vendors.update-status');
 
-    // ==========================================
     // MODULE: PENGADAAN / TENDER (FILTER STATUS ONLY)
-    // ==========================================
     Route::get('/procurement', function (Request $request) {
         if (Schema::hasTable('tenders')) {
             $query = Tender::query();
@@ -118,6 +126,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
             'title' => $request->title,
             'description' => $request->description,
             'status' => $request->status,
+            'created_by' => auth()->id(),
         ]);
 
         $tender->timeline()->updateOrCreate(
@@ -175,9 +184,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return back()->with('success', 'Pemenang lelang paket pengadaan berhasil ditetapkan.');
     })->name('admin.tenders.select-winner');
 
-    // ==========================================
-    // MODULE: AANWIJZING
-    // ==========================================
+    // MODULE: AANWIJZING 
     Route::get('/tenders/{id}/aanwijzing', function ($id) {
         $tender = Tender::with('aanwijzings.vendor')->findOrFail($id);
         return view('admin.aanwijzing', compact('tender'));
@@ -190,9 +197,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return back()->with('interaction', 'Jawaban penjelasan resmi berhasil diterbitkan ke forum publik!');
     })->name('admin.aanwijzing.jawab');
 
-    // ==========================================
     // MODULE: PURCHASE ORDERS (FILTER + SORT BY ID)
-    // ==========================================
     Route::get('/purchase-orders', function (Request $request) {
         if (Schema::hasTable('purchase_orders')) {
             $query = \App\Models\PurchaseOrder::with(['tender', 'vendor']);
@@ -215,54 +220,39 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF'])->name('admin.purchase-orders.pdf');
 
-    // ==========================================
-    // MODULE: PRODUCTS (KATALOG BARANG)
-    // ==========================================
-    Route::get('/products', function (Request $request) {
-        if (Schema::hasTable('products')) {
-            $query = \App\Models\Product::query();
+    // MODULE: OTHERS MASTER DATA (MANAJEMEN USER - DIURUTKAN BERDASARKAN ROLE)
+    Route::get('/users', function (Request $request) {
+        if (Schema::hasTable('users')) {
+            $query = User::query();
 
-            if ($request->filled('category')) {
-                $query->where('category', $request->category);
+            // 1. Logika Filter Berdasarkan Role
+            if ($request->filled('role')) {
+                $query->where('role', $request->role);
             }
+
+            // 2. Logika Pencarian berdasarkan nama atau email
             if ($request->filled('search')) {
-                $query->where('name', 'like', '%' . $request->search . '%');
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
             }
 
-            $products = $query->latest()->paginate(10)->withQueryString();
+            // KUNCI PERBAIKAN: Urutkan berdasarkan 'role' dari A ke Z, 
+            // lalu urutkan berdasarkan 'name' agar nama di dalam role yang sama juga berurutan.
+            $users = $query->orderBy('role', 'asc')
+                           ->orderBy('name', 'asc')
+                           ->paginate(10)
+                           ->withQueryString();
         } else {
-            $products = collect();
+            $users = collect();
         }
-        return view('admin.products', compact('products'));
-    })->name('admin.products');
-
-    // TAMBAHKAN RUTE INI UNTUK MENYIMPAN BARANG BARU (POST)
-    Route::post('/products', function (Request $request) {
-        // Validasi inputan form
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category' => 'required|string',
-            'stock_in' => 'required|integer|min:0',
-            'stock_out' => 'required|integer|min:0',
-        ]);
-
-        // Simpan ke database
-        \App\Models\Product::create([
-            'name' => $request->name,
-            'category' => $request->category,
-            'stock_in' => $request->stock_in,
-            'stock_out' => $request->stock_out,
-        ]);
-
-        return back()->with('success', 'Barang baru berhasil ditambahkan ke katalog!');
-    })->name('admin.products.store');
-
-    // OTHERS MASTER DATA
-    Route::get('/users', function () {
-        $users = Schema::hasTable('users') ? User::whereIn('role', ['admin', 'super_admin'])->get() : collect();
+        
         return view('admin.users', compact('users'));
     })->name('admin.users');
-
+                        
+    // Laporan & Grafik Keuangan
     // Rute untuk Halaman Laporan & Grafik (Ini yang sudah kamu buat, sudah benar!)
     Route::get('/reports', function () {
         // data untuk chart keuangan (total anggaran pembelian per bulan di tahun berjalan)
