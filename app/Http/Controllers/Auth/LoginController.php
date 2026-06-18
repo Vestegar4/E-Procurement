@@ -48,4 +48,10 @@ class LoginController extends Controller
         // Fallback
         return redirect()->route('login');
     }
+    // --- FITUR BARU: OVERRIDE LOGOUT REDIRECT ---
+    protected function loggedOut(Request $request)
+    {
+        // Lempar user kembali ke halaman utama (landing page) dan munculkan Toast Info
+        return redirect('/')->with('info', 'Anda telah berhasil keluar dari portal sistem aplikasi.');
+    }
 }

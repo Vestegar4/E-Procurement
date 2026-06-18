@@ -12,19 +12,21 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 
 // AUTH & HOME ROUTES
-Auth::routes(['register' => true]);
+// Matikan fitur pendaftaran, lupa password, dan verifikasi email
+Auth::routes([
+    'register' => false, 
+    'reset'    => false, 
+    'verify'   => false,
+]);
 
 Route::get('/', function () {
+    // Jika sudah login, langsung paksa masuk ke dashboard admin
     if (auth()->check()) {
-        return auth()->user()->role === 'admin'
-            ? redirect()->route('admin.dashboard')
-            : redirect()->route('home');
+        return redirect()->route('admin.dashboard');
     }
+    // Jika belum login, tampilkan landing page (beranda)
     return view('home.home');
 })->name('home');
-
-Route::get('/pending-approval', fn() => view('auth.pending'))->name('pending');
-
 
 // ADMIN ROUTES 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -291,3 +293,24 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.settings');
     })->name('admin.settings');
 });
+
+// Kontak Admin Route
+// 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)
+Route::get('/kontak-admin', function () {
+    return view('auth.contact');
+})->name('contact.admin');
+
+// Route::post('/kontak-admin/kirim', function (Illuminate\Http\Request $request) {
+//     // Menyimpan pengaduan ke dalam tabel notifications dengan aman menggunakan Query Builder
+//     if (Schema::hasTable('notifications')) {
+//         DB::table('notifications')->insert([
+//             'title' => 'Tiket Pengaduan Support Baru',
+//             'message' => 'Pengirim: ' . $request->name . ' (' . $request->email . ') - Pesan: ' . $request->message,
+//             'is_read' => false,
+//             'created_at' => now(),
+//             'updated_at' => now(),
+//         ]);
+//     }
+    
+//     return redirect('/')->with('success', 'Pesan pengaduan Anda berhasil terkirim ke Admin Proculus!');
+// })->name('contact.admin.store');
