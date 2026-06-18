@@ -184,33 +184,28 @@ class VendorProfileController extends Controller
     }
 
     // upload document API/mobile
+    // upload document API/mobile
     public function uploadDocument(Request $request)
     {
+        // 1. Ubah validasi agar menerima 'type' dari Ionic
         $request->validate([
-            'document_name' => 'required|string|max:255',
-
-            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'type' => 'required|string|max:255', 
+            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Izinkan hingga 5MB
         ]);
 
         $user = $request->user();
-
         $vendor = $user->vendor;
 
-        // store file in storage/app/public/vendor-documents
+        // 2. Simpan file
         $path = $request->file('file')
-            ->store(
-                'vendor-documents/vendor-' . $vendor->id,
-                'public'
-            );
+            ->store('vendor-documents/vendor-' . $vendor->id, 'public');
 
-        // create document
+        // 3. Simpan ke database
         $document = VendorDocument::create([
             'vendor_id' => $vendor->id,
-
-            'document_name' => $request->document_name,
-
-            'file_path' => $path,
-
+            'document_type' => $request->type, // Menyimpan jenis dokumen (SIUP, NPWP, dll)
+            'document_name' => $request->file('file')->getClientOriginalName(), // Menyimpan nama asli file
+            'file_path' => '/storage/' . $path, // Tambahkan /storage/ agar bisa dibaca Ionic
             'uploaded_at' => now(),
         ]);
 

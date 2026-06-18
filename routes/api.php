@@ -34,7 +34,7 @@ Route::prefix('auth/vendor')->group(function () {
     Route::post('register', [VendorAuthController::class, 'register']);
     Route::post('login', [VendorAuthController::class, 'login'])->middleware('throttle:5,15');
     Route::post('logout', [VendorAuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::get('me', [VendorAuthController::class, 'me'])->middleware('auth:sanctum');
+    Route::get('me', [\App\Http\Controllers\Vendor\VendorProfileController::class, 'me'])->middleware('auth:sanctum');
 });
 
 /*
@@ -92,4 +92,6 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsVendor::clas
     
     Route::get('/tenders/{id}/aanwijzing', [AanwijzingController::class, 'index']);
     Route::post('/tenders/{id}/aanwijzing', [AanwijzingController::class, 'store']);
+    Route::put('/profile', [\App\Http\Controllers\Vendor\VendorProfileController::class, 'update']);
+    Route::post('/documents', [\App\Http\Controllers\Vendor\VendorProfileController::class, 'uploadDocument']);
 });
