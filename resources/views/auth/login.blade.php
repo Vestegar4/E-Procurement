@@ -21,7 +21,7 @@
                         <img src="{{ asset('assets/img/logo.png') }}" alt="Proculus Logo" class="img-fluid" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
                     
-                    <h2 class="fw-bold mb-3" style="color: var(--color-accent-bright); letter-spacing: -0.02em;">Welcome Back</h2>
+                    <h2 class="fw-bold mb-3" style="color: var(--color-accent-bright); letter-spacing: -0.02em;">Selamat Datang</h2>
                     <p class="mb-0" style="color: var(--color-border); font-size: 0.95rem; line-height: 1.6;">
                         Sistem E-Procurement modern untuk manajemen tender internal dan kolaborasi vendor perusahaan.
                     </p>
@@ -74,13 +74,6 @@
                                     <i class="fa-solid fa-circle-xmark me-1"></i> email atau password anda salah
                                 </div>
                             @endif
-
-                            {{-- Posisi Lupa Password tetap di bawah form password --}}
-                            @if (Route::has('password.request'))
-                                <div class="mt-2 text-end">
-                                    <a href="{{ route('password.request') }}" class="small fw-bold text-decoration-none" style="color: var(--color-accent); font-size: 0.85rem;">Lupa Password?</a>
-                                </div>
-                            @endif
                         </div>
 
                         {{-- TOMBOL SUBMIT SECURE LOGIN --}}
@@ -92,15 +85,8 @@
                             font-weight: 700;
                             transition: all 0.25s ease;
                         " onmouseover="this.style.backgroundColor='#b45309'; this.style.borderColor='#b45309';" onmouseout="this.style.backgroundColor='var(--color-accent)'; this.style.borderColor='var(--color-accent)';">
-                            Secure Login <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
+                            Login <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
                         </button>
-
-                        <div class="text-center">
-                            <span class="text-muted fw-medium">Ingin bergabung sebagai mitra vendor?</span>
-                            <a href="{{ route('register') }}" class="text-decoration-none fw-bold ms-1" style="color: var(--color-accent);">
-                                Daftar Sekarang
-                            </a>
-                        </div>
                     </form>
                 </div>
 
