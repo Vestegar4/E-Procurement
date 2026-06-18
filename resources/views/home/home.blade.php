@@ -40,7 +40,7 @@
                     text-decoration: none;
                     transition: all 0.25s ease;
                 " onmouseover="this.style.backgroundColor='var(--color-primary)'; this.style.color='var(--color-white)';" onmouseout="this.style.backgroundColor='var(--color-white)'; this.style.color='var(--color-primary)';">
-                    <i class="fa-solid fa-right-to-bracket me-2"></i> Login Portal
+                    <i class="fa-solid fa-right-to-bracket me-2"></i> Login
                 </a>
                 
                 {{-- Tombol 2: Daftar Sebagai Vendor (Gaya Solid Amber - Tombol Utama Paling Mencolok) --}}

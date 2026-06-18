@@ -196,6 +196,13 @@ class VendorProfileController extends Controller
         $user = $request->user();
         $vendor = $user->vendor;
 
+        $allowedTypes = ['npwp', 'nib', 'siup', 'company_profile', 'domicile_letter', 'other'];
+        $documentType = strtolower($request->type);
+
+        if (!in_array($documentType, $allowedTypes)) {
+            $documentType = 'other';
+        }
+
         // 2. Simpan file
         $path = $request->file('file')
             ->store('vendor-documents/vendor-' . $vendor->id, 'public');
@@ -203,7 +210,7 @@ class VendorProfileController extends Controller
         // 3. Simpan ke database
         $document = VendorDocument::create([
             'vendor_id' => $vendor->id,
-            'document_type' => $request->type, // Menyimpan jenis dokumen (SIUP, NPWP, dll)
+            'document_type' => $documentType, // Menyimpan jenis dokumen (SIUP, NPWP, dll)
             'document_name' => $request->file('file')->getClientOriginalName(), // Menyimpan nama asli file
             'file_path' => '/storage/' . $path, // Tambahkan /storage/ agar bisa dibaca Ionic
             'uploaded_at' => now(),
