@@ -18,7 +18,7 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\Api\Vendor\AanwijzingController;
 /*
 |--------------------------------------------------------------------------
-| AUTH ROUTES (KHUSUS API / MESIN / APLIKASI MOBILE)
+| AUTH ROUTES (KHUSUS API / MOBILE APLIKASI)
 |--------------------------------------------------------------------------
 */
 
@@ -69,12 +69,6 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsAdmin::class
     });
 
     Route::get('/tenders/{tenderId}/export-bahp', [ReportController::class, 'exportBAHP']);
-
-    Route::prefix('purchase-orders')->group(function () {
-        Route::get('/', [PurchaseOrderController::class, 'index']);
-        Route::get('{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF']);
-        Route::put('{id}/status', [PurchaseOrderController::class, 'UpdateStatus']) ->name('admin.purchase-orders.update-status');
-    });
 });
 
 /*

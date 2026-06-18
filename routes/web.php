@@ -219,6 +219,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     })->name('admin.purchase-order');
 
     Route::get('/purchase-orders/{id}/export-pdf', [PurchaseOrderController::class, 'exportPDF'])->name('admin.purchase-orders.pdf');
+    Route::put('/purchase-orders/{id}/update-status', [PurchaseOrderController::class, 'updateStatus'])->name('admin.purchase-orders.update-status');
 
     // MODULE: OTHERS MASTER DATA (MANAJEMEN USER - DIURUTKAN BERDASARKAN ROLE)
     Route::get('/users', function (Request $request) {
