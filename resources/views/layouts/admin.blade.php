@@ -10,28 +10,6 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     @stack('styles')
-    <style>
-        /* FIX SIDEBAR POP-UP & SCROLL OVERFLOW */
-        .sidebar {
-            position: sticky !important;
-            top: 0 !important;
-            height: 100vh !important;
-            overflow-y: auto !important;
-        }
-        .sidebar::-webkit-scrollbar {
-            width: 5px;
-        }
-        .sidebar::-webkit-scrollbar-track {
-            background: transparent; 
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-        }
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3); 
-        }
-    </style>
 </head>
 
 <body>
@@ -143,12 +121,8 @@
                             @endforelse
                         </ul>
                     </div>
-                    {{-- ================================================== --}}
-                    {{-- AKHIR KODE LONCENG NOTIFIKASI --}}
-                    {{-- ================================================== }}
 
-
-                    {{-- INI ADALAH DROPDOWN PROFIL USER ANDA (TIDAK BERUBAH) --}}
+                    {{-- INI ADALAH DROPDOWN PROFIL USER (TIDAK BERUBAH) --}}
                     <div class="dropdown">
                         <div class="rounded-circle d-flex justify-content-center align-items-center fw-bold text-uppercase shadow-sm"
                             data-bs-toggle="dropdown" aria-expanded="false"
@@ -202,30 +176,49 @@
             const sidebarElement = document.getElementById("sidebarNav");
             const overlayElement = document.getElementById("sidebarOverlay");
 
+            // 1. Fungsi Buka Sidebar saat Tombol Garis Tiga Diklik
             if (toggleButton && sidebarElement && overlayElement) {
                 toggleButton.addEventListener("click", function(event) {
                     event.preventDefault();
-                    if (window.innerWidth > 992) {
-                        sidebarElement.classList.toggle("toggled");
+
+                    // Cek jika ukuran layar adalah HP/Tablet
+                    if (window.innerWidth <= 991.98) {
+                        sidebarElement.classList.add("mobile-open");
+                        overlayElement.classList.add("show");
+                        // Kunci scroll halaman web agar fokus ke sidebar
+                        document.body.style.overflow = "hidden";
                     } else {
-                        sidebarElement.classList.toggle("mobile-open");
-                        overlayElement.classList.toggle("show");
+                        // Jika di Desktop, buat sidebar jadi mode mini (toggled)
+                        sidebarElement.classList.toggle("toggled");
                     }
                 });
             }
 
+            // 2. Fungsi Tutup Sidebar saat Bagian Blur (Overlay) Diklik
             if (overlayElement) {
                 overlayElement.addEventListener("click", function() {
                     sidebarElement.classList.remove("mobile-open");
                     overlayElement.classList.remove("show");
+                    // Kembalikan scroll halaman web
+                    document.body.style.overflow = "auto";
                 });
             }
+
+            // 3. Reset tampilan otomatis jika layar diputar/di-resize dari HP ke Desktop
+            window.addEventListener("resize", function() {
+                if (window.innerWidth > 991.98) {
+                    sidebarElement.classList.remove("mobile-open");
+                    overlayElement.classList.remove("show");
+                    document.body.style.overflow = "auto";
+                }
+            });
         });
     </script>
 
-    {{-- SCRIPT JAVASCRIPT --}}
+    <!-- SCRIPT JAVASCRIPT  -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @include('components.interaction-toast')
     @stack('scripts')
-</body> 
+</body>
+
 </html>

@@ -8,7 +8,7 @@
             <h4 class="fw-bold mb-1" style="color: var(--color-text-main); letter-spacing: -0.01em;">Daftar Pengadaan Aktif</h4>
             <p class="mb-0 fw-medium" style="color: var(--color-text-muted);">Kelola pembuatan dan publikasi paket pekerjaan</p>
         </div>
-        <button class="btn btn-primary-action shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#createTenderModal">
+        <button class="btn btn-primary-action shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#createTenderModal" style="background-color: var(--color-primary); color: var(--color-accent-bright); border-radius: 8px; font-size: 1.05rem;">
             <i class="fa-solid fa-plus me-2"></i> Buat Tender Baru
         </button>
     </div>
