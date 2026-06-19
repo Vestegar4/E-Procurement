@@ -89,13 +89,13 @@
                                     </td>
                                     
                                     <td>
-                                        @if($tender->timeline)
+                                        @if($tender->timeline && $tender->timeline->aanwijzing_at && $tender->timeline->bidding_end)
                                             <div class="small fw-medium" style="color: var(--color-text-muted); line-height: 1.6;">
                                                 <div><i class="fa-solid fa-users-viewfinder me-1" style="color: var(--color-warning-border);"></i> Tanya Jawab: <strong>{{ \Carbon\Carbon::parse($tender->timeline->aanwijzing_at)->format('d M Y') }}</strong> - <strong>{{ \Carbon\Carbon::parse($tender->timeline->aanwijzing_at)->format('H:i') }}</strong></div>
                                                 <div class="mt-1"><i class="fa-regular fa-clock me-1" style="color: var(--color-primary);"></i> Batas Akhir: <strong>{{ \Carbon\Carbon::parse($tender->timeline->bidding_end)->format('d M Y') }}</strong> - <strong>{{ \Carbon\Carbon::parse($tender->timeline->bidding_end)->format('H:i') }}</strong></div>
                                             </div>
                                         @else
-                                            <span class="small text-muted fst-italic">Jadwal belum dikonfigurasi</span>
+                                            <span class="small text-muted fst-italic">Jadwal belum dikonfigurasi lengkap</span>
                                         @endif
                                     </td>
                                     
@@ -182,8 +182,8 @@
                                                                 <input type="date" name="aanwijzing_date" class="form-control auth-input" value="{{ $tender->timeline ? \Carbon\Carbon::parse($tender->timeline->aanwijzing_at)->format('Y-m-d') : '' }}" required>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label class="form-label small text-muted mb-1">Ketik Jam (Contoh: 14:30)</label>
-                                                                <input type="text" name="aanwijzing_time" class="form-control auth-input time-formatter" placeholder="00:00" maxlength="5" value="{{ $tender->timeline ? \Carbon\Carbon::parse($tender->timeline->aanwijzing_at)->format('H:i') : '' }}" required>
+                                                                <label class="form-label small text-muted mb-1">Pilih Jam</label>
+                                                                <input type="time" name="aanwijzing_time" class="form-control auth-input" value="{{ ($tender->timeline && $tender->timeline->aanwijzing_at) ? \Carbon\Carbon::parse($tender->timeline->aanwijzing_at)->format('H:i') : '' }}" required>
                                                             </div>
                                                         </div>
 
@@ -194,8 +194,8 @@
                                                                 <input type="date" name="bidding_start_date" class="form-control auth-input" value="{{ $tender->timeline ? \Carbon\Carbon::parse($tender->timeline->bidding_start)->format('Y-m-d') : '' }}" required>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label class="form-label small text-muted mb-1">Ketik Jam (Contoh: 09:00)</label>
-                                                                <input type="text" name="bidding_start_time" class="form-control auth-input time-formatter" placeholder="00:00" maxlength="5" value="{{ $tender->timeline ? \Carbon\Carbon::parse($tender->timeline->bidding_start)->format('H:i') : '' }}" required>
+                                                                <label class="form-label small text-muted mb-1">Pilih Jam</label>
+                                                                <input type="time" name="bidding_start_time" class="form-control auth-input" value="{{ ($tender->timeline && $tender->timeline->bidding_start) ? \Carbon\Carbon::parse($tender->timeline->bidding_start)->format('H:i') : '' }}" required>
                                                             </div>
                                                         </div>
 
@@ -206,8 +206,8 @@
                                                                 <input type="date" name="bidding_end_date" class="form-control auth-input" value="{{ $tender->timeline ? \Carbon\Carbon::parse($tender->timeline->bidding_end)->format('Y-m-d') : '' }}" required>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label class="form-label small text-muted mb-1">Ketik Jam (Contoh: 16:00)</label>
-                                                                <input type="text" name="bidding_end_time" class="form-control auth-input time-formatter" placeholder="00:00" maxlength="5" value="{{ $tender->timeline ? \Carbon\Carbon::parse($tender->timeline->bidding_end)->format('H:i') : '' }}" required>
+                                                               <label class="form-label small text-muted mb-1">Pilih Jam</label>
+                                                                <input type="time" name="bidding_end_time" class="form-control auth-input" value="{{ ($tender->timeline && $tender->timeline->bidding_end) ? \Carbon\Carbon::parse($tender->timeline->bidding_end)->format('H:i') : '' }}" required>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -386,22 +386,4 @@
             });
         </script>
     @endif
-
-    {{-- SCRIPT: AUTO-FORMATTER JAM --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const timeInputs = document.querySelectorAll('.time-formatter');
-            
-            timeInputs.forEach(input => {
-                input.addEventListener('input', function (e) {
-                    let val = this.value.replace(/\D/g, ''); 
-                    if (val.length > 2) {
-                        this.value = val.substring(0, 2) + ':' + val.substring(2, 4);
-                    } else {
-                        this.value = val;
-                    }
-                });
-            });
-        });
-    </script>
 @endpush
