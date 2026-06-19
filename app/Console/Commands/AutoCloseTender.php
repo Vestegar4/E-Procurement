@@ -23,7 +23,7 @@ class AutoCloseTender extends Command
     {
         // 1. Cari semua tender yang statusnya aktif tapi waktu bidding_end sudah lewat
         // ▼ BAGIAN INI YANG DIPERLEBAR JARINGNYA ▼
-        $tenders = Tender::whereIn('status', ['published', 'open', 'active', 'bidding'])
+        $tenders = Tender::whereIn('status', ['open', 'aanwijzing', 'bidding'])
             ->whereHas('timeline', function ($query) {
                 $query->where('bidding_end', '<=', Carbon::now());
             })
