@@ -29,7 +29,7 @@ class VendorTenderController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $vendor = auth()->user()->vendor;
+        $vendor = auth()->user() ? auth()->user()->vendor : null;
         $joinedTenderIds = $vendor
             ? TenderParticipant::where('vendor_id', $vendor->id)->pluck('tender_id')->all()
             : [];
@@ -46,7 +46,8 @@ class VendorTenderController extends Controller
             return $tender;
         });
 
-        if ($request->expectsJson()) {
+        // ▼ PERBAIKAN: Selalu gunakan JSON jika ini dari rute API ▼
+        if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json([
                 'message' => 'Tenders retrieved successfully',
                 'data' => $tenders,
@@ -67,7 +68,7 @@ class VendorTenderController extends Controller
             'result'
         ])->findOrFail($id);
 
-        $vendor = auth()->user()->vendor;
+        $vendor = auth()->user() ? auth()->user()->vendor : null;
         $isJoined = $vendor
             ? TenderParticipant::where('tender_id', $tender->id)
             ->where('vendor_id', $vendor->id)
@@ -84,7 +85,8 @@ class VendorTenderController extends Controller
             ? $tender->result->winner_vendor_id !== $vendor->id
             : false;
         
-        if ($request->expectsJson()) {
+        // ▼ PERBAIKAN: Selalu gunakan JSON jika ini dari rute API ▼
+        if ($request->expectsJson() || $request->is('api/*')) {
             $tender->effective_status = $effectiveStatus;
             return response()->json([
                 'message' => 'Tender detail retrieved successfully',
@@ -101,20 +103,19 @@ class VendorTenderController extends Controller
     }
 
     // vendor join tender
-    // Jangan lupa pastikan (Request $request) ada di dalam parameter fungsi
     public function join(Request $request, $id)
     {
         $vendor = auth()->user()->vendor;
+        $isApi = $request->expectsJson() || $request->is('api/*');
 
         if (!$vendor) {
-            return $request->expectsJson() 
+            return $isApi 
                 ? response()->json(['message' => 'Profil vendor tidak ditemukan.'], 404)
                 : back()->withErrors(['join' => 'Profil vendor tidak ditemukan.']);
         }
 
-        // 1. Pengecekan status vendor (Wajib disetujui)
         if ($vendor->status !== 'approved') {
-            return $request->expectsJson()
+            return $isApi
                 ? response()->json(['message' => 'Akun vendor masih menunggu approval admin.'], 403)
                 : back()->withErrors(['join' => 'Akun vendor masih menunggu approval admin.']);
         }
@@ -123,42 +124,39 @@ class VendorTenderController extends Controller
         $now = now();
 
         if (!$tender->timeline) {
-            return $request->expectsJson()
+            return $isApi
                 ? response()->json(['message' => 'Timeline tender belum tersedia.'], 400)
                 : back()->withErrors(['join' => 'Timeline tender belum tersedia.']);
         }
 
         if ($now < $tender->timeline->registration_start || $now > $tender->timeline->registration_end) {
-            return $request->expectsJson()
+            return $isApi
                 ? response()->json(['message' => 'Periode registrasi sudah ditutup.'], 400)
                 : back()->withErrors(['join' => 'Periode registrasi sudah ditutup.']);
         }
 
-        // Cek apakah vendor sudah pernah join tender ini
         $alreadyJoined = TenderParticipant::where([
             'tender_id' => $tender->id,
             'vendor_id' => $vendor->id
         ])->exists();
 
         if ($alreadyJoined) {
-            return $request->expectsJson()
+            return $isApi
                 ? response()->json(['message' => 'Anda sudah join tender ini.'], 400)
                 : back()->withErrors(['join' => 'Anda sudah join tender ini.']);
         }
 
-        // Buat entry di tabel peserta tender
         TenderParticipant::create([
             'tender_id' => $tender->id,
             'vendor_id' => $vendor->id,
             'joined_at' => now(),
         ]);
 
-        // Berikan respons SUKSES sesuai platform
-        return $request->expectsJson()
+        return $isApi
             ? response()->json(['message' => 'Berhasil join tender.'], 200)
             : back()->with('success', 'Berhasil join tender.');
     }
-    // joined Tenders
+
     public function myTenders()
     {
         $user = auth()->user();
