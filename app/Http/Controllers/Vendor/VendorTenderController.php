@@ -129,10 +129,12 @@ class VendorTenderController extends Controller
                 : back()->withErrors(['join' => 'Timeline tender belum tersedia.']);
         }
 
-        if ($now < $tender->timeline->registration_start || $now > $tender->timeline->registration_end) {
-            return $isApi
-                ? response()->json(['message' => 'Periode registrasi sudah ditutup.'], 400)
-                : back()->withErrors(['join' => 'Periode registrasi sudah ditutup.']);
+        if ($tender->timeline->registration_start && $tender->timeline->registration_end) {
+            if ($now < $tender->timeline->registration_start || $now > $tender->timeline->registration_end) {
+                return $isApi
+                    ? response()->json(['message' => 'Periode registrasi sudah ditutup.'], 400)
+                    : back()->withErrors(['join' => 'Periode registrasi sudah ditutup.']);
+            }
         }
 
         $alreadyJoined = TenderParticipant::where([
@@ -171,7 +173,7 @@ class VendorTenderController extends Controller
 
         return response()->json([
             'message' => 'Joined tenders retrieved successfully',
-            'data' => $joined
+            'data' => $joined->items()
         ]);
     }
 
