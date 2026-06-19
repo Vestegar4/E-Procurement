@@ -46,6 +46,14 @@ class VendorTenderController extends Controller
             return $tender;
         });
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Tenders retrieved successfully',
+                'data' => $tenders,
+                'joined_tender_ids' => $joinedTenderIds
+            ]);
+        }
+
         return view('vendor.tenders', compact('tenders', 'status', 'search', 'joinedTenderIds'));
     }
 
@@ -75,7 +83,20 @@ class VendorTenderController extends Controller
         $isLoser = $vendor && $tender->result && $isJoined
             ? $tender->result->winner_vendor_id !== $vendor->id
             : false;
-
+        
+        if ($request->expectsJson()) {
+            $tender->effective_status = $effectiveStatus;
+            return response()->json([
+                'message' => 'Tender detail retrieved successfully',
+                'data' => [
+                    'tender' => $tender,
+                    'is_joined' => $isJoined,
+                    'is_winner' => $isWinner,
+                    'is_loser' => $isLoser
+                ]
+            ]);
+        }
+        
         return view('vendor.tender-detail', compact('tender', 'effectiveStatus', 'isJoined', 'isWinner', 'isLoser'));
     }
 
