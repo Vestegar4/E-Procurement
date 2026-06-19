@@ -50,7 +50,7 @@ class VendorTenderController extends Controller
         if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json([
                 'message' => 'Tenders retrieved successfully',
-                'data' => $tenders,
+                'data' => $tenders->items(),
                 'joined_tender_ids' => $joinedTenderIds
             ]);
         }
@@ -188,26 +188,31 @@ class VendorTenderController extends Controller
 
         $now = now();
 
-        if ($now->lt($timeline->registration_start)) {
-            return $tender->status ?? 'draft';
+        // 1. Cek Masa Registrasi (HANYA dieksekusi JIKA datanya tidak kosong)
+        if ($timeline->registration_start && $timeline->registration_end) {
+            if ($now->lt($timeline->registration_start)) {
+                return $tender->status ?? 'draft';
+            }
+            if ($now->between($timeline->registration_start, $timeline->registration_end)) {
+                return 'open';
+            }
         }
 
-        if ($now->between($timeline->registration_start, $timeline->registration_end)) {
-            return 'open';
-        }
-
-        if ($now->lt($timeline->aanwijzing_at)) {
+        // 2. Cek Masa Aanwijzing (HANYA dieksekusi JIKA datanya tidak kosong)
+        if ($timeline->aanwijzing_at && $now->lt($timeline->aanwijzing_at)) {
             return 'aanwijzing';
         }
 
-        if ($now->between($timeline->bidding_start, $timeline->bidding_end)) {
-            return 'bidding';
+        // 3. Cek Masa Bidding
+        if ($timeline->bidding_start && $timeline->bidding_end) {
+            if ($now->between($timeline->bidding_start, $timeline->bidding_end)) {
+                return 'bidding';
+            }
+            if ($now->gt($timeline->bidding_end)) {
+                return 'closed';
+            }
         }
 
-        if ($now->gt($timeline->bidding_end)) {
-            return 'closed';
-        }
-
-        return $tender->status ?? 'draft';
+        return $tender->status ?? 'open';
     }
 }
