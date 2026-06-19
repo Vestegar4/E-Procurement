@@ -58,7 +58,7 @@ class VendorTenderController extends Controller
     }
 
     // detail tender
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $tender = Tender::with([
             'timeline',
