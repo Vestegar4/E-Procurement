@@ -4,106 +4,132 @@
 @section('content')
 <div class="container-fluid p-0">
 
-    {{-- LINK SUB-MENU TABS NAVIGATION (Gaya Neo Resign) --}}
-    {{-- LINK SUB-MENU TABS NAVIGATION (Dengan Animasi Slide CSS Murni) --}}
-    <ul class="settings-tab-container nav" id="settingsTab" role="tablist">
+    {{-- HEADER HALAMAN --}}
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1" style="color: var(--color-text-main); letter-spacing: -0.01em;">Pengaturan Sistem</h4>
+        <p class="mb-0 fw-medium" style="color: var(--color-text-muted);">Kelola profil instansi, perbarui tingkat keamanan, dan atur opsi peringatan toast</p>
+    </div>
+
+    {{-- NAVIGATION TABS (Dibuat responsif & bisa di-scroll horizontal pada Mobile dengan Swipe) --}}
+    <ul class="settings-tab-container nav flex-nowrap overflow-x-auto pb-2 mb-4" id="settingsTab" role="tablist" 
+        style="white-space: nowrap; -webkit-overflow-scrolling: touch; border-bottom: 2px solid var(--color-border);">
         <li class="nav-item" role="presentation">
-            <button class="settings-tab-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab">
-                <i class="fa-solid fa-building me-2"></i> Profile Instansi
+            <button class="settings-tab-link active py-3 px-4" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab" style="font-weight: 700; transition: all 0.3s ease;">
+                <i class="fa-solid fa-building me-2"></i> Profil Instansi
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="settings-tab-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab">
-                <i class="fa-solid fa-shield-halved me-2"></i> Security
+            <button class="settings-tab-link py-3 px-4" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab" style="font-weight: 700; transition: all 0.3s ease; color: var(--color-text-muted);">
+                <i class="fa-solid fa-shield-halved me-2"></i> Keamanan
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="settings-tab-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification-pane" type="button" role="tab">
-                <i class="fa-solid fa-bell me-2"></i> Notifications
+            <button class="settings-tab-link py-3 px-4" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification-pane" type="button" role="tab" style="font-weight: 700; transition: all 0.3s ease; color: var(--color-text-muted);">
+                <i class="fa-solid fa-bell me-2"></i> Notifikasi & Toast
             </button>
         </li>
     </ul>
 
-    {{-- ISI KONTEN PADA MASING-MASING SUB-MENU --}}
+    {{-- KONTEN INTERAKTIF TABS --}}
     <div class="tab-content" id="settingsTabContent">
-
-        {{-- PANE 1: PROFIL INSTANSI --}}
-        <div class="tab-pane fade show active" id="profile-pane" role="tabpanel" aria-labelledby="profile-tab">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card card-custom p-4 border-0 shadow-sm">
-                        <h5 class="fw-bold mb-4" style="color: var(--color-text-main);">Identitas Profil Perusahaan</h5>
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold" style="color: var(--color-text-muted);">Nama Instansi / Perusahaan</label>
-                                <input type="text" class="form-control auth-input" value="PT. Solusi Digital Enterprise" style="font-weight: 600;">
+        
+        {{-- 1. TAB: PROFIL INSTANSI --}}
+        <div class="tab-pane fade show active" id="profile-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <div class="card card-custom border-0 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card, 16px);">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4" style="color: var(--color-text-main);">
+                        <i class="fa-solid fa-circle-info me-2 text-warning"></i>Informasi Umum Instansi
+                    </h5>
+                    <form action="#" method="POST" onsubmit="event.preventDefault(); shadowToast('Sukses', 'Profil instansi berhasil diperbarui!', 'success');">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-bold text-uppercase small text-muted">Nama Instansi / Perusahaan</label>
+                                <input type="text" class="form-control auth-input" value="Proculus Procurement Group" required>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold" style="color: var(--color-text-muted);">Email Notifikasi Sistem Utama</label>
-                                <input type="email" class="form-control auth-input" value="admin@procurement.com" style="font-weight: 600;">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-bold text-uppercase small text-muted">Email Korespondensi Resmi</label>
+                                <input type="email" class="form-control auth-input" value="admin@proculus-enterprise.com" required>
                             </div>
-                            <button type="button" class="btn btn-gold px-4">Simpan Perubahan Profil</button>
-                        </form>
-                    </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-uppercase small text-muted">Alamat Kantor Pusat</label>
+                                <textarea class="form-control auth-input" rows="3" required>Gedung Menara Aureate Lt. 24, Jl. Jenderal Sudirman Kav. 21, Jakarta Selatan, DKI Jakarta</textarea>
+                            </div>
+                        </div>
+                        
+                        {{-- TOMBOL 1: Simpan Perubahan Profile (Premium Solid Amber Gold) --}}
+                        <div class="mt-4 pt-2">
+                            <button type="submit" class="btn btn-action-amber px-4 py-2-5 fw-bold text-white shadow-sm border-0" 
+                                    style="background: linear-gradient(135deg, var(--color-accent) 0%, #ff7913 100%); border-radius: 8px; transition: transform 0.2s ease;">
+                                <i class="fa-solid fa-floppy-disk me-2"></i> Simpan Perubahan Profile
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        {{-- PANE 2: SECURITY (UBAH PASSWORD) --}}
-        <div class="tab-pane fade" id="security-pane" role="tabpanel" aria-labelledby="security-tab">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card card-custom p-4 border-0 shadow-sm">
-                        <h5 class="fw-bold mb-4" style="color: var(--color-text-main);">Perbarui Kata Sandi Akses</h5>
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold" style="color: var(--color-text-muted);">Password Saat Ini</label>
-                                <input type="password" class="form-control auth-input" placeholder="Masukkan password lama">
+        {{-- 2. TAB: KEAMANAN --}}
+        <div class="tab-pane fade" id="security-pane" role="tabpanel" aria-labelledby="security-tab" tabindex="0">
+            <div class="card card-custom border-0 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card, 16px);">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4" style="color: var(--color-text-main);">
+                        <i class="fa-solid fa-key me-2 text-danger"></i>Perbarui Kredensial Akses
+                    </h5>
+                    <form action="#" method="POST" onsubmit="event.preventDefault(); shadowToast('Sukses', 'Kredensial akun berhasil diperbarui secara aman!', 'success');">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-uppercase small text-muted">Password Saat Ini</label>
+                                <input type="password" class="form-control auth-input" placeholder="••••••••••••" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold" style="color: var(--color-text-muted);">Password Baru</label>
-                                <input type="password" class="form-control auth-input" placeholder="Min. 8 karakter gabungan">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-bold text-uppercase small text-muted">Password Baru</label>
+                                <input type="password" class="form-control auth-input" placeholder="Minimal 8 karakter unik..." required>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold" style="color: var(--color-text-muted);">Konfirmasi Password Baru</label>
-                                <input type="password" class="form-control auth-input" placeholder="Ulangi password baru">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-bold text-uppercase small text-muted">Konfirmasi Password Baru</label>
+                                <input type="password" class="form-control auth-input" placeholder="Ulangi input password baru..." required>
                             </div>
-                            <button type="button" class="btn btn-primary-action px-4">Update Keamanan Akun</button>
-                        </form>
-                    </div>
+                        </div>
+
+                        {{-- TOMBOL 2: Update Keamanan Akun (Premium Dark Navy Slate) --}}
+                        <div class="mt-4 pt-2">
+                            <button type="submit" class="btn btn-action-navy px-4 py-2-5 fw-bold text-white shadow-sm border-0" 
+                                    style="background: linear-gradient(135deg, var(--color-primary) 0%, #1e293b 100%); border-radius: 8px; transition: transform 0.2s ease;">
+                                <i class="fa-solid fa-shield-halved me-2"></i> Update Keamanan Akun
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        {{-- PANE 3: NOTIFICATIONS (TOGGLE SWITCH) --}}
-        <div class="tab-pane fade" id="notification-pane" role="tabpanel" aria-labelledby="notification-tab">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card card-custom p-4 border-0 shadow-sm">
-                        <h5 class="fw-bold mb-3" style="color: var(--color-text-main);">Preferensi Pusat Notifikasi</h5>
-                        <p style="color: var(--color-text-muted); font-size: 0.95rem;" class="mb-4">Atur bagaimana sistem mengirim informasi pengadaan penting kepada manajemen.</p>
-
-                        <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
-                            <div>
-                                <h6 class="fw-bold m-0" style="color: var(--color-text-main);">Email Pengumuman Tender</h6>
-                                <small style="color: var(--color-text-muted); font-weight: 500;">Kirim laporan ringkasan berkas pengadaan mingguan secara otomatis.</small>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" checked style="transform: scale(1.3); cursor: pointer;">
-                            </div>
+        {{-- 3. TAB: NOTIFIKASI & TOAST --}}
+        <div class="tab-pane fade" id="notification-pane" role="tabpanel" aria-labelledby="notification-tab" tabindex="0">
+            <div class="card card-custom border-0 shadow-sm" style="background: var(--color-white); border-radius: var(--radius-card, 16px);">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-2" style="color: var(--color-text-main);">
+                        <i class="fa-solid fa-sliders me-2 text-success"></i>Kontrol Toast Notification Cerita / Sistem
+                    </h5>
+                    <p class="text-muted small mb-4">Aktifkan atau nonaktifkan jendela notifikasi popup (Toast) interaktif yang muncul di sudut layar secara realtime.</p>
+                    
+                    <div class="p-3 mb-4 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-3" 
+                         style="background-color: var(--color-surface); border: 1px solid var(--color-border);">
+                        <div>
+                            <strong class="d-block mb-1" style="color: var(--color-text-main);">Popup Interaction Toast Alert</strong>
+                            <small class="text-muted d-block">Matikan sakelar ini untuk menghentikan seluruh notifikasi otomatis bermodel Toast di Dashboard Admin.</small>
                         </div>
-
-                        <div class="d-flex justify-content-between align-items-center py-3 mb-4">
-                            <div>
-                                <h6 class="fw-bold m-0" style="color: var(--color-text-main);">Peringatan Aktivitas Login Keamanan</h6>
-                                <small style="color: var(--color-text-muted); font-weight: 500;">Beritahu admin dengan segera jika terdeteksi akses dari IP asing.</small>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" checked style="transform: scale(1.3); cursor: pointer;">
-                            </div>
+                        <div class="form-check form-switch m-0">
+                            {{-- RIIL TOGGLE NOTIFIKASI (Tersambung ke localStorage via Script) --}}
+                            <input class="form-check-input" type="checkbox" role="switch" id="realToastNotificationToggle" style="transform: scale(1.4); cursor: pointer;">
                         </div>
+                    </div>
 
-                        <button type="button" class="btn btn-primary-action px-4">Simpan Opsi Peringatan</button>
+                    {{-- TOMBOL 3: Simpan Opsi Peringatan (Premium Emerald Success) --}}
+                    <div>
+                        <button type="button" id="saveNotificationOptionsBtn" class="btn btn-action-success px-4 py-2-5 fw-bold text-white shadow-sm border-0" 
+                                style="background: linear-gradient(135deg, var(--color-success-border) 0%, #047857 100%); border-radius: 8px; transition: transform 0.2s ease;">
+                            <i class="fa-solid fa-check-double me-2"></i> Simpan Opsi Peringatan
+                        </button>
                     </div>
                 </div>
             </div>
@@ -115,21 +141,79 @@
 
 @push('scripts')
 <script>
-    // Logika skrip mini untuk mengubah style tab aktif saat diklik (meniru interaksi dinamis CSS Anda)
     document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. LOGIKA RESPONSIVE TAB SLIDING ACTIVE STYLE ---
         const triggerTabList = document.querySelectorAll('#settingsTab button');
         triggerTabList.forEach(triggerEl => {
             triggerEl.addEventListener('click', function(event) {
-                // Reset semua tab style ke warna standard redup
                 triggerTabList.forEach(btn => {
                     btn.style.color = 'var(--color-text-muted)';
                     btn.style.borderBottom = 'none';
+                    btn.classList.remove('active');
                 });
-                // Pasang style tebal & aksen kuning pada tab terpilih
+                this.classList.add('active');
                 this.style.color = 'var(--color-primary)';
-                this.style.borderBottom = '3px solid var(--color-accent)';
             });
         });
+
+        // --- 2. FITUR RIIL: KONTROL POPUP TOAST NOTIFIKASI ---
+        const toggleSwitch = document.getElementById('realToastNotificationToggle');
+        const saveBtn = document.getElementById('saveNotificationOptionsBtn');
+
+        // Membaca status awal dari localStorage, default jika kosong adalah TRUE (Aktif)
+        const currentToastStatus = localStorage.getItem('enable_admin_toasts');
+        if (currentToastStatus === null || currentToastStatus === 'true') {
+            toggleSwitch.checked = true;
+        } else {
+            toggleSwitch.checked = false;
+        }
+
+        // Event listener saat sakelar digeser langsung oleh admin
+        toggleSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                localStorage.setItem('enable_admin_toasts', 'true');
+                shadowToast('Notifikasi Aktif', 'Toast alert berhasil diaktifkan kembali secara global.', 'success');
+            } else {
+                localStorage.setItem('enable_admin_toasts', 'false');
+                // Menggunakan native alert bawaan apabila sweetalert dinonaktifkan
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Toast Dinonaktifkan',
+                    text: 'Seluruh popup interaksi toast tidak akan dimunculkan lagi di halaman sistem.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+        });
+
+        // Event listener saat tombol "Simpan Opsi Peringatan" ditekan
+        saveBtn.addEventListener('click', function() {
+            const statusLabel = toggleSwitch.checked ? 'AKTIF' : 'NON-AKTIF';
+            shadowToast('Konfigurasi Disimpan', 'Opsi peringatan toast berhasil disimpan dengan status: ' + statusLabel, 'success');
+        });
     });
+
+    // Wrapper fungsi toast pintar agar mematuhi konfigurasi sakelar riil
+    function shadowToast(title, message, iconType) {
+        const isToastEnabled = localStorage.getItem('enable_admin_toasts');
+        
+        // Jika admin memilih untuk me-nonaktifkan toast, blokir kemunculan popup!
+        if (isToastEnabled === 'false') {
+            console.warn('Proculus Blocked: Toast ditolak muncul karena opsi sakelar dinonaktifkan.');
+            return;
+        }
+
+        // Sebaliknya, jika aktif, panggil popup SweetAlert2 yang menawan
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: iconType,
+            title: title,
+            text: message,
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true
+        });
+    }
 </script>
 @endpush

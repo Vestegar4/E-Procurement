@@ -36,9 +36,7 @@
     --radius-input: 8px;
 }
 
-/* =========================
-   1. GLOBAL & STRUCTURAL LAYOUT
-========================= */
+/* 1. GLOBAL & STRUCTURAL LAYOUT */
 body {
     margin: 0;
     padding: 0;
@@ -60,9 +58,7 @@ body {
     border-bottom: 2px solid var(--color-border);
 }
 
-/* =========================
-   2. BUTTONS & TOGGLE HAMBURGER
-========================= */
+/* 2. BUTTONS & TOGGLE HAMBURGER */
 .btn-primary-action {
     background-color: var(--color-primary);
     color: var(--color-white);
@@ -140,9 +136,7 @@ body {
     border-color: var(--color-primary);
 }
 
-/* =========================
-   3. AUTHENTICATION
-========================= */
+/* 3. AUTHENTICATION */
 .auth-body {
     background-color: var(--color-surface);
     min-height: 100vh;
@@ -198,9 +192,7 @@ body {
     margin: 0 auto;
 }
 
-/* =========================
-   4. LANDING PAGE
-========================= */
+/* 4. LANDING PAGE*/
 .landing-hero {
     background: var(--color-surface);
     padding: 100px 24px 80px 24px;
@@ -285,9 +277,7 @@ body {
     font-weight: 600;
 }
 
-/* 5. DASHBOARD & SIDEBAR UTAMA (DENGAN CORE SLIDING ACTIVE THEME)/* ==========================================================================
-   5. DASHBOARD & SIDEBAR UTAMA (DENGAN CORE SLIDING ACTIVE THEME)
-   ========================================================================== */
+/* 5. DASHBOARD & SIDEBAR UTAMA (DENGAN CORE SLIDING ACTIVE THEME)*/
 .sidebar { 
     width: 285px;       /* Diperlebar dari 260px */
     min-width: 285px;   /* Diperlebar dari 260px */
@@ -295,7 +285,7 @@ body {
     padding: 24px; 
     color: var(--color-white); 
     
-    /* --- INI KUNCI UTAMA BIAR SIDEBAR NGGAK KEPOTONG --- */
+    /* Sidebar biar ga kepotong */
     position: sticky;
     top: 0;
     height: 100vh; 
@@ -440,27 +430,59 @@ body {
     flex: 1;
 }
 
+/* RESPONSIVE SIDEBAR & OVERLAY BLUR EFFECT*/
+
+/* Efek Blur untuk Overlay */
 .sidebar-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(15, 23, 42, 0.5);
-    backdrop-filter: blur(3px);
-    z-index: 1040;
-    display: none;
+    inset: 0; 
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1040; 
     opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.sidebar-overlay.show {
-    display: block;
-    opacity: 1;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
 }
 
-/* =========================
-   6. DASHBOARD COMPONENTS & TABLES
-========================= */
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Sidebar Base Style */
+.sidebar {
+    z-index: 1050; 
+    transition: transform 0.3s ease-in-out, width 0.3s ease;
+}
+
+/* Sidebar akan muncul di atas konten utama saat layar lebih kecil dari 992px */
+@media (max-width: 991.98px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px; 
+        transform: translateX(-100%); 
+        background-color: var(--color-surface, #ffffff);
+        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    }
+
+    /* Munculkan sidebar saat class mobile-open ditambahkan dari JS */
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    /* Pastikan area konten mengambil lebar penuh di mobile */
+    .content-area {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* 6. DASHBOARD COMPONENTS & TABLES */
 .card-custom {
     border: 2px solid var(--color-border);
     border-radius: var(--radius-card);
@@ -485,9 +507,7 @@ body {
     font-weight: 600;
 }
 
-/* =========================
-   7. BADGES ACCESSBILITY
-========================= */
+/* 7. BADGES ACCESSBILITY */
 .badge-pastel-success {
     background-color: var(--color-success-bg) !important;
     color: var(--color-success-text) !important;
@@ -516,13 +536,11 @@ body {
     letter-spacing: 0.03em;
 }
 
-/* =========================
-   8. RESPONSIVE DESIGN
-========================= */
+/* 8. RESPONSIVE DESIGN */
 @media (max-width: 992px) {
     .sidebar { 
         position: fixed; 
-        left: -285px; /* Sesuaikan dengan lebar baru agar sembunyi penuh */
+        left: -285px; 
         top: 0; 
         margin-left: 0 !important; 
     }
@@ -532,9 +550,7 @@ body {
     .page-title { font-size: 1.2rem; }
 }
 
-/* ==========================================================================
-   9. SETTINGS TABS & DROPDOWN ACTIVE STATES (SLIDING ANIMATION)
-   ========================================================================== */
+/* 9. SETTINGS TABS & DROPDOWN ACTIVE STATES (SLIDING ANIMATION) */
 .settings-tab-container {
     border-bottom: 2px solid var(--color-border);
     margin-bottom: 24px;
@@ -606,7 +622,7 @@ body {
     transform: translateX(0);
 }
 .settings-tab-link.active::before {
-    background: rgba(217, 119, 6, 0.15); /* Background Kuning Permanen */
+    background: rgba(217, 119, 6, 0.15); 
 }
 
 /* Active State untuk Menu Dropdown Top Navbar */
