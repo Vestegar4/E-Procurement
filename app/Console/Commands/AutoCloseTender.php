@@ -7,6 +7,7 @@ use App\Models\Tender;
 use App\Models\Bid;
 use App\Models\TenderResult;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderItem;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -20,13 +21,15 @@ class AutoCloseTender extends Command
 
     public function handle()
     {
-        // 1. Cari semua tender yang statusnya masih 'bidding' tapi waktu bidding_end sudah lewat
-        $tenders = Tender::where('status', 'bidding')
+        // 1. Cari semua tender yang statusnya aktif tapi waktu bidding_end sudah lewat
+        // ▼ BAGIAN INI YANG DIPERLEBAR JARINGNYA ▼
+        $tenders = Tender::whereIn('status', ['published', 'open', 'active', 'bidding'])
             ->whereHas('timeline', function ($query) {
                 $query->where('bidding_end', '<=', Carbon::now());
             })
             ->with('timeline')
             ->get();
+        // ▲ SAMPAI SINI ▲
 
         $count = 0;
 
@@ -57,15 +60,23 @@ class AutoCloseTender extends Command
                 ]);
 
                 // 5. Terbitkan PO (Purchase Order) berstatus Draft
-                PurchaseOrder::create([
+                $po = PurchaseOrder::create([
                     'tender_id' => $tender->id,
                     'vendor_id' => $winningBid->vendor_id,
-                    'po_number' => 'PO-AUTO-' . date('Ymd') . '-' . $tender->id,
+                    'po_number' => 'PO-' . date('Ymd') . '-' . str_pad($tender->id, 3, '0', STR_PAD_LEFT),
                     'total_amount' => $winningBid->bid_amount,
                     'status' => 'draft'
                 ]);
 
-                Log::info("Tender ID {$tender->id} otomatis ditutup. Pemenang: Vendor ID {$winningBid->vendor_id}.");
+                PurchaseOrderItem::create([
+                    'purchase_order_id' => $po->id,
+                    'item_name' => $tender->title ?? 'Paket Pengadaan ' . $tender->tender_number, // Mengambil nama/judul tender
+                    'quantity' => 1,
+                    'unit_price' => $winningBid->bid_amount,
+                    'total_price' => $winningBid->bid_amount,
+                ]);
+
+                Log::info("Tender ID {$tender->id} ditutup. Pemenang: Vendor ID {$winningBid->vendor_id}. PO berhasil dibuat!");
             } else {
                 // Jika tidak ada yang menawar sama sekali
                 $tender->update(['status' => 'finished']); // Atau status 'failed' sesuai aturan Anda
