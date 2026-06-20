@@ -116,11 +116,42 @@
                                                 <option value="approved" {{ ($v->status ?? '') == 'approved' ? 'selected' : '' }}>Approved (Terverifikasi)</option>
                                                 <option value="rejected" {{ ($v->status ?? '') == 'rejected' ? 'selected' : '' }}>Rejected (Tolak & Blacklist)</option>
                                             </select>
+                                            {{-- BLOK BARU: TAMPILAN DOKUMEN VENDOR --}}
+                                            <div class="p-4 rounded-3 mb-3" style="background-color: var(--color-surface); border: 1px solid var(--color-border);">
+                                                <label class="form-label fw-bold mb-3 text-uppercase small" style="color: var(--color-text-muted);">
+                                                    <i class="fa-solid fa-folder-open me-2" style="color: var(--color-accent-bright);"></i> Berkas & Lampiran Vendor
+                                                </label>
+
+                                                @if(isset($v->documents) && $v->documents->count() > 0)
+                                                <div class="d-flex flex-column gap-2">
+                                                    @foreach($v->documents as $doc)
+                                                    {{-- Sesuaikan nama properti 'file_path' dan 'name' sesuai dengan kolom di tabel vendor_documents kamu --}}
+                                                    <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="text-decoration-none border p-3 rounded-3 d-flex align-items-center shadow-sm" style="background: var(--color-white); transition: 0.2s;" onmouseover="this.style.borderColor='var(--color-primary)'" onmouseout="this.style.borderColor='var(--color-border)'">
+                                                        <div class="bg-light rounded p-2 me-3">
+                                                            <i class="fa-solid fa-file-pdf fs-4 text-danger"></i>
+                                                        </div>
+                                                        <div>
+                                                            <span class="fw-bold d-block" style="color: var(--color-text-main); font-size: 0.9rem;">
+                                                                {{ $doc->document_name ?? $doc->type ?? 'Dokumen Pendukung' }}
+                                                            </span>
+                                                            <small class="text-muted" style="font-size: 0.75rem;">Klik untuk melihat file</small>
+                                                        </div>
+                                                        <i class="fa-solid fa-arrow-up-right-from-square ms-auto text-muted small"></i>
+                                                    </a>
+                                                    @endforeach
+                                                </div>
+                                                @else
+                                                <div class="text-center py-3 border border-dashed rounded-3" style="background: var(--color-white); border-color: var(--color-border);">
+                                                    <i class="fa-regular fa-folder-closed fs-3 mb-2 opacity-50 text-muted"></i>
+                                                    <p class="text-muted small mb-0 fw-medium">Vendor belum melampirkan dokumen apapun.</p>
+                                                </div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer p-4 pt-0 border-0">
                                         <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Tutup</button>
-                                        <button type="submit" class="btn btn-primary-action px-4">Simpan Perubahan</button>
+                                        <button type="submit" class="btn btn-primary-action px-4" style="color: var(--color-text-main); background-color: var(--color-accent-bright);">Simpan Perubahan</button>
                                     </div>
                                 </form>
                             </div>

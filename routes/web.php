@@ -184,8 +184,42 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.tender-bids', compact('tender', 'bids', 'result'));
     })->name('admin.tenders.bids');
 
+
+    // Rute API untuk menetapkan pemenang
     Route::post('/tenders/{id}/select-winner', function (Request $request, $id) {
-        return back()->with('success', 'Pemenang lelang paket pengadaan berhasil ditetapkan.');
+        // 1. Validasi input dari Modal
+        $request->validate([
+            'bid_id' => 'required|exists:bids,id',
+            'vendor_id' => 'required|exists:vendors,id',
+            'notes' => 'required|string',
+        ]);
+
+        // 2. Simpan Data Pemenang (Tanpa memasukkan bid_id ke tabel tender_results)
+        $result = new \App\Models\TenderResult();
+        $result->tender_id = $id;
+        $result->winner_vendor_id = $request->vendor_id;
+        $result->notes = $request->notes;
+        // Kolom bid_id dihapus dari sini karena tidak ada di struktur database Anda
+        $result->save();
+
+        // 3. Ubah status Tender menjadi 'completed' (Selesai/Diumumkan)
+        $tender = \App\Models\Tender::findOrFail($id);
+        $tender->update([
+            'status' => 'completed'
+        ]);
+
+        // 4. Update status dokumen penawaran (bids) agar label "Pemenang" vs "Gugur" muncul
+        if (\Illuminate\Support\Facades\Schema::hasColumn('bids', 'status')) {
+            // Tandai vendor terpilih sebagai pemenang ('won' / 'approved')
+            \App\Models\Bid::where('id', $request->bid_id)->update(['status' => 'won']);
+
+            // Tandai vendor lainnya yang ikut tender ini sebagai gugur ('lost' / 'rejected')
+            \App\Models\Bid::where('tender_id', $id)
+                ->where('id', '!=', $request->bid_id)
+                ->update(['status' => 'lost']);
+        }
+
+        return back()->with('success', 'Pemenang lelang berhasil ditetapkan dan langsung diumumkan!');
     })->name('admin.tenders.select-winner');
 
     // MODULE: AANWIJZING 
