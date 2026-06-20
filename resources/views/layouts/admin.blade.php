@@ -68,8 +68,9 @@
         {{-- AREA UTAMA KONTEN --}}
         <div class="main-content">
             {{-- TOP NAVBAR --}}
-            <div class="top-navbar" style="position: relative; z-index: 1050;">
+            <div class="top-navbar">
                 <div class="d-flex align-items-center gap-3">
+
                     {{-- Tombol Toggle Garis Tiga --}}
                     <button type="button" class="btn-toggle-sidebar" id="sidebarToggle" aria-label="Menu Toggle">
                         <i class="fa-solid fa-bars"></i>
@@ -78,17 +79,18 @@
                 </div>
 
                 <div class="top-right d-flex align-items-center gap-3">
-                    {{-- DROPDOWN LONCENG NOTIFIKASI --}}
+
+                    {{-- TOMBOL LONCENG NOTIFIKASI TARUH DI SINI --}}
                     @php
-                        // Ambil 5 notif terakhir dari DB
-                        $notifications = \App\Models\Notification::latest()->take(5)->get();
+                    // Ambil 5 notif terakhir dari DB
+                    $notifications = \App\Models\Notification::latest()->take(5)->get();
                     @endphp
 
                     <div class="dropdown">
-                        <button class="btn border-0 position-relative rounded-circle d-flex justify-content-center align-items-center" type="button" id="notifDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" style="width: 44px; height: 44px; background: var(--color-surface); border: 1px solid var(--color-border) !important;">
+                        <button class="btn border-0 position-relative rounded-circle d-flex justify-content-center align-items-center" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 44px; height: 44px; background: var(--color-surface); border: 1px solid var(--color-border) !important;">
                             <i class="fa-solid fa-bell text-muted fs-5"></i>
                             @if($notifications->count() > 0)
-                                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="margin-top: 5px; margin-left: -5px;"></span>
+                            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="margin-top: 5px; margin-left: -5px;"></span>
                             @endif
                         </button>
 
@@ -98,25 +100,25 @@
                             </li>
 
                             @forelse($notifications as $notif)
-                                <li>
-                                    <a class="dropdown-item py-3 border-bottom text-wrap" href="javascript:void(0)" style="background: transparent;">
-                                        <div class="d-flex align-items-start gap-3">
-                                            <div class="rounded-circle d-flex justify-content-center align-items-center mt-1 shadow-sm" style="width: 35px; height: 35px; background-color: var(--color-primary); color: var(--color-white); flex-shrink: 0;">
-                                                <i class="fa-solid fa-info" style="font-size: 0.8rem;"></i>
-                                            </div>
-                                            <div>
-                                                <strong class="d-block text-dark small mb-1">{{ $notif->title ?? 'Pembaruan' }}</strong>
-                                                <span class="text-muted d-block" style="font-size: 0.85rem; white-space: normal;">{{ $notif->message ?? 'Ada aktivitas baru.' }}</span>
-                                                <small class="d-block fw-bold mt-1" style="color: var(--color-accent); font-size: 0.75rem;">{{ $notif->created_at->diffForHumans() }}</small>
-                                            </div>
+                            <li>
+                                <a class="dropdown-item py-3 border-bottom text-wrap" href="javascript:void(0)" style="background: transparent;">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="rounded-circle d-flex justify-content-center align-items-center mt-1 shadow-sm" style="width: 35px; height: 35px; background-color: var(--color-primary); color: var(--color-white); flex-shrink: 0;">
+                                            <i class="fa-solid fa-info" style="font-size: 0.8rem;"></i>
                                         </div>
-                                    </a>
-                                </li>
+                                        <div>
+                                            <strong class="d-block text-dark small mb-1">{{ $notif->title ?? 'Pembaruan' }}</strong>
+                                            <span class="text-muted d-block" style="font-size: 0.85rem; white-space: normal;">{{ $notif->message ?? 'Ada aktivitas baru.' }}</span>
+                                            <small class="d-block fw-bold mt-1" style="color: var(--color-accent); font-size: 0.75rem;">{{ $notif->created_at->diffForHumans() }}</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
                             @empty
-                                <li class="text-center py-4">
-                                    <i class="fa-regular fa-bell-slash fs-3 mb-2" style="color: var(--color-border);"></i>
-                                    <p class="text-muted small mb-0">Belum ada aktivitas baru.</p>
-                                </li>
+                            <li class="text-center py-4">
+                                <i class="fa-regular fa-bell-slash fs-3 mb-2" style="color: var(--color-border);"></i>
+                                <p class="text-muted small mb-0">Belum ada aktivitas baru.</p>
+                            </li>
                             @endforelse
                         </ul>
                     </div>
@@ -163,44 +165,54 @@
 
     {{-- KUMPULAN LOGIKA JAVASCRIPT --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // ==========================================
-            // 1. LOGIKA TOGGLE SIDEBAR
-            // ==========================================
-            const toggleButton = document.getElementById("sidebarToggle");
-            const sidebarElement = document.getElementById("sidebarNav");
-            const overlayElement = document.getElementById("sidebarOverlay");
+    document.addEventListener("DOMContentLoaded", function() {
+        const toggleBtn = document.getElementById("sidebarToggle");
+        const sidebarElement = document.getElementById("sidebarNav");
+        const overlayElement = document.getElementById("sidebarOverlay");
 
-            if (toggleButton && sidebarElement && overlayElement) {
-                toggleButton.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    if (window.innerWidth <= 991.98) {
-                        sidebarElement.classList.add("mobile-open");
-                        overlayElement.classList.add("show");
-                        document.body.style.overflow = "hidden";
-                    } else {
-                        sidebarElement.classList.toggle("toggled");
-                    }
-                });
-            }
-
-            if (overlayElement) {
-                overlayElement.addEventListener("click", function() {
-                    sidebarElement.classList.remove("mobile-open");
-                    overlayElement.classList.remove("show");
-                    document.body.style.overflow = "auto";
-                });
-            }
-
-            window.addEventListener("resize", function() {
-                if (window.innerWidth > 991.98) {
-                    sidebarElement.classList.remove("mobile-open");
-                    overlayElement.classList.remove("show");
-                    document.body.style.overflow = "auto";
+        // 1. Fungsi Buka/Tutup Sidebar
+        if (toggleBtn) {
+            toggleBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                if (window.innerWidth <= 991.98) {
+                    sidebarElement.classList.add("mobile-open");
+                    overlayElement.classList.add("show");
+                    document.body.style.overflow = "hidden";
+                } else {
+                    sidebarElement.classList.toggle("toggled");
                 }
             });
-        });
+        }
 
+        // 2. Fungsi Tutup Sidebar saat Bagian Blur (Overlay) Diklik & Kembalikan Fokus
+        if (overlayElement) {
+            overlayElement.addEventListener("click", function(e) {
+                e.preventDefault();
+                
+                // Tutup sidebar dan hilangkan efek blur
+                sidebarElement.classList.remove("mobile-open");
+                overlayElement.classList.remove("show");
+                document.body.style.overflow = "auto";
+
+                // Kembalikan fokus kursor/layar ke halaman (Perbaikan yang Anda minta)
+                const mainContent = document.querySelector(".main-content") || document.querySelector(".wrapper");
+                if (mainContent) {
+                    mainContent.setAttribute("tabindex", "-1");
+                    mainContent.focus();
+                    mainContent.style.outline = "none";
+                }
+            });
+        }
+
+        // 3. Reset tampilan otomatis jika orientasi layar diubah
+        window.addEventListener("resize", function() {
+            if (window.innerWidth > 991.98) {
+                sidebarElement.classList.remove("mobile-open");
+                overlayElement.classList.remove("show");
+                document.body.style.overflow = "auto";
+            }
+        });
+    });
         // ==========================================
         // 2. LOGIKA TRIGGER SYSTEM EVENT INDEPENDEN (JANGAN DIHAPUS)
         // ==========================================
