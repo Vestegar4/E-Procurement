@@ -94,4 +94,5 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureUserIsVendor::clas
     Route::post('/tenders/{id}/aanwijzing', [AanwijzingController::class, 'store']);
     Route::put('/profile', [\App\Http\Controllers\Vendor\VendorProfileController::class, 'update']);
     Route::post('/documents', [\App\Http\Controllers\Vendor\VendorProfileController::class, 'uploadDocument']);
+    Route::post('/customer-service', [App\Http\Controllers\Api\Vendor\CustomerServiceController::class, 'store']);
 });

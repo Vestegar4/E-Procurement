@@ -13,7 +13,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except(['storeContact']);
     }
 
     /**
@@ -24,5 +24,26 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
+    }
+
+    public function storeContact(Request $request)
+    {
+        // Validasi isian form dari landing page
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string'
+        ]);
+
+        // Simpan ke tabel CustomerService TANPA vendor_id
+        \App\Models\CustomerService::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'message' => $request->message,
+            'status' => 'unread'
+        ]);
+
+        // Kembalikan ke landing page dengan pesan sukses
+        return back()->with('success', 'Terima kasih! Pesan/Pengaduan Anda telah berhasil dikirim.');
     }
 }
