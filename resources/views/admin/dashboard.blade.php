@@ -340,7 +340,7 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
         btn.disabled = true;
 
-        fetch("{{ route('admin.customer-service.send') }}", {
+        fetch("{{ route('admin.customer-service') }}", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
