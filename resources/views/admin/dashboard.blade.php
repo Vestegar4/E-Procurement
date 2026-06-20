@@ -67,20 +67,20 @@
 
     {{-- SECTION 2: WRAPPER TAB AKTIVITAS & CHAT (MENGGANTIKAN TABEL LAMA) --}}
     <div class="card card-custom border-0 shadow-sm mb-5" style="background: var(--color-white); border-radius: var(--radius-card, 16px); overflow: hidden;">
-        
+
         {{-- NAV TABS HEADER --}}
         <div class="card-header bg-white border-bottom pt-4 pb-0 px-4">
             <ul class="nav nav-tabs border-0" id="dashboardTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active fw-bold text-dark border-0 border-bottom border-3 border-primary bg-transparent py-3" 
-                        id="pengadaan-tab" data-bs-toggle="tab" data-bs-target="#pengadaan-pane" 
+                    <button class="nav-link active fw-bold text-dark border-0 border-bottom border-3 border-primary bg-transparent py-3"
+                        id="pengadaan-tab" data-bs-toggle="tab" data-bs-target="#pengadaan-pane"
                         type="button" role="tab" aria-controls="pengadaan-pane" aria-selected="true" style="font-size: 1.05rem;">
                         <i class="fa-solid fa-folder-open me-2 text-primary"></i> Aktivitas Pengadaan
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-bold text-muted border-0 border-bottom border-3 border-transparent bg-transparent py-3" 
-                        id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat-pane" 
+                    <button class="nav-link fw-bold text-muted border-0 border-bottom border-3 border-transparent bg-transparent py-3"
+                        id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat-pane"
                         type="button" role="tab" aria-controls="chat-pane" aria-selected="false" style="font-size: 1.05rem;">
                         <i class="fa-solid fa-headset me-2 text-secondary"></i> Chat Customer Service
                     </button>
@@ -91,15 +91,15 @@
         {{-- TAB CONTENT --}}
         <div class="card-body p-0">
             <div class="tab-content" id="dashboardTabsContent">
-                
-                {{-- TAB 1: TABEL PENGADAAN (KODE TABEL ASLI ANDA) --}}
+
+                {{-- TAB 1: TABEL PENGADAAN (KODE TABEL ASLI) --}}
                 <div class="tab-pane fade show active" id="pengadaan-pane" role="tabpanel" aria-labelledby="pengadaan-tab" tabindex="0">
                     <div class="p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="fw-bold m-0" style="color: var(--color-text-main); letter-spacing: -0.01em;">Aktivitas Pengadaan Terbaru</h5>
                             <span class="badge bg-light text-dark px-3 py-2 border fw-semibold" style="border-radius: 20px; font-size: 0.8rem;">Sistem Master Realtime</span>
                         </div>
-                        
+
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead>
@@ -156,111 +156,222 @@
                 </div>
 
                 {{-- TAB 2: CHAT CUSTOMER SERVICE (SPLIT VIEW) --}}
-                <div class="tab-pane fade" id="chat-pane" role="tabpanel" aria-labelledby="chat-tab" tabindex="0">
-                    <div class="row g-0" style="min-height: 500px;">
-                        
-                        {{-- SISI KIRI: LIST VENDOR --}}
-                        <div class="col-md-4 col-lg-3 border-end" style="background-color: var(--color-surface); max-height: 500px; overflow-y: auto;">
-                            <div class="p-3 border-bottom position-sticky top-0 bg-light" style="z-index: 10;">
-                                <input type="text" class="form-control auth-input" placeholder="Cari percakapan...">
-                            </div>
-                            
-                            <div class="list-group list-group-flush">
-                                {{-- Contoh Item Vendor Aktif --}}
-                                <button type="button" class="list-group-item list-group-item-action p-3 border-bottom active" style="background-color: var(--color-primary); color: white;">
-                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                        <strong class="text-truncate">PT. Digital Solusi</strong>
-                                        <small style="font-size: 0.7rem;">10:42</small>
-                                    </div>
-                                    <small class="d-block text-truncate" style="opacity: 0.8;">Apakah dokumen NPWP harus legalisir?</small>
-                                </button>
+                @php
+                // Mengambil data vendor untuk list chat di Dashboard
+                $dashboardVendors = \App\Models\Vendor::latest()->get();
+                @endphp
 
-                                {{-- Contoh Item Vendor Pasif --}}
-                                <button type="button" class="list-group-item list-group-item-action p-3 border-bottom bg-transparent">
-                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                        <strong class="text-truncate text-dark">CV. Bangun Karya</strong>
-                                        <small class="text-muted" style="font-size: 0.7rem;">Kemarin</small>
-                                    </div>
-                                    <small class="d-block text-muted text-truncate">Terima kasih atas informasinya min.</small>
-                                </button>
+                <div class="row g-0 border-top">
+                    {{-- KIRI: DAFTAR VENDOR --}}
+                    <div class="col-md-4 border-end" style="background: var(--color-white); max-height: 500px; overflow-y: auto;">
+                        <div class="p-3 border-bottom">
+                            <input type="text" class="form-control" placeholder="Cari percakapan..." style="border-radius: 8px;">
+                        </div>
+
+                        <div id="dashboardVendorList">
+                            @forelse($dashboardVendors as $vendor)
+                            <div id="dash-vendor-{{ $vendor->id }}"
+                                class="p-3 border-bottom dash-vendor-item {{ $loop->first ? 'bg-navy text-white active' : 'bg-white text-dark' }}"
+                                style="cursor: pointer; transition: 0.2s;"
+                                onclick="bukaChatDashboard('{{ $vendor->id }}', '{{ addslashes($vendor->company_name ?? $vendor->name) }}')">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-bold" style="font-size: 0.95rem;">{{ $vendor->company_name ?? $vendor->name }}</span>
+                                    <small style="opacity: 0.7; font-size: 0.75rem;">Vendor</small>
+                                </div>
+                                <p class="mb-0 small text-truncate" style="opacity: 0.8;">Ketuk untuk melihat pesan...</p>
+                            </div>
+                            @empty
+                            <div class="p-4 text-center text-muted small">Belum ada vendor terdaftar.</div>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    {{-- KANAN: RUANG CHAT --}}
+                    <div class="col-md-8 d-flex flex-column" style="background: #f8fafc; max-height: 500px;">
+                        {{-- Header Chat --}}
+                        <div class="p-3 border-bottom bg-white d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center me-3 text-white fw-bold" style="width: 40px; height: 40px; background-color: var(--color-accent);">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                            <div>
+                                <h6 id="dashChatHeader" class="fw-bold mb-0 text-dark">
+                                    {{ $dashboardVendors->count() > 0 ? ($dashboardVendors->first()->company_name ?? $dashboardVendors->first()->name) : 'Pilih Vendor' }}
+                                </h6>
+                                <small class="text-success"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Sedang aktif</small>
                             </div>
                         </div>
 
-                        {{-- SISI KANAN: RUANG CHAT & FORM BALAS --}}
-                        <div class="col-md-8 col-lg-9 d-flex flex-column" style="background-color: var(--color-white); max-height: 500px;">
-                            
-                            {{-- Chat Header --}}
-                            <div class="p-3 border-bottom d-flex align-items-center gap-3">
-                                <div class="rounded-circle d-flex justify-content-center align-items-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background-color: var(--color-accent);">
-                                    PT
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold" style="color: var(--color-text-main);">PT. Digital Solusi</h6>
-                                    <small class="text-success fw-medium"><i class="fa-solid fa-circle me-1" style="font-size: 0.5rem;"></i>Sedang aktif</small>
-                                </div>
+                        {{-- Area Pesan --}}
+                        <div class="flex-grow-1 p-4 overflow-auto" id="dashChatArea">
+                            <div class="text-center text-muted my-5">
+                                <i class="fa-solid fa-spinner fa-spin mb-2 fs-3 opacity-50"></i>
+                                <p class="small">Memuat percakapan...</p>
                             </div>
+                        </div>
 
-                            {{-- Chat Messages Area --}}
-                            <div class="flex-grow-1 p-4 overflow-auto" style="background-color: #f8fafc;">
-                                {{-- Bubble Kiri (Vendor) --}}
-                                <div class="d-flex justify-content-start mb-3">
-                                    <div class="p-3 shadow-sm" style="background-color: white; border-radius: 16px 16px 16px 0; max-width: 75%; border: 1px solid var(--color-border);">
-                                        <p class="mb-1 text-dark small">Selamat pagi admin, untuk paket tender IT Infrastruktur, apakah dokumen NPWP harus dilegalisir basah atau cukup scan PDF?</p>
-                                        <small class="text-muted" style="font-size: 0.7rem;">10:42 AM</small>
-                                    </div>
+                        {{-- Input Pesan --}}
+                        <div class="p-3 bg-white border-top">
+                            <form id="dashFormChat" onsubmit="kirimChatDashboard(event)" class="m-0">
+                                @csrf
+                                <input type="hidden" id="dash_receiver_id" value="{{ $dashboardVendors->count() > 0 ? $dashboardVendors->first()->id : '' }}">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-paperclip text-muted"></i></span>
+                                    <input type="text" id="dashChatMessage" class="form-control border-start-0" placeholder="Ketik balasan pesan di sini..." required>
+                                    <button type="submit" id="dashBtnKirim" class="btn text-white px-4" style="background-color: var(--color-primary);">
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
                                 </div>
-
-                                {{-- Bubble Kanan (Admin/Anda) --}}
-                                <div class="d-flex justify-content-end mb-3">
-                                    <div class="p-3 shadow-sm text-white" style="background-color: var(--color-primary); border-radius: 16px 16px 0 16px; max-width: 75%;">
-                                        <p class="mb-1 small">Selamat pagi. Cukup melampirkan hasil scan PDF berwarna dari NPWP asli perusahaan Anda.</p>
-                                        <small style="font-size: 0.7rem; opacity: 0.8;">10:45 AM <i class="fa-solid fa-check-double ms-1"></i></small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Form Input Balasan --}}
-                            <div class="p-3 border-top bg-white">
-                                <form action="#" method="POST" onsubmit="event.preventDefault();">
-                                    <div class="input-group">
-                                        <button class="btn btn-light border text-muted px-3" type="button"><i class="fa-solid fa-paperclip"></i></button>
-                                        <input type="text" class="form-control border auth-input" placeholder="Ketik balasan pesan di sini..." required>
-                                        <button class="btn btn-primary-action px-4" type="submit" style="background-color: var(--color-primary); color: white;">
-                                            <i class="fa-solid fa-paper-plane"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-
+                            </form>
                         </div>
                     </div>
                 </div>
 
+                <style>
+                    /* Styling khusus untuk state active pada list vendor dashboard */
+                    .dash-vendor-item.bg-navy {
+                        background-color: var(--color-primary) !important;
+                        color: white !important;
+                    }
+
+                    .dash-vendor-item.bg-navy .text-muted {
+                        color: rgba(255, 255, 255, 0.7) !important;
+                    }
+
+                    .dash-chat-bubble-vendor {
+                        background: white;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 0 12px 12px 12px;
+                        padding: 12px 16px;
+                        max-width: 80%;
+                        color: #1e293b;
+                    }
+
+                    .dash-chat-bubble-admin {
+                        background: var(--color-primary);
+                        color: white;
+                        border-radius: 12px 0 12px 12px;
+                        padding: 12px 16px;
+                        max-width: 80%;
+                        box-shadow: 0 4px 6px rgba(15, 23, 42, 0.1);
+                    }
+                </style>
             </div>
+
         </div>
     </div>
+</div>
 
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tabs = document.querySelectorAll('#dashboardTabs .nav-link');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function () {
-                // Hapus warna dan garis aktif dari semua tab
-                tabs.forEach(t => {
-                    t.classList.remove('text-dark', 'border-primary');
-                    t.classList.add('text-muted', 'border-transparent');
-                });
-                
-                // Tambahkan warna dan garis aktif ke tab yang diklik
-                this.classList.remove('text-muted', 'border-transparent');
-                this.classList.add('text-dark', 'border-primary');
-            });
-        });
+    // 1. Load chat pertama kali saat halaman dibuka
+    document.addEventListener("DOMContentLoaded", function() {
+        let firstVendor = document.getElementById('dash_receiver_id').value;
+        if(firstVendor) {
+            let firstName = document.getElementById('dashChatHeader').innerText;
+            bukaChatDashboard(firstVendor, firstName);
+        }
     });
+    
+    // 2. Fungsi mengganti obrolan
+    function bukaChatDashboard(vendorId, vendorName) {
+        document.getElementById('dash_receiver_id').value = vendorId;
+        document.getElementById('dashChatHeader').innerText = vendorName;
+
+        // Ubah warna aktif di sidebar kiri
+        document.querySelectorAll('.dash-vendor-item').forEach(el => {
+            el.classList.remove('bg-navy', 'text-white', 'active');
+            el.classList.add('bg-white', 'text-dark');
+        });
+        let activeEl = document.getElementById('dash-vendor-' + vendorId);
+        if(activeEl) {
+            activeEl.classList.remove('bg-white', 'text-dark');
+            activeEl.classList.add('bg-navy', 'text-white', 'active');
+        }
+
+        let chatArea = document.getElementById('dashChatArea');
+        chatArea.innerHTML = `<div class="text-center text-muted my-5"><i class="fa-solid fa-spinner fa-spin mb-2 fs-3 opacity-50"></i><p class="small">Menarik pesan...</p></div>`;
+
+        // Fetch data dari database
+        fetch(`/admin/chat/messages/${vendorId}`)
+            .then(res => res.json())
+            .then(data => {
+                chatArea.innerHTML = '';
+                if (data.success && data.data.length > 0) {
+                    data.data.forEach(chat => {
+                        if (chat.is_admin) {
+                            chatArea.innerHTML += `
+                                <div class="d-flex justify-content-end mb-3">
+                                    <div class="dash-chat-bubble-admin">
+                                        <p class="mb-1 small">${chat.message}</p>
+                                        <small style="font-size: 0.7rem; opacity: 0.7;">${chat.time} <i class="fa-solid fa-check-double ms-1"></i></small>
+                                    </div>
+                                </div>`;
+                        } else {
+                            chatArea.innerHTML += `
+                                <div class="d-flex justify-content-start mb-3">
+                                    <div class="dash-chat-bubble-vendor shadow-sm">
+                                        <p class="mb-1 small">${chat.message}</p>
+                                        <small class="text-muted" style="font-size: 0.7rem;">${chat.time}</small>
+                                    </div>
+                                </div>`;
+                        }
+                    });
+                } else {
+                    chatArea.innerHTML = `<div class="text-center text-muted my-4"><p class="small">Belum ada pesan dengan ${vendorName}.</p></div>`;
+                }
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }).catch(err => chatArea.innerHTML = `<div class="text-center text-danger my-4"><p class="small">Gagal memuat pesan.</p></div>`);
+    }
+
+    // 3. Fungsi mengirim pesan
+    function kirimChatDashboard(e) {
+        e.preventDefault();
+        let input = document.getElementById('dashChatMessage');
+        let receiverId = document.getElementById('dash_receiver_id').value;
+        let btn = document.getElementById('dashBtnKirim');
+        let chatArea = document.getElementById('dashChatArea');
+        let msg = input.value.trim();
+
+        if(!msg) return;
+
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+
+        fetch("{{ route('admin.customer-service.send') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({ receiver_id: receiverId, message: msg })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                input.value = '';
+                let time = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                
+                // Hapus placeholder kosong jika ada
+                if(chatArea.innerHTML.includes('Belum ada pesan')) chatArea.innerHTML = '';
+
+                chatArea.innerHTML += `
+                    <div class="d-flex justify-content-end mb-3">
+                        <div class="dash-chat-bubble-admin">
+                            <p class="mb-1 small">${msg}</p>
+                            <small style="font-size: 0.7rem; opacity: 0.7;">${time} <i class="fa-solid fa-check ms-1"></i></small>
+                        </div>
+                    </div>`;
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+        })
+        .finally(() => {
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
+            btn.disabled = false;
+        });
+    }
 </script>
 @endpush
