@@ -71,7 +71,7 @@
             {{-- BAGIAN KANAN: MENU NAVIGASI (Hapus Home, Modifikasi Kontak Admin & Register) --}}
             <div class="ms-auto d-flex align-items-center gap-3">
                 @guest
-                {{-- 1. TOMBOL LOGIN / MASUK PORTAL --}}
+                {{-- 1. TOMBOL LOGIN --}}
                 @if(!request()->routeIs('login'))
                 <a href="{{ route('login') }}" class="btn px-4 py-2" style="
                             border: 2px solid var(--color-primary); 
