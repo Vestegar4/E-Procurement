@@ -38,6 +38,13 @@ class AanwijzingController extends Controller
 
         $tender = Tender::findOrFail($tenderId);
 
+        $vendor = auth()->user()->vendor; if (!$vendor) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Vendor tidak ditemukan.'
+            ], 404);
+        }
+
         // Simpan ke database
         $aanwijzing = Aanwijzing::create([
             'tender_id' => $tender->id,

@@ -115,11 +115,10 @@ class VendorBidController extends Controller
         }
 
         // cek status tender
-        if ($tender->status !== 'bidding') {
-            return back()->with(
-                'error',
-                'Tender belum memasuki tahap bidding.'
-            );
+        if (!$tender->isBiddingOpen()) {
+            return response()->json([
+                'message' => 'Tender is not open for bidding'
+            ], 400);
         }
 
         // cek periode bidding
@@ -129,10 +128,9 @@ class VendorBidController extends Controller
             $now->lt($tender->timeline->bidding_start) ||
             $now->gt($tender->timeline->bidding_end)
         ) {
-            return back()->with(
-                'error',
-                'Periode bidding sudah ditutup.'
-            );
+            return response()->json([
+                'message' => 'Bidding period has ended'
+            ], 400);
         }
 
         // cek existing bid
