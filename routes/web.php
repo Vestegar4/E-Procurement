@@ -339,4 +339,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     //     return redirect('/')->with('success', 'Pesan pengaduan Anda berhasil terkirim ke Admin Proculus!');
     //  })->name('contact.admin.send');
 
+    Route::get('/customer-service', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'index'])->name('admin.customer-service');
+    Route::post('/customer-service/{id}/resolve', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'resolve'])->name('admin.customer-service.resolve');
 });
+// Kontak Admin Route
+// 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)
+Route::get('/kontak-admin', function () {
+    return view('auth.contact');
+})->name('contact.admin');
+
+
+// Rute untuk form pengaduan di Landing Page
+Route::post('/contact-submit', [App\Http\Controllers\HomeController::class, 'storeContact'])->name('contact.submit');
