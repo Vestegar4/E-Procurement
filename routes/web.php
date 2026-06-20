@@ -292,6 +292,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/settings', function () {
         return view('admin.settings');
     })->name('admin.settings');
+    Route::get('/customer-service', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'index'])->name('admin.customer-service');
+    Route::post('/customer-service/{id}/resolve', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'resolve'])->name('admin.customer-service.resolve');
 });
 
 // Kontak Admin Route
@@ -300,17 +302,6 @@ Route::get('/kontak-admin', function () {
     return view('auth.contact');
 })->name('contact.admin');
 
-// Route::post('/kontak-admin/kirim', function (Illuminate\Http\Request $request) {
-//     // Menyimpan pengaduan ke dalam tabel notifications dengan aman menggunakan Query Builder
-//     if (Schema::hasTable('notifications')) {
-//         DB::table('notifications')->insert([
-//             'title' => 'Tiket Pengaduan Support Baru',
-//             'message' => 'Pengirim: ' . $request->name . ' (' . $request->email . ') - Pesan: ' . $request->message,
-//             'is_read' => false,
-//             'created_at' => now(),
-//             'updated_at' => now(),
-//         ]);
-//     }
-    
-//     return redirect('/')->with('success', 'Pesan pengaduan Anda berhasil terkirim ke Admin Proculus!');
-// })->name('contact.admin.store');
+
+// Rute untuk form pengaduan di Landing Page
+Route::post('/contact-submit', [App\Http\Controllers\HomeController::class, 'storeContact'])->name('contact.submit');
