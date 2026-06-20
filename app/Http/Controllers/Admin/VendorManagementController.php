@@ -9,14 +9,25 @@ use App\Http\Controllers\Controller;
 class VendorManagementController extends Controller
 {
     // list vendor vendor
-    public function index()
+    public function index(Request $Request)
     {
-        $vendors = Vendor::latest()->paginate(15);
+        $search = $request->query('search');
+        $status = $request->query('status');
 
-        return response()->json([
-            'message' => 'Vendors retrieved successfully',
-            'data' => $vendors
-        ]);
+        // 2. Query data vendor (dan relasi dokumennya sekalian)
+        $vendors = Vendor::with('user', 'documents')
+            ->when($search, function ($query) use ($search) {
+                $query->where('company_name', 'like', '%' . $search . '%');
+            })
+            ->when($status, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        // 3. Kembalikan ke tampilan Web, BUKAN ke JSON
+        return view('admin.vendors', compact('vendors'));
     }
 
     // detail vendor
