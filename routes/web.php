@@ -10,12 +10,14 @@ use App\Models\User;
 use App\Models\Aanwijzing;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use Illuminate\Support\Facades\Hash;
+
 
 // AUTH & HOME ROUTES
 // Matikan fitur pendaftaran, lupa password, dan verifikasi email
 Auth::routes([
-    'register' => false, 
-    'reset'    => false, 
+    'register' => false,
+    'reset'    => false,
     'verify'   => false,
 ]);
 
@@ -236,25 +238,25 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
             // 2. Logika Pencarian berdasarkan nama atau email
             if ($request->filled('search')) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%");
                 });
             }
 
             // KUNCI PERBAIKAN: Urutkan berdasarkan 'role' dari A ke Z, 
             // lalu urutkan berdasarkan 'name' agar nama di dalam role yang sama juga berurutan.
             $users = $query->orderBy('role', 'asc')
-                           ->orderBy('name', 'asc')
-                           ->paginate(10)
-                           ->withQueryString();
+                ->orderBy('name', 'asc')
+                ->paginate(10)
+                ->withQueryString();
         } else {
             $users = collect();
         }
-        
+
         return view('admin.users', compact('users'));
     })->name('admin.users');
-                        
+
     // Laporan & Grafik Keuangan
     // Rute untuk Halaman Laporan & Grafik (Ini yang sudah kamu buat, sudah benar!)
     Route::get('/reports', function () {
@@ -289,28 +291,52 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/reports/download/{type}', function ($type) {
         return back()->with('success', 'File data berhasil diekstrak.');
     })->name('admin.reports.download');
+
+    // Rute untuk menampilkan halaman
     Route::get('/settings', function () {
         return view('admin.settings');
     })->name('admin.settings');
+
+    // Rute untuk memproses form (POST)
+    // Cukup tambahkan kata /admin/ di depan url settings/update
+    Route::post('/admin/settings/update', function (Illuminate\Http\Request $request) {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Illuminate\Support\Facades\Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Password saat ini tidak cocok.']);
+        }
+
+        $user->password = Illuminate\Support\Facades\Hash::make($request->new_password);
+        $user->save();
+
+        return back()->with('success', 'Kata sandi berhasil diperbarui!');
+    })->name('admin.settings.update');
+
+
+    // Kontak Admin Route
+    // 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)
+    Route::get('/kontak-admin', function () {
+        return view('auth.contact');
+    })->name('contact.admin');
+
+    // Route::post('/kontak-admin/kirim', function (Illuminate\Http\Request $request) {
+    //     // Menyimpan pengaduan ke dalam tabel notifications dengan aman menggunakan Query Builder
+    //     if (Schema::hasTable('notifications')) {
+    //         DB::table('notifications')->insert([
+    //             'title' => 'Tiket Pengaduan Support Baru',
+    //             'message' => 'Pengirim: ' . $request->name . ' (' . $request->email . ') - Pesan: ' . $request->message,
+    //             'is_read' => false,
+    //             'created_at' => now(),
+    //             'updated_at' => now(),
+    //         ]);
+    //     }
+
+    //     return redirect('/')->with('success', 'Pesan pengaduan Anda berhasil terkirim ke Admin Proculus!');
+    //  })->name('contact.admin.send');
+
 });
-
-// Kontak Admin Route
-// 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)
-Route::get('/kontak-admin', function () {
-    return view('auth.contact');
-})->name('contact.admin');
-
-// Route::post('/kontak-admin/kirim', function (Illuminate\Http\Request $request) {
-//     // Menyimpan pengaduan ke dalam tabel notifications dengan aman menggunakan Query Builder
-//     if (Schema::hasTable('notifications')) {
-//         DB::table('notifications')->insert([
-//             'title' => 'Tiket Pengaduan Support Baru',
-//             'message' => 'Pengirim: ' . $request->name . ' (' . $request->email . ') - Pesan: ' . $request->message,
-//             'is_read' => false,
-//             'created_at' => now(),
-//             'updated_at' => now(),
-//         ]);
-//     }
-    
-//     return redirect('/')->with('success', 'Pesan pengaduan Anda berhasil terkirim ke Admin Proculus!');
-// })->name('contact.admin.store');

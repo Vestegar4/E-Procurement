@@ -40,7 +40,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: var(--color-surface);
+    background-color: #fff9f6;
     font-family: "Inter", sans-serif;
     color: var(--color-text-main);
     -webkit-font-smoothing: antialiased;
@@ -635,4 +635,48 @@ body {
 }
 .active-dropdown i {
     color: var(--color-accent-bright) !important;
+}
+
+/* PROCULUS RESPONSIVE UTILITY & ACCESSIBILITY GRID (RAMAH LANSIA) */
+
+/* Grid Otomatis Responsive Tanpa Media Query Manual */
+.proculus-responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* Utilitas Kontras & Keterbacaan Tinggi untuk Segala Usia */
+.text-accessible-main {
+    color: var(--color-primary, #0f172a) !important;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.text-accessible-muted {
+    color: #475569 !important; /* Warna abu-abu yang lebih gelap lolos WCAG AAA */
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+/* Tombol Ramah Lansia (Ukuran Target Klik Lebih Besar & Jelas) */
+.btn-accessible {
+    padding: 0.85rem 1.75rem !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em;
+}
+
+/* Mencegah Konten Form Meluber di Layar Kecil */
+.auth-input, .form-control {
+    font-size: 1rem !important; /* Minimal 16px di mobile agar browser tidak auto-zoom */
+    padding: 0.75rem 1rem !important;
+}
+
+@media (max-width: 576px) {
+    .proculus-responsive-grid {
+        grid-template-columns: 1fr; /* Paksa 1 kolom penuh pada mobile super kecil */
+        gap: 1rem;
+    }
 }
