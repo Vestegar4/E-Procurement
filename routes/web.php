@@ -259,14 +259,29 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Laporan & Grafik Keuangan
     // Rute untuk Halaman Laporan & Grafik (Ini yang sudah kamu buat, sudah benar!)
-    Route::get('/reports', function () {
+    Route::get('/reports', function (\Illuminate\Http\Request $request) {
+        $selectedYear = $request->input('year', date('Y'));
+
+        // Dapatkan list tahun yang tersedia dari database untuk dropdown
+        $availableYears = \Illuminate\Support\Facades\DB::table('purchase_orders')
+            ->selectRaw('YEAR(created_at) as year')
+            ->groupBy('year')
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Jika tidak ada data, pastikan minimal ada tahun sekarang
+        if (empty($availableYears)) {
+            $availableYears = [date('Y')];
+        }
+
         // data untuk chart keuangan (total anggaran pembelian per bulan di tahun berjalan)
         $financialData = \Illuminate\Support\Facades\DB::table('purchase_orders')
             ->select(
                 \Illuminate\Support\Facades\DB::raw("DATE_FORMAT(created_at, '%b') as month_name"),
                 \Illuminate\Support\Facades\DB::raw("SUM(total_amount) as total_budget")
             )
-            ->whereYear('created_at', date('Y')) // Hanya mengambil data tahun berjalan
+            ->whereYear('created_at', $selectedYear) // Hanya mengambil data sesuai tahun terpilih
             ->groupBy(\Illuminate\Support\Facades\DB::raw("DATE_FORMAT(created_at, '%b')"), \Illuminate\Support\Facades\DB::raw("MONTH(created_at)"))
             ->orderBy(\Illuminate\Support\Facades\DB::raw("MONTH(created_at)"), 'asc')
             ->get();
@@ -284,12 +299,70 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         }
 
         // Kirim data asli database ke file view admin/reports.blade.php
-        return view('admin.reports', compact('chartLabels', 'chartValues'));
+        return view('admin.reports', compact('chartLabels', 'chartValues', 'selectedYear', 'availableYears'));
     })->name('admin.reports');
 
-    // menambahkan rute ini agar tidak error
+    // Rute untuk download laporan
     Route::get('/reports/download/{type}', function ($type) {
-        return back()->with('success', 'File data berhasil diekstrak.');
+        if ($type === 'procurement') {
+            $tenders = \App\Models\Tender::all();
+            $fileName = 'rekapitulasi_pengadaan_' . date('Ymd_His') . '.csv';
+
+            $headers = [
+                "Content-type"        => "text/csv",
+                "Content-Disposition" => "attachment; filename=$fileName",
+            ];
+
+            $callback = function () use ($tenders) {
+                $file = fopen('php://output', 'w');
+                // Header CSV
+                fputcsv($file, ['ID', 'Nama Paket', 'Deskripsi', 'Status', 'Tanggal Dibuat']);
+
+                // Isi Data CSV
+                foreach ($tenders as $tender) {
+                    fputcsv($file, [
+                        $tender->id,
+                        $tender->title,
+                        $tender->description,
+                        $tender->status,
+                        $tender->created_at ? $tender->created_at->format('Y-m-d H:i') : ''
+                    ]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        } elseif ($type === 'vendor') {
+            $vendors = \App\Models\Vendor::all();
+            $fileName = 'laporan_vendor_' . date('Ymd_His') . '.csv';
+
+            $headers = [
+                "Content-type"        => "text/csv",
+                "Content-Disposition" => "attachment; filename=$fileName",
+            ];
+
+            $callback = function () use ($vendors) {
+                $file = fopen('php://output', 'w');
+                // Header CSV
+                fputcsv($file, ['ID', 'Nama Vendor', 'Nama Perusahaan', 'Alamat', 'Status Verifikasi']);
+
+                // Isi Data CSV
+                foreach ($vendors as $vendor) {
+                    fputcsv($file, [
+                        $vendor->id,
+                        $vendor->name,
+                        $vendor->company_name,
+                        $vendor->address,
+                        $vendor->status ?? 'Draft'
+                    ]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        }
+
+        return back()->with('error', 'Jenis laporan tidak valid.');
     })->name('admin.reports.download');
 
     // Rute untuk menampilkan halaman
