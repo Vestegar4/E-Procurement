@@ -22,16 +22,27 @@ Auth::routes([
 ]);
 
 Route::get('/', function () {
-    // Jika sudah login, langsung paksa masuk ke dashboard admin
-    if (auth()->user()->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    } else {
-            // Jika dia Vendor (atau role lain) yang mencoba masuk lewat Web, tolak!
-            // (Karena Vendor seharusnya hanya pakai aplikasi Ionic Mobile)
+    // 1. Cek dulu apakah ada session aktif
+    if (auth()->check()) {
+        $user = auth()->user();
+        
+        // 2. PELINDUNG "GHOST SESSION": Jika nyangkut tapi akun aslinya hilang/null
+        if (!$user) {
+            Auth::logout();
+            return redirect()->route('home');
+        }
+
+        // 3. Jika akunnya benar-benar ada, baru cek Role-nya
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } else {
+            // Tolak akses jika selain Admin (misal: Vendor)
             Auth::logout();
             return redirect('/')->with('error', 'Akses Ditolak: Akun Vendor hanya dapat diakses melalui Aplikasi Mobile Proculus.');
         }
-    // Jika belum login, tampilkan landing page (beranda)
+    }
+    
+    // Jika memang belum login, tampilkan landing page (beranda)
     return view('home.home');
 })->name('home');
 
