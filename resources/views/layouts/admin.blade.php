@@ -94,33 +94,39 @@
                             @endif
                         </button>
 
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="notifDropdown" style="width: 320px; border-radius: 12px; max-height: 400px; overflow-y: auto;">
-                            <li class="bg-light border-bottom px-3 py-3 position-sticky top-0" style="z-index: 10;">
+                        {{-- WADAH DROPDOWN MENU YANG DIPERBAIKI --}}
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0" aria-labelledby="notifDropdown" style="width: 320px; border-radius: 12px; overflow: hidden;">
+                            
+                            {{-- 1. HEADER DROPDOWN (Tetap / Tidak ter-scroll) --}}
+                            <div class="bg-light border-bottom px-3 py-3" style="z-index: 10;">
                                 <h6 class="mb-0 fw-bold" style="color: var(--color-text-main);">Pemberitahuan Sistem</h6>
-                            </li>
+                            </div>
 
-                            @forelse($notifications as $notif)
-                            <li>
-                                <a class="dropdown-item py-3 border-bottom text-wrap" href="javascript:void(0)" style="background: transparent;">
-                                    <div class="d-flex align-items-start gap-3">
-                                        <div class="rounded-circle d-flex justify-content-center align-items-center mt-1 shadow-sm" style="width: 35px; height: 35px; background-color: var(--color-primary); color: var(--color-white); flex-shrink: 0;">
-                                            <i class="fa-solid fa-info" style="font-size: 0.8rem;"></i>
+                            {{-- 2. ISI NOTIFIKASI (Area yang bisa di-scroll) --}}
+                            <ul class="list-unstyled mb-0" style="max-height: 350px; overflow-y: auto; overflow-x: hidden;">
+                                @forelse($notifications as $notif)
+                                <li>
+                                    <a class="dropdown-item py-3 border-bottom text-wrap" href="javascript:void(0)" style="background: transparent;">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="rounded-circle d-flex justify-content-center align-items-center mt-1 shadow-sm" style="width: 35px; height: 35px; background-color: var(--color-primary); color: var(--color-white); flex-shrink: 0;">
+                                                <i class="fa-solid fa-info" style="font-size: 0.8rem;"></i>
+                                            </div>
+                                            <div>
+                                                <strong class="d-block text-dark small mb-1">{{ $notif->title ?? 'Pembaruan' }}</strong>
+                                                <span class="text-muted d-block" style="font-size: 0.85rem; white-space: normal;">{{ $notif->message ?? 'Ada aktivitas baru.' }}</span>
+                                                <small class="d-block fw-bold mt-1" style="color: var(--color-accent); font-size: 0.75rem;">{{ $notif->created_at->diffForHumans() }}</small>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <strong class="d-block text-dark small mb-1">{{ $notif->title ?? 'Pembaruan' }}</strong>
-                                            <span class="text-muted d-block" style="font-size: 0.85rem; white-space: normal;">{{ $notif->message ?? 'Ada aktivitas baru.' }}</span>
-                                            <small class="d-block fw-bold mt-1" style="color: var(--color-accent); font-size: 0.75rem;">{{ $notif->created_at->diffForHumans() }}</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            @empty
-                            <li class="text-center py-4">
-                                <i class="fa-regular fa-bell-slash fs-3 mb-2" style="color: var(--color-border);"></i>
-                                <p class="text-muted small mb-0">Belum ada aktivitas baru.</p>
-                            </li>
-                            @endforelse
-                        </ul>
+                                    </a>
+                                </li>
+                                @empty
+                                <li class="text-center py-4">
+                                    <i class="fa-regular fa-bell-slash fs-3 mb-2" style="color: var(--color-border);"></i>
+                                    <p class="text-muted small mb-0">Belum ada aktivitas baru.</p>
+                                </li>
+                                @endforelse
+                            </ul>
+                        </div>
                     </div>
 
                     {{-- DROPDOWN PROFIL USER --}}
