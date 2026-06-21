@@ -448,6 +448,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::get('/customer-service', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'index'])->name('admin.customer-service');
     Route::post('/customer-service/{id}/resolve', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'resolve'])->name('admin.customer-service.resolve');
+    Route::get('/customer-service/{vendor_id}/history', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'history'])->name('admin.cs.history');    
+    Route::post('/customer-service/send', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'send'])->name('admin.cs.send');
 });
 // Kontak Admin Route
 // 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)

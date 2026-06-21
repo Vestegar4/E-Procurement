@@ -69,20 +69,21 @@
     <div class="card card-custom border-0 shadow-sm mb-5" style="background: var(--color-white); border-radius: var(--radius-card, 16px); overflow: hidden;">
 
         {{-- NAV TABS HEADER --}}
+        {{-- NAV TABS HEADER --}}
         <div class="card-header bg-white border-bottom pt-4 pb-0 px-4">
             <ul class="nav nav-tabs border-0" id="dashboardTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active fw-bold text-dark border-0 border-bottom border-3 border-primary bg-transparent py-3"
+                    <button class="nav-link dash-tab-link active"
                         id="pengadaan-tab" data-bs-toggle="tab" data-bs-target="#pengadaan-pane"
-                        type="button" role="tab" aria-controls="pengadaan-pane" aria-selected="true" style="font-size: 1.05rem;">
-                        <i class="fa-solid fa-folder-open me-2 text-primary"></i> Aktivitas Pengadaan
+                        type="button" role="tab" aria-controls="pengadaan-pane" aria-selected="true">
+                        <i class="fa-solid fa-folder-open me-2"></i> Aktivitas Pengadaan
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-bold text-muted border-0 border-bottom border-3 border-transparent bg-transparent py-3"
+                    <button class="nav-link dash-tab-link"
                         id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat-pane"
-                        type="button" role="tab" aria-controls="chat-pane" aria-selected="false" style="font-size: 1.05rem;">
-                        <i class="fa-solid fa-headset me-2 text-secondary"></i> Chat Customer Service
+                        type="button" role="tab" aria-controls="chat-pane" aria-selected="false">
+                        <i class="fa-solid fa-headset me-2"></i> Chat Customer Service
                     </button>
                 </li>
             </ul>
@@ -156,6 +157,7 @@
                 </div>
 
                 {{-- TAB 2: CHAT CUSTOMER SERVICE (SPLIT VIEW) --}}
+            <div class="tab-pane fade" id="chat-pane" role="tabpanel" aria-labelledby="chat-tab" tabindex="0">
                 @php
                 // Mengambil data vendor untuk list chat di Dashboard
                 $dashboardVendors = \App\Models\Vendor::latest()->get();
@@ -197,7 +199,7 @@
                                 <h6 id="dashChatHeader" class="fw-bold mb-0 text-dark">
                                     {{ $dashboardVendors->count() > 0 ? ($dashboardVendors->first()->company_name ?? $dashboardVendors->first()->name) : 'Pilih Vendor' }}
                                 </h6>
-                                <small class="text-success"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Sedang aktif</small>
+                                <small class="text-muted"><i class="fa-solid fa-building-circle-check me-1"></i> Mitra Terdaftar</small>
                             </div>
                         </div>
 
@@ -254,9 +256,42 @@
                         max-width: 80%;
                         box-shadow: 0 4px 6px rgba(15, 23, 42, 0.1);
                     }
+
+                    .dash-tab-link {
+                        font-size: 1.05rem;
+                        font-weight: 700;
+                        color: #6c757d; /* Warna abu-abu saat tidak aktif */
+                        background: transparent !important;
+                        border: none !important;
+                        border-bottom: 3px solid transparent !important;
+                        padding: 1rem 1.5rem;
+                        transition: all 0.3s ease;
+                    }
+                    .dash-tab-link:hover {
+                        color: var(--color-primary);
+                    }
+                    .dash-tab-link.active {
+                        color: var(--color-text-main) !important;
+                        border-bottom: 3px solid var(--color-primary) !important; /* Garis Biru Muncul di Sini */
+                    }
+                    .dash-tab-link.active i {
+                        color: var(--color-primary) !important;
+                    }
+                    /* ▲ SAMPAI DI SINI ▲ */
+
+                    /* Styling khusus untuk state active pada list vendor dashboard */
+                    .dash-vendor-item.bg-navy {
+                        background-color: var(--color-primary) !important;
+                        color: white !important;
+                    }
+
+                    .dash-vendor-item.bg-navy {
+                            background-color: var(--color-primary) !important;
+                            color: white !important;
+                        }
                 </style>
             </div>
-
+            </div>
         </div>
     </div>
 </div>
@@ -275,6 +310,7 @@
         }
     });
     
+    // 2. Fungsi mengganti obrolan
     // 2. Fungsi mengganti obrolan
     function bukaChatDashboard(vendorId, vendorName) {
         document.getElementById('dash_receiver_id').value = vendorId;
@@ -295,26 +331,34 @@
         chatArea.innerHTML = `<div class="text-center text-muted my-5"><i class="fa-solid fa-spinner fa-spin mb-2 fs-3 opacity-50"></i><p class="small">Menarik pesan...</p></div>`;
 
         // Fetch data dari database
-        fetch(`/admin/chat/messages/${vendorId}`)
+        fetch(`/admin/customer-service/${vendorId}/history`)
             .then(res => res.json())
             .then(data => {
                 chatArea.innerHTML = '';
                 if (data.success && data.data.length > 0) {
                     data.data.forEach(chat => {
-                        if (chat.is_admin) {
-                            chatArea.innerHTML += `
-                                <div class="d-flex justify-content-end mb-3">
-                                    <div class="dash-chat-bubble-admin">
-                                        <p class="mb-1 small">${chat.message}</p>
-                                        <small style="font-size: 0.7rem; opacity: 0.7;">${chat.time} <i class="fa-solid fa-check-double ms-1"></i></small>
-                                    </div>
-                                </div>`;
-                        } else {
+                        // ▼ PERBAIKAN: Format waktu dari database Laravel (created_at) ▼
+                        let time = new Date(chat.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                        let updateTime = chat.updated_at ? new Date(chat.updated_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : time;
+
+                        // ▼ 1. BUBBLE VENDOR: Gunakan chat.message ▼
+                        if (chat.message && chat.message !== '-') {
                             chatArea.innerHTML += `
                                 <div class="d-flex justify-content-start mb-3">
                                     <div class="dash-chat-bubble-vendor shadow-sm">
                                         <p class="mb-1 small">${chat.message}</p>
-                                        <small class="text-muted" style="font-size: 0.7rem;">${chat.time}</small>
+                                        <small class="text-muted" style="font-size: 0.7rem;">${time}</small>
+                                    </div>
+                                </div>`;
+                        }
+
+                        // ▼ 2. BUBBLE ADMIN: Gunakan chat.admin_reply ▼
+                        if (chat.admin_reply && chat.admin_reply !== null) {
+                            chatArea.innerHTML += `
+                                <div class="d-flex justify-content-end mb-3">
+                                    <div class="dash-chat-bubble-admin">
+                                        <p class="mb-1 small">${chat.admin_reply}</p>
+                                        <small style="font-size: 0.7rem; opacity: 0.7;">${updateTime} <i class="fa-solid fa-check-double ms-1"></i></small>
                                     </div>
                                 </div>`;
                         }
@@ -323,7 +367,10 @@
                     chatArea.innerHTML = `<div class="text-center text-muted my-4"><p class="small">Belum ada pesan dengan ${vendorName}.</p></div>`;
                 }
                 chatArea.scrollTop = chatArea.scrollHeight;
-            }).catch(err => chatArea.innerHTML = `<div class="text-center text-danger my-4"><p class="small">Gagal memuat pesan.</p></div>`);
+            }).catch(err => {
+                console.error(err);
+                chatArea.innerHTML = `<div class="text-center text-danger my-4"><p class="small">Gagal memuat pesan.</p></div>`;
+            });
     }
 
     // 3. Fungsi mengirim pesan
@@ -340,7 +387,7 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
         btn.disabled = true;
 
-        fetch("{{ route('admin.customer-service') }}", {
+        fetch("{{ route('admin.cs.send') }}", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
