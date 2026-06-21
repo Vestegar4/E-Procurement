@@ -70,60 +70,43 @@
 
             {{-- BAGIAN KANAN: MENU NAVIGASI (Hapus Home, Modifikasi Kontak Admin & Register) --}}
             <div class="ms-auto d-flex align-items-center gap-3">
-                @guest
-                {{-- 1. TOMBOL LOGIN --}}
-                @if(!request()->routeIs('login'))
-                <a href="{{ route('login') }}" class="btn px-4 py-2" style="
-                            border: 2px solid var(--color-primary); 
-                            color: var(--color-primary); 
-                            background-color: transparent;
-                            border-radius: 6px; 
-                            font-weight: 700;
-                            font-size: 0.95rem;
-                            transition: all 0.2s ease;
-                            text-decoration: none;
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                        " onmouseover="this.style.backgroundColor='var(--color-primary)'; this.style.color='var(--color-white)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--color-primary)';">
-                    Login <i class="fa-solid fa-right-to-bracket ms-2"></i>
-                </a>
-                @endif
+    
+    @guest
+        {{-- TAMPILAN UNTUK PENGUNJUNG (TIDAK ADA TOMBOL LOGIN) --}}
+        
+        {{-- Tombol Kontak Admin saja --}}
+        @if(request()->routeIs('home') || request()->routeIs('register') || request()->routeIs('contact.admin'))
+        <a href="{{ route('contact.admin') }}" class="btn px-4 py-2 shadow-sm" style="
+                background-color: var(--color-primary); 
+                color: var(--color-white); 
+                border: 2px solid var(--color-primary);
+                border-radius: 6px; 
+                font-weight: 700;
+                font-size: 0.95rem;
+                transition: all 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+            " onmouseover="this.style.opacity='0.8';" onmouseout="this.style.opacity='1';">
+            <i class="fa-solid fa-envelope-open-text me-2" style="color: var(--color-accent-bright);"></i> Kontak Admin
+        </a>
+        @endif
 
-                {{-- 2. TOMBOL KONTAK ADMIN (Muncul di Landing Page & Halaman Register) --}}
-                @if(request()->routeIs('home') || request()->routeIs('register'))
-                <a href="{{ route('contact.admin') }}" class="btn px-4 py-2 shadow-sm" style="
-                            background-color: var(--color-primary); 
-                            color: var(--color-white); 
-                            border: 2px solid var(--color-primary);
-                            border-radius: 6px; 
-                            font-weight: 700;
-                            font-size: 0.95rem;
-                            transition: all 0.2s ease;
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                            text-decoration: none;
-                        " onmouseover="this.style.opacity='0.8';" onmouseout="this.style.opacity='1';">
-                    <i class="fa-solid fa-envelope-open-text me-2" style="color: var(--color-accent-bright);"></i> Kontak Admin
-                </a>
-                @endif
-
-                @else
-                {{-- TAMPILAN JIKA USER SUDAH LOGIN (Sama persis dengan kode bawaan zip) --}}
-                <div class="d-flex align-items-center gap-3">
-                    <span class="fw-medium text-muted small">Halo, <strong style="color: var(--color-text-main);">{{ Auth::user()->name }}</strong></span>
-                    <form action="{{ route('logout') }}" method="POST" class="m-0">
-                        @csrf
-                        <button type="submit" class="btn btn-sm px-3 py-2 text-white shadow-sm" style="background-color: var(--color-primary); border-radius: 6px; font-weight: 600; border: none; transition: 0.2s;" onmouseover="this.style.backgroundColor='#1e293b';" onmouseout="this.style.backgroundColor='var(--color-primary)';">
-                            <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
-                        </button>
-                    </form>
-                </div>
-                @endguest
-            </div>
-
+    @else
+        {{-- TAMPILAN JIKA USER SUDAH LOGIN --}}
+        <div class="d-flex align-items-center gap-3">
+            <span class="fw-medium text-muted small">Halo, <strong style="color: var(--color-text-main);">{{ Auth::user()->name }}</strong></span>
+            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                @csrf
+                <button type="submit" class="btn btn-sm px-3 py-2 text-white shadow-sm" style="background-color: var(--color-primary); border-radius: 6px; font-weight: 600; border: none; transition: 0.2s;" onmouseover="this.style.backgroundColor='#1e293b';" onmouseout="this.style.backgroundColor='var(--color-primary)';">
+                    <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+                </button>
+            </form>
         </div>
+    @endguest
+
+</div>
     </nav>
 
     {{-- KONTEN UTAMA HALAMAN --}}

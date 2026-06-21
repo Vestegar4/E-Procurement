@@ -23,7 +23,7 @@
         </p>
 
         {{-- PERBAIKAN TOMBOL: SEKARANG TERLIHAT NYATA DAN SANGAT JELAS SEBAGAI BUTTON --}}
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <!-- <div class="d-flex justify-content-center gap-3 flex-wrap">
 
             {{-- Tombol 1: Login Portal (Gaya Outline Navy yang Tegas & Bersih) --}}
             <a href="{{ route('login') }}" class="btn px-4 py-3 shadow-sm" style="
@@ -41,7 +41,7 @@
                     transition: all 0.25s ease;
                 " onmouseover="this.style.backgroundColor='var(--color-primary)'; this.style.color='var(--color-white)';" onmouseout="this.style.backgroundColor='var(--color-white)'; this.style.color='var(--color-primary)';">
                 <i class="fa-solid fa-right-to-bracket me-2"></i> Login
-            </a>
+            </a> -->
 
             {{-- Tombol 2: Daftar Sebagai Vendor (Gaya Solid Amber - Tombol Utama Paling Mencolok) --}}
             <a href="https://play.google.com/store/apps/details?id=proculus.app.dartd" target="_blank" class="btn px-4 py-3 shadow" style="
@@ -117,10 +117,21 @@
 </section>
 
 {{-- FOOTER --}}
-<footer class="py-4 text-center border-top" style="background: var(--color-surface); border-color: var(--color-border) !important;">
+<footer class="py-4 text-center border-top" style="background: var(--color-surface); border-color: var(--color-border) !important; position: relative;">
     <div class="container">
         <h5 class="fw-bold mb-2" style="color: var(--color-text-main);">Proculus E-Procurement</h5>
         <p class="mb-0 text-muted small">&copy; 2026 Proculus Enterprise. Hak Cipta Dilindungi.</p>
+        
+        {{-- AKSES ADMIN TERSEMBUNYI --}}
+        <div class="mt-2">
+            <a href="{{ route('login') }}" 
+               class="text-decoration-none" 
+               style="font-size: 0.65rem; color: var(--color-text-main); opacity: 0.1; transition: opacity 0.3s ease; letter-spacing: 1px; text-transform: uppercase;"
+               onmouseover="this.style.opacity='0.6'" 
+               onmouseout="this.style.opacity='0.1'">
+               Admin Access
+            </a>
+        </div>
     </div>
 </footer>
 @endsection

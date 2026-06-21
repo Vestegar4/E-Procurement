@@ -42,8 +42,18 @@
                         <td>{{ $bid->vendor->company_name ?? 'Nama Vendor' }}</td>
                         <td class="fw-bold text-success">Rp {{ number_format($bid->bid_amount, 0, ',', '.') }}</td>
                         <td>{{ $bid->estimated_time }} Hari</td>
-                        <td><span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Approved</span></td>
-
+                        <td>
+                            @if ($bid->bid_document)
+                                <a href="{{ asset('storage/' . $bid->bid_document) }}" target="_blank" class="btn btn-sm shadow-sm" style="background-color: var(--color-surface); color: var(--color-primary); border: 1px solid var(--color-border);">
+                                    <i class="fa-solid fa-file-pdf me-1 text-danger"></i> Lihat Berkas
+                                </a>
+                            @else
+                                <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill" style="opacity: 0.7;">
+                                    <i class="fa-solid fa-folder-closed"></i> Kosong
+                                </span>
+                            @endif
+                        </td>
+                        
                         <td class="text-center align-middle">
                             @if (!$result)
                             <button class="btn btn-sm text-white fw-bold shadow-sm px-3"
