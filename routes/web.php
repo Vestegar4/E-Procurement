@@ -404,43 +404,41 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->pref
 
         $user->password = Illuminate\Support\Facades\Hash::make($request->new_password);
         $user->save();
-
+        
         return back()->with('success', 'Kata sandi berhasil diperbarui!');
-    })->name('admin.settings.update');
-
-
+        })->name('admin.settings.update');
+        
+        
+        // Kontak Admin Route
+        // 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)
+        
+        // Route::post('/kontak-admin/kirim', function (Illuminate\Http\Request $request) {
+        //     // Menyimpan pengaduan ke dalam tabel notifications dengan aman menggunakan Query Builder
+        //     if (Schema::hasTable('notifications')) {
+            //         DB::table('notifications')->insert([
+                //             'title' => 'Tiket Pengaduan Support Baru',
+                //             'message' => 'Pengirim: ' . $request->name . ' (' . $request->email . ') - Pesan: ' . $request->message,
+                //             'is_read' => false,
+                //             'created_at' => now(),
+                //             'updated_at' => now(),
+                //         ]);
+                //     }
+                
+                //     return redirect('/')->with('success', 'Pesan pengaduan Anda berhasil terkirim ke Admin Proculus!');
+                //  })->name('contact.admin.send');
+                
+                Route::get('/customer-service', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'index'])->name('admin.customer-service');
+    Route::post('/customer-service/{id}/resolve', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'resolve'])->name('admin.customer-service.resolve');
+    Route::get('/customer-service/{vendor_id}/history', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'history'])->name('admin.cs.history');    
+    Route::post('/customer-service/send', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'send'])->name('admin.cs.send');
+    });
     // Kontak Admin Route
     // 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)
     Route::get('/kontak-admin', function () {
         return view('auth.contact');
-    })->name('contact.admin');
-
-    // Route::post('/kontak-admin/kirim', function (Illuminate\Http\Request $request) {
-    //     // Menyimpan pengaduan ke dalam tabel notifications dengan aman menggunakan Query Builder
-    //     if (Schema::hasTable('notifications')) {
-    //         DB::table('notifications')->insert([
-    //             'title' => 'Tiket Pengaduan Support Baru',
-    //             'message' => 'Pengirim: ' . $request->name . ' (' . $request->email . ') - Pesan: ' . $request->message,
-    //             'is_read' => false,
-    //             'created_at' => now(),
-    //             'updated_at' => now(),
-    //         ]);
-    //     }
-
-    //     return redirect('/')->with('success', 'Pesan pengaduan Anda berhasil terkirim ke Admin Proculus!');
-    //  })->name('contact.admin.send');
-
-    Route::get('/customer-service', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'index'])->name('admin.customer-service');
-    Route::post('/customer-service/{id}/resolve', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'resolve'])->name('admin.customer-service.resolve');
-    Route::get('/customer-service/{vendor_id}/history', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'history'])->name('admin.cs.history');    
-    Route::post('/customer-service/send', [App\Http\Controllers\Admin\AdminCustomerServiceController::class, 'send'])->name('admin.cs.send');
-});
-// Kontak Admin Route
-// 1. RUTE FORM & PENGIRIMAN PESAN SUPPORT (KONTEN AMAN)
-Route::get('/kontak-admin', function () {
-    return view('auth.contact');
-})->name('contact.admin');
-
-
-// Rute untuk form pengaduan di Landing Page
-Route::post('/contact-submit', [App\Http\Controllers\HomeController::class, 'storeContact'])->name('contact.submit');
+        })->name('contact.admin');
+        
+        
+        // Rute untuk form pengaduan di Landing Page
+        Route::post('/contact-submit', [App\Http\Controllers\HomeController::class, 'storeContact'])->name('contact.submit');
+        

@@ -246,22 +246,17 @@ class VendorBidController extends Controller
         $tender = Tender::with('timeline')
             ->findOrFail($tenderId);
 
-        if ($tender->status !== 'bidding') {
+        // 1. PERBAIKAN: Gunakan fungsi isBiddingOpen() agar sama persis dengan versi Web
+        if (!$tender->isBiddingOpen()) {
             return response()->json([
                 'message' => 'Tender is not open for bidding'
             ], 400);
         }
-    
-        // if ($vendor->status !== 'approved') {
-        //     return response()->json([
-        //         'message' => 'Your vendor account is not approved'
-        //     ], 403);
-        // }
 
         if ($vendor->status !== 'approved') {
-        return response()->json([
-            'message' => 'Akun vendor belum approved untuk melakukan bidding.'
-        ], 403);
+            return response()->json([
+                'message' => 'Akun vendor belum approved untuk melakukan bidding.'
+            ], 403);
         }
         
         $participant = TenderParticipant::where([
@@ -275,7 +270,8 @@ class VendorBidController extends Controller
             ], 403);
         }
 
-        $now = now();
+        // 2. PERBAIKAN: Kunci zona waktu ke WIB (Jakarta) agar tidak ada selisih 7 jam dengan server
+        $now = now()->timezone('Asia/Jakarta');
 
         if (
             $now->lt($tender->timeline->bidding_start) ||
