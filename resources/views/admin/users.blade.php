@@ -22,7 +22,7 @@
                 <div class="col-md-6">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <input type="text" name="search" class="form-control border-start-0 auth-input px-0" placeholder="Ketik nama atau email pengguna lalu tekan enter..." value="{{ request('search') }}">
+                        <input type="text" name="search" class="form-control border-start-0 auth-input px-0" placeholder="Ketik nama atau email pengguna..." value="{{ request('search') }}">
                     </div>
                 </div>
 

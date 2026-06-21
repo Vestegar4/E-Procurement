@@ -108,6 +108,7 @@
                                 </div>
                                 <form action="{{ route('admin.vendors.update-status', $v->id) }}" method="POST">
                                     @csrf
+                                    @method('PUT')
                                     <div class="modal-body p-4">
                                         <div class="mb-4">
                                             <label class="form-label text-muted small fw-bold">Status Penilaian Saat Ini</label>
