@@ -8,6 +8,25 @@ use App\Models\CustomerService;
 
 class CustomerServiceController extends Controller
 {
+    public function index(Request $request)
+    {
+        $vendor = auth()->user()->vendor;
+
+        if (!$vendor) {
+            return response()->json(['success' => false, 'message' => 'Vendor tidak ditemukan'], 404);
+        }
+
+        // Ambil semua riwayat chat vendor ini dari database
+        $chats = CustomerService::where('vendor_id', $vendor->id)
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $chats
+        ]);
+    }
+    
     public function store(Request $request)
     {
         // Validasi pesan tidak boleh kosong

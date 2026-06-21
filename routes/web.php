@@ -23,15 +23,21 @@ Auth::routes([
 
 Route::get('/', function () {
     // Jika sudah login, langsung paksa masuk ke dashboard admin
-    if (auth()->check()) {
+    if (auth()->user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
-    }
+    } else {
+            // Jika dia Vendor (atau role lain) yang mencoba masuk lewat Web, tolak!
+            // (Karena Vendor seharusnya hanya pakai aplikasi Ionic Mobile)
+            Auth::logout();
+            return redirect('/')->with('error', 'Akses Ditolak: Akun Vendor hanya dapat diakses melalui Aplikasi Mobile Proculus.');
+        }
     // Jika belum login, tampilkan landing page (beranda)
     return view('home.home');
 })->name('home');
 
 // ADMIN ROUTES 
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->group(function () {
+    
 
     Route::get('/dashboard', function () {
         $vendorCount = Schema::hasTable('vendors') ? Vendor::count() : 0;
