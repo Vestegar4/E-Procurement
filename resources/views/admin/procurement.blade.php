@@ -34,12 +34,14 @@
                         {{-- Fitur Auto-Submit pada Dropdown --}}
                         <select name="status" class="form-select auth-input" onchange="this.form.submit()">
                             <option value="">Semua Status Tender</option>
-                            <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft (Belum Rilis)
-                            </option>
-                            <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Open (Pendaftaran
-                                Dibuka)</option>
+                            <!-- <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft (Belum Rilis)
+                            </option> -->
+                            <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Open (Buka Pendaftaran)</option>
+                            <option value="aanwijzing" {{ request('status') == 'aanwijzing' ? 'selected' : '' }}>Tanya Jawab (Aanwijzing)</option>
+                            <option value="bidding" {{ request('status') == 'bidding' ? 'selected' : '' }}>Bidding (Masa Terima Penawaran)</option>
                             <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>Closed
-                                (Selesai/Tutup)</option>
+                                (Tutup/Evaluasi)</option>
+                            <option value="finished" {{ request('status') == 'finished' ? 'selected' : '' }}>Finished (Pekerjaan Selesai)</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -325,7 +327,7 @@
                                                     <button type="button" class="btn fw-bold"
                                                         style="color: var(--color-text-muted);"
                                                         data-bs-dismiss="modal">Batalkan</button>
-                                                    <button type="submit" class="btn btn-primary-action px-4 shadow-sm">
+                                                    <button type="submit" class="btn btn-primary-action px-4 shadow-sm" style="background-color: var(--color-accent-bright); color: var(--color-primary); border-radius: 8px; font-size: 1.05rem;">
                                                         Simpan Perubahan <i class="fa-solid fa-floppy-disk ms-2"></i>
                                                     </button>
                                                 </div>
