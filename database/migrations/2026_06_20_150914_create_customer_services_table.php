@@ -18,7 +18,8 @@ return new class extends Migration
         $table->string('email')->nullable();
         
         $table->text('message'); 
-        $table->enum('status', ['unread', 'read', 'resolved'])->default('unread');
+        $table->text('admin_reply')->nullable(); // Kolom untuk balasan admin
+        $table->enum('status', ['unread', 'read', 'answered', 'resolved'])->default('unread');
         $table->timestamps();
     });
     }

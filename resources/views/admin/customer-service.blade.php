@@ -217,25 +217,15 @@ $chatVendors = \App\Models\Vendor::latest()->take(10)->get();
 @push('scripts')
 <script>
     // 1. FUNGSI UNTUK MENGGANTI VENDOR DI SEBELAH KIRI
+    // 1. FUNGSI UNTUK MENGGANTI VENDOR & MEMUAT RIWAYAT
     function bukaPercakapan(vendorId, vendorName) {
-        // Set ID ke form input
         document.getElementById('receiver_id').value = vendorId;
-        
-        // Ubah Header Kanan
         document.getElementById('chatHeaderName').innerText = vendorName;
         
-        // Hapus class 'active' dari semua vendor
-        document.querySelectorAll('.vendor-chat-item').forEach(el => {
-            el.classList.remove('active');
-        });
-        
-        // Tambahkan class 'active' ke vendor yang diklik
+        document.querySelectorAll('.vendor-chat-item').forEach(el => el.classList.remove('active'));
         let activeEl = document.getElementById('vendor-item-' + vendorId);
-        if(activeEl) {
-            activeEl.classList.add('active');
-        }
+        if(activeEl) activeEl.classList.add('active');
 
-        // Tampilkan loading sebentar di layar chat
         let chatArea = document.getElementById('chatArea');
         chatArea.innerHTML = `
             <div class="text-center text-muted my-5">
@@ -244,14 +234,57 @@ $chatVendors = \App\Models\Vendor::latest()->take(10)->get();
             </div>
         `;
 
-        // Hapus loading (Simulasi data kosong)
-        setTimeout(() => {
-            chatArea.innerHTML = `
-                <div class="text-center w-100 mb-3">
-                    <span class="badge border px-3 py-2 shadow-sm" style="background-color: var(--color-white); color: var(--color-text-muted); border-color: var(--color-border) !important; border-radius: 8px;">Hari Ini</span>
-                </div>
-            `;
-        }, 500);
+        // Ambil riwayat dari database
+        fetch(`/admin/customer-service/${vendorId}/history`)
+            .then(response => response.json())
+            .then(res => {
+                chatArea.innerHTML = `
+                    <div class="text-center w-100 mb-3">
+                        <span class="badge border px-3 py-2 shadow-sm" style="background-color: var(--color-white); color: var(--color-text-muted); border-color: var(--color-border) !important; border-radius: 8px;">Riwayat Tiket</span>
+                    </div>
+                `;
+
+                if(res.data.length === 0) {
+                    chatArea.innerHTML += `
+                        <div class="text-center text-muted my-4 opacity-50" id="emptyChatPlaceholder">
+                            <i class="fa-regular fa-message display-6 mb-2"></i>
+                            <p class="small">Belum ada riwayat percakapan dengan vendor ini.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render setiap baris tiket menjadi Bubble Chat
+                res.data.forEach(chat => {
+                    // Jika vendor mengirim pesan
+                    if(chat.message && chat.message !== '-') {
+                        chatArea.innerHTML += `
+                            <div class="d-flex flex-column align-items-start mt-2">
+                                <span class="small fw-bold mb-1 ms-1" style="color: var(--color-text-muted);">${vendorName}</span>
+                                <div class="chat-bubble chat-bubble-vendor">
+                                    ${chat.message}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Jika admin membalas di tiket yang sama
+                    if(chat.admin_reply) {
+                        chatArea.innerHTML += `
+                            <div class="d-flex flex-column align-items-end mt-2">
+                                <span class="small fw-bold mb-1 me-1" style="color: var(--color-text-muted);">Admin (Anda)</span>
+                                <div class="chat-bubble chat-bubble-admin">
+                                    ${chat.admin_reply}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                // Auto-scroll ke paling bawah
+                chatArea.scrollTop = chatArea.scrollHeight;
+            })
+            .catch(err => console.error(err));
     }
 
     // 2. FUNGSI AJAX UNTUK MENGIRIM PESAN KE DATABASE & IONIC
