@@ -159,8 +159,15 @@
                 {{-- TAB 2: CHAT CUSTOMER SERVICE (SPLIT VIEW) --}}
             <div class="tab-pane fade" id="chat-pane" role="tabpanel" aria-labelledby="chat-tab" tabindex="0">
                 @php
-                // Mengambil data vendor untuk list chat di Dashboard
-                $dashboardVendors = \App\Models\Vendor::latest()->get();
+                // 1. Ambil ID Vendor yang SUDAH PERNAH mengirim chat ke tabel customer_services
+                $activeVendorIds = \App\Models\CustomerService::select('vendor_id')
+                                    ->distinct()
+                                    ->pluck('vendor_id');
+
+                // 2. Tampilkan HANYA vendor-vendor tersebut di sidebar chat Admin
+                $dashboardVendors = \App\Models\Vendor::whereIn('id', $activeVendorIds)
+                                    ->latest()
+                                    ->get();
                 @endphp
 
                 <div class="row g-0 border-top">
