@@ -25,29 +25,20 @@ class LoginController extends Controller
         }
 
         if ($user->role === 'vendor') {
-            // Cek apakah vendor sudah approved
-            $vendor = $user->vendor;
+            // Jika dia Vendor tapi nekat mencoba login lewat Web, langsung TOLAK!
+            // Karena Vendor harus login dari Aplikasi Mobile Ionic (API)
+            auth()->logout();
 
-            if (!$vendor || $vendor->status === 'pending') {
-                auth()->logout();
-                return redirect()->route('login')->withErrors([
-                    'email' => 'Akun vendor kamu masih menunggu persetujuan admin.',
-                ]);
-            }
-
-            if ($vendor->status === 'rejected') {
-                auth()->logout();
-                return redirect()->route('login')->withErrors([
-                    'email' => 'Akun vendor kamu telah ditolak. Hubungi admin.',
-                ]);
-            }
-
-            return redirect()->route('vendor.dashboard');
+            return redirect()->route('login')->withErrors([
+                'email' => 'Akses Ditolak: Akun Vendor hanya dapat diakses melalui Aplikasi Mobile Proculus.',
+            ]);
         }
 
-        // Fallback
+        // Fallback (Jika rolenya aneh/tidak terdaftar)
+        auth()->logout();
         return redirect()->route('login');
     }
+
     // --- FITUR BARU: OVERRIDE LOGOUT REDIRECT ---
     protected function loggedOut(Request $request)
     {
