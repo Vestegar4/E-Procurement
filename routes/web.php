@@ -107,9 +107,25 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->pref
     })->name('admin.vendors');
 
     Route::put('/vendors/{id}/update-status', function (Request $request, $id) {
+        // 1. Update Status Akun Vendor Utama
         $vendor = Vendor::findOrFail($id);
         $vendor->update(['status' => $request->status]);
-        return back()->with('success', 'Status verifikasi akun vendor berhasil diperbarui!');
+
+        // 2. Update Status Masing-Masing Dokumen
+        if ($request->has('documents')) {
+            foreach ($request->documents as $docId => $docData) {
+                $document = \App\Models\VendorDocument::find($docId);
+                if ($document) {
+                    $document->update([
+                        'status' => $docData['status'],
+                        // Otomatis mencatat waktu jika dokumen di-approve
+                        'verified_at' => $docData['status'] == 'approved' ? now() : null 
+                    ]);
+                }
+            }
+        }
+
+        return back()->with('success', 'Status akun vendor dan seluruh dokumen pendukung berhasil diverifikasi!');
     })->name('admin.vendors.update-status');
 
     // MODULE: PENGADAAN / TENDER (FILTER STATUS ONLY)
