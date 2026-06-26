@@ -8,6 +8,7 @@
 
     <title>Proculus E-Procurement - @yield('title', 'Welcome')</title>
 
+    <link rel="icon" href="{{ asset('assets/img/logo.png') }}" type="image/png">
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Inter:400,500,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">

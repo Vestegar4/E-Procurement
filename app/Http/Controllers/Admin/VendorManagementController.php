@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class VendorManagementController extends Controller
 {
     // list vendor vendor
-    public function index(Request $Request)
+    public function index(Request $request)
     {
         $search = $request->query('search');
         $status = $request->query('status');
