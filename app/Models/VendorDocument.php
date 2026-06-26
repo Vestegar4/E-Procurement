@@ -26,6 +26,15 @@ class VendorDocument extends Model
         'uploaded_at' => 'datetime',
         'verified_at' => 'datetime',
     ];
+    protected $appends = ['file_url'];
+
+    public function getFileUrlAttribute()
+    {
+        if (!$this->file_path) return null;
+
+        // Jika Anda menggunakan Symlink 'api_docs' di dalam folder public Proculus:
+        return asset('storage/api_docs/' . str_replace('vendor-documents/', '', $this->file_path));
+    }
 
     /*
     |--------------------------------------------------------------------------
