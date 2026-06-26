@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\Api\Vendor\AanwijzingController;
+
+require_once app_path('Http/Controllers/Auth/vendor/forgot-password.php');
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES (KHUSUS API / MOBILE APLIKASI)
@@ -35,6 +37,12 @@ Route::prefix('auth/vendor')->group(function () {
     Route::post('login', [VendorAuthController::class, 'login'])->middleware('throttle:5,15');
     Route::post('logout', [VendorAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [\App\Http\Controllers\Vendor\VendorProfileController::class, 'me'])->middleware('auth:sanctum');
+});
+
+Route::prefix('auth/vendor/forgot-password')->group(function () {
+    Route::post('request-otp', [\App\Http\Controllers\Auth\Vendor\ForgotPasswordController::class, 'requestOtp']);
+    Route::post('verify-otp', [\App\Http\Controllers\Auth\Vendor\ForgotPasswordController::class, 'verifyOtp']);
+    Route::post('reset', [\App\Http\Controllers\Auth\Vendor\ForgotPasswordController::class, 'reset']);
 });
 
 /*

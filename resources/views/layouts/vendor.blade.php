@@ -108,7 +108,7 @@
                     </div>
                     <form action="/admin/vendors/{{ $v->id }}/status" method="POST">
                         @csrf
-                        @method('PUT')
+                        @method('POST')
                         <div class="modal-body p-4">
                             <div class="mb-4">
                                 <label class="form-label fw-bold text-uppercase small" style="color: var(--color-text-muted);">Nama Vendor</label>
