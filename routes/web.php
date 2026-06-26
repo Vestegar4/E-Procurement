@@ -106,7 +106,7 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->pref
         return view('admin.vendors', compact('vendors'));
     })->name('admin.vendors');
 
-    Route::post('/vendors/{id}/update-status', function (Request $request, $id) {
+    Route::put('/vendors/{id}/update-status', function (Request $request, $id) {
         $vendor = Vendor::findOrFail($id);
         $vendor->update(['status' => $request->status]);
         return back()->with('success', 'Status verifikasi akun vendor berhasil diperbarui!');
