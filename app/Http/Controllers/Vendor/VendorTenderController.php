@@ -85,6 +85,13 @@ class VendorTenderController extends Controller
             ? $tender->result->winner_vendor_id !== $vendor->id
             : false;
         
+        $myBid = null;
+        if ($isJoined && $vendor) {
+            $myBid = \App\Models\Bid::where('tender_id', $tender->id)
+                ->where('vendor_id', $vendor->id)
+                ->first();
+        }
+
         // ▼ PERBAIKAN: Selalu gunakan JSON jika ini dari rute API ▼
         if ($request->expectsJson() || $request->is('api/*')) {
             $tender->effective_status = $effectiveStatus;
@@ -94,7 +101,8 @@ class VendorTenderController extends Controller
                     'tender' => $tender,
                     'is_joined' => $isJoined,
                     'is_winner' => $isWinner,
-                    'is_loser' => $isLoser
+                    'is_loser' => $isLoser,
+                    'my_bid_amount' => $myBid ? $myBid->bid_amount : 0
                 ]
             ]);
         }
