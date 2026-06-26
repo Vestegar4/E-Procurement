@@ -156,7 +156,7 @@
                                             <h5 class="modal-title fw-bold">Tinjau Vendor #{{ $v->id }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-                                        <form action="{{ route('admin.vendors.update-status', $v->id) }}" method="PUT">
+                                        <form action="{{ route('admin.vendors.update-status', $v->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
                                             <div class="modal-body p-4">
