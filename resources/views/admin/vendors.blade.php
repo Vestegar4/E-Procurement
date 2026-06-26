@@ -126,19 +126,34 @@
                                                 @if(isset($v->documents) && $v->documents->count() > 0)
                                                 <div class="d-flex flex-column gap-2">
                                                     @foreach($v->documents as $doc)
-                                                    {{-- Sesuaikan nama properti 'file_path' dan 'name' sesuai dengan kolom di tabel vendor_documents kamu --}}
-                                                    <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="text-decoration-none border p-3 rounded-3 d-flex align-items-center shadow-sm" style="background: var(--color-white); transition: 0.2s;" onmouseover="this.style.borderColor='var(--color-primary)'" onmouseout="this.style.borderColor='var(--color-border)'">
-                                                        <div class="bg-light rounded p-2 me-3">
-                                                            <i class="fa-solid fa-file-pdf fs-4 text-danger"></i>
+                                                    <div class="border p-3 rounded-3 shadow-sm mb-2" style="background: var(--color-white); border-color: var(--color-border);">
+
+                                                        {{-- Bagian Atas: Link Dokumen --}}
+                                                        <a href="{{ $doc->file_url ?? asset('storage/' . $doc->file_path) }}" target="_blank" class="text-decoration-none d-flex align-items-center mb-3 pb-2 border-bottom">
+                                                            <div class="bg-light rounded p-2 me-3">
+                                                                <i class="fa-solid fa-file-pdf fs-4 text-danger"></i>
+                                                            </div>
+                                                            <div>
+                                                                <span class="fw-bold d-block" style="color: var(--color-text-main); font-size: 0.9rem;">
+                                                                    {{ $doc->document_name ?? strtoupper($doc->document_type) ?? 'Dokumen Pendukung' }}
+                                                                </span>
+                                                                <small class="text-muted" style="font-size: 0.75rem;">Klik untuk melihat file <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></small>
+                                                            </div>
+                                                        </a>
+
+                                                        {{-- Bagian Bawah: Dropdown Verifikasi per Dokumen --}}
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            <span class="small fw-bold text-muted">Status Dokumen:</span>
+                                                            <select name="documents[{{ $doc->id }}][status]"
+                                                                class="form-select form-select-sm fw-bold {{ $doc->status == 'approved' ? 'text-success' : ($doc->status == 'rejected' ? 'text-danger' : 'text-warning') }}"
+                                                                style="width: auto; min-width: 140px; cursor: pointer;">
+                                                                <option value="pending" class="text-warning" {{ $doc->status == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                                                                <option value="approved" class="text-success" {{ $doc->status == 'approved' ? 'selected' : '' }}>✅ Approved</option>
+                                                                <option value="rejected" class="text-danger" {{ $doc->status == 'rejected' ? 'selected' : '' }}>❌ Rejected</option>
+                                                            </select>
                                                         </div>
-                                                        <div>
-                                                            <span class="fw-bold d-block" style="color: var(--color-text-main); font-size: 0.9rem;">
-                                                                {{ $doc->document_name ?? $doc->type ?? 'Dokumen Pendukung' }}
-                                                            </span>
-                                                            <small class="text-muted" style="font-size: 0.75rem;">Klik untuk melihat file</small>
-                                                        </div>
-                                                        <i class="fa-solid fa-arrow-up-right-from-square ms-auto text-muted small"></i>
-                                                    </a>
+
+                                                    </div>
                                                     @endforeach
                                                 </div>
                                                 @else
